@@ -8,10 +8,11 @@ Nine rounds. Adaptive after round 5. Returns your top three seasons with trade-o
 
 ## How it works
 
-- **Rounds 1–4** are binary "this or that" questions chosen to genuinely fork the audience along real spectrums: kind of laugh, format preference, tone, performer DNA.
+- **Round 1** asks you to pick three aspects of SNL you live for from eight dimensions: cold opens, Weekend Update, recurring characters, host-driven sketches, pre-tapes & digital shorts, musical guests, weird 10-to-1s, and political impressions. Your picks set the baseline season weights and choose the next three questions.
+- **Rounds 2–4** drill into each chosen aspect in the order you picked them. Each aspect has its own follow-up — e.g. picking Weekend Update surfaces a question about Update style (sharp commentary, deadpan one-liners, warm chemistry, cool detachment, weird correspondents); picking pre-tapes asks which pre-tape flavor you'd rewatch most.
 - **Round 5** is a multi-select picker for up to three cast members you cannot live without. These weigh roughly four times heavier than any other pick.
-- **Rounds 6–9** are adaptive. After each round the algorithm computes your current top season candidates and selects the next question from a pool of eight refinement questions (Update desk, iconic moment, sketch type, impression, etc.) — whichever question most cleanly discriminates between your remaining candidates.
-- The result page shows your bullseye season with cover photo from Wikipedia, both Lorne's and Bill Murray's quotes about generational taste, an age prediction based on the Lorne theory, your archetype, and direct streaming links.
+- **Rounds 6–9** are adaptive. After each round the algorithm computes your current top season candidates and selects the next question from a pool of refinement questions (Update desk, iconic moment, sketch type, the feel, host era, impression, 10-to-1 spirit) — whichever one most cleanly discriminates between your remaining candidates. Questions already covered by your round-1 aspects are skipped so you never answer the same thing twice.
+- The result page shows your bullseye season with cover photo from Wikipedia, both Lorne's and Bill Murray's quotes about generational taste, an age prediction based on the Lorne theory, your archetype (derived from your top aspect), and direct streaming links.
 
 ## Run locally
 
