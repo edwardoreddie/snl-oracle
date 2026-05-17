@@ -606,6 +606,163 @@ const ADAPTIVE_POOL = [
 ];
 
 /* ============================================================
+   SKETCH CATALOG — for "Watch This Next" on the result page.
+   Hand-curated. Tier = "iconic" (everyone knows it) or "deep_cut"
+   (lesser-known but season-defining). aspects[] tags overlap with
+   ASPECT_IDS so we can match the user's top aspects.
+   ============================================================ */
+const SKETCHES = [
+  // Original cast
+  { season: 1, title: "Land Shark", tier: "iconic", aspects: ["recurring", "loose"] },
+  { season: 1, title: "The Killer Bees", tier: "iconic", aspects: ["recurring"] },
+  { season: 1, title: "Mr. Mike's Least-Loved Bedtime Stories", tier: "deep_cut", aspects: ["pretape", "loose"] },
+  { season: 2, title: "The Coneheads", tier: "iconic", aspects: ["recurring", "loose"] },
+  { season: 2, title: "Samurai Futaba", tier: "deep_cut", aspects: ["host", "recurring"] },
+  { season: 3, title: "Olympia Cafe — Cheeseburger Cheeseburger", tier: "iconic", aspects: ["recurring", "host"] },
+  { season: 3, title: "Mr. Bill", tier: "iconic", aspects: ["pretape", "loose"] },
+  { season: 3, title: "King Bee with Stevie Wonder", tier: "deep_cut", aspects: ["host", "music"] },
+  { season: 4, title: "Two Wild and Crazy Guys", tier: "iconic", aspects: ["recurring", "host"] },
+  { season: 4, title: "Bass-O-Matic", tier: "deep_cut", aspects: ["pretape", "recurring"] },
+  { season: 5, title: "Nick the Lounge Singer", tier: "iconic", aspects: ["recurring", "host"] },
+  // Eddie era
+  { season: 7, title: "Mister Robinson's Neighborhood", tier: "iconic", aspects: ["recurring", "topical"] },
+  { season: 7, title: "Buckwheat", tier: "iconic", aspects: ["recurring"] },
+  { season: 8, title: "James Brown's Celebrity Hot Tub Party", tier: "iconic", aspects: ["recurring", "music", "host"] },
+  { season: 8, title: "Velvet Jones", tier: "deep_cut", aspects: ["recurring"] },
+  { season: 9, title: "White Like Me", tier: "iconic", aspects: ["pretape", "topical"] },
+  // S10 — Crystal/Short/Guest
+  { season: 10, title: "Synchronized Swimming", tier: "iconic", aspects: ["pretape", "host"] },
+  { season: 10, title: "Ed Grimley", tier: "iconic", aspects: ["recurring"] },
+  // S12-15 — Hartman/Carvey
+  { season: 12, title: "Church Lady debut", tier: "iconic", aspects: ["recurring", "topical"] },
+  { season: 12, title: "Sweeney Sisters", tier: "deep_cut", aspects: ["recurring", "music"] },
+  { season: 13, title: "Church Lady at peak", tier: "iconic", aspects: ["recurring"] },
+  { season: 13, title: "Hans and Franz debut", tier: "iconic", aspects: ["recurring"] },
+  { season: 14, title: "Wayne's World", tier: "iconic", aspects: ["recurring", "host"] },
+  { season: 14, title: "Hans and Franz", tier: "iconic", aspects: ["recurring"] },
+  { season: 14, title: "Toonces the Driving Cat", tier: "deep_cut", aspects: ["recurring"] },
+  { season: 15, title: "Wayne's World — Garth's Wedding", tier: "iconic", aspects: ["recurring"] },
+  { season: 15, title: "Carvey's Bush 41", tier: "iconic", aspects: ["impressions", "topical"] },
+  { season: 15, title: "Stuart Smalley debut", tier: "deep_cut", aspects: ["recurring"] },
+  // S16-20 — Sandler/Farley
+  { season: 16, title: "Wayne's World", tier: "iconic", aspects: ["recurring"] },
+  { season: 16, title: "Stuart Smalley", tier: "iconic", aspects: ["recurring"] },
+  { season: 17, title: "Coffee Talk", tier: "iconic", aspects: ["recurring"] },
+  { season: 17, title: "Hans and Franz pump up Schwarzenegger", tier: "iconic", aspects: ["recurring", "host"] },
+  { season: 17, title: "Pat", tier: "deep_cut", aspects: ["recurring"] },
+  { season: 18, title: "Matt Foley — van down by the river", tier: "iconic", aspects: ["recurring"] },
+  { season: 18, title: "Opera Man", tier: "iconic", aspects: ["update", "recurring"] },
+  { season: 18, title: "Sandler's Hanukkah Song", tier: "deep_cut", aspects: ["update", "music"] },
+  { season: 19, title: "Spartan Cheerleaders debut", tier: "iconic", aspects: ["recurring"] },
+  { season: 19, title: "Norm takes Update", tier: "iconic", aspects: ["update"] },
+  { season: 20, title: "Update with Norm", tier: "iconic", aspects: ["update"] },
+  // S21-25 — Reborn era
+  { season: 21, title: "Spartan Cheerleaders", tier: "iconic", aspects: ["recurring"] },
+  { season: 21, title: "Mary Katherine Gallagher debut", tier: "iconic", aspects: ["recurring"] },
+  { season: 22, title: "Celebrity Jeopardy debut", tier: "iconic", aspects: ["recurring", "host"] },
+  { season: 22, title: "Mango", tier: "deep_cut", aspects: ["recurring"] },
+  { season: 22, title: "Goat Boy", tier: "deep_cut", aspects: ["recurring"] },
+  { season: 23, title: "Roxbury Guys", tier: "iconic", aspects: ["recurring"] },
+  { season: 23, title: "Mary Katherine Gallagher peak", tier: "iconic", aspects: ["recurring"] },
+  { season: 23, title: "Norm's last Update", tier: "deep_cut", aspects: ["update", "loose"] },
+  { season: 24, title: "Spartan Cheerleaders", tier: "iconic", aspects: ["recurring"] },
+  { season: 24, title: "Celebrity Jeopardy with Burt Reynolds", tier: "iconic", aspects: ["recurring", "host"] },
+  { season: 25, title: "More Cowbell", tier: "iconic", aspects: ["recurring", "host"] },
+  { season: 25, title: "Celebrity Jeopardy peak", tier: "iconic", aspects: ["recurring", "host"] },
+  { season: 25, title: "Janet Reno's Dance Party finale", tier: "deep_cut", aspects: ["recurring", "topical"] },
+  // S26-30
+  { season: 26, title: "Tina Fey & Jimmy Fallon Update", tier: "iconic", aspects: ["update"] },
+  { season: 26, title: "Ferrell's Bush 43", tier: "iconic", aspects: ["impressions", "topical"] },
+  { season: 27, title: "Mayor Giuliani opens the show", tier: "iconic", aspects: ["cold-open", "topical"] },
+  { season: 27, title: "Ferrell's farewell", tier: "iconic", aspects: ["host"] },
+  { season: 29, title: "Debbie Downer", tier: "iconic", aspects: ["recurring", "loose"] },
+  { season: 30, title: "Cork Soakers with Janet Jackson", tier: "iconic", aspects: ["recurring", "host"] },
+  { season: 30, title: "Tina & Amy Update debut", tier: "iconic", aspects: ["update"] },
+  // S31-35 — Lonely Island
+  { season: 31, title: "Lazy Sunday", tier: "iconic", aspects: ["pretape"] },
+  { season: 31, title: "Natalie Portman's rap", tier: "iconic", aspects: ["pretape", "host"] },
+  { season: 31, title: "Two A-Holes", tier: "deep_cut", aspects: ["recurring", "ten-to-one"] },
+  { season: 32, title: "Dick in a Box", tier: "iconic", aspects: ["pretape", "host", "music"] },
+  { season: 32, title: "Peyton Manning's United Way", tier: "iconic", aspects: ["pretape", "host"] },
+  { season: 32, title: "Bronx Beat", tier: "deep_cut", aspects: ["recurring"] },
+  { season: 33, title: "Iran So Far", tier: "iconic", aspects: ["pretape", "topical"] },
+  { season: 33, title: "Jizz In My Pants", tier: "iconic", aspects: ["pretape", "music"] },
+  { season: 34, title: "Sarah Palin opens the show", tier: "iconic", aspects: ["cold-open", "impressions", "topical"] },
+  { season: 34, title: "I'm On a Boat", tier: "iconic", aspects: ["pretape", "music"] },
+  { season: 34, title: "Motherlover", tier: "deep_cut", aspects: ["pretape", "music"] },
+  { season: 35, title: "Stefon debut", tier: "iconic", aspects: ["update", "recurring"] },
+  { season: 35, title: "MacGruber", tier: "iconic", aspects: ["recurring"] },
+  { season: 35, title: "Gilly", tier: "deep_cut", aspects: ["recurring"] },
+  // S36-40
+  { season: 36, title: "Stefon at the desk", tier: "iconic", aspects: ["update", "recurring"] },
+  { season: 36, title: "What's Up With That?", tier: "iconic", aspects: ["recurring", "music"] },
+  { season: 37, title: "The Californians debut", tier: "iconic", aspects: ["recurring", "loose"] },
+  { season: 37, title: "Stefon peak", tier: "iconic", aspects: ["update", "recurring"] },
+  { season: 37, title: "Wiig's Sue (the surprise lady)", tier: "deep_cut", aspects: ["recurring"] },
+  { season: 38, title: "Drunk Uncle debut", tier: "iconic", aspects: ["update", "recurring"] },
+  { season: 38, title: "Stefon farewell at the desk", tier: "iconic", aspects: ["update", "recurring", "loose"] },
+  { season: 39, title: "Drunk Uncle on New Year's", tier: "iconic", aspects: ["update", "recurring"] },
+  { season: 39, title: "Pharoah's Obama", tier: "iconic", aspects: ["impressions", "topical"] },
+  { season: 39, title: "Mooney's Inside SoCal", tier: "deep_cut", aspects: ["pretape", "ten-to-one"] },
+  { season: 40, title: "McKinnon's Hillary debut", tier: "iconic", aspects: ["impressions", "topical"] },
+  { season: 40, title: "Jost & Che take Update", tier: "iconic", aspects: ["update"] },
+  // S41-46 — Trump I era
+  { season: 41, title: "Trump hosts", tier: "iconic", aspects: ["host", "topical"] },
+  { season: 41, title: "Black Jeopardy debut", tier: "iconic", aspects: ["recurring"] },
+  { season: 41, title: "Strong's Cathy Anne", tier: "deep_cut", aspects: ["update", "recurring"] },
+  { season: 42, title: "David S. Pumpkins", tier: "iconic", aspects: ["recurring", "ten-to-one", "host"] },
+  { season: 42, title: "Black Jeopardy with Tom Hanks", tier: "iconic", aspects: ["recurring", "host", "topical"] },
+  { season: 42, title: "Hallelujah cold open", tier: "iconic", aspects: ["cold-open", "topical"] },
+  { season: 42, title: "Baldwin's Trump", tier: "deep_cut", aspects: ["cold-open", "impressions", "topical"] },
+  { season: 43, title: "Diner Lobster with Mulaney", tier: "iconic", aspects: ["host", "pretape"] },
+  { season: 43, title: "Welcome to Hell", tier: "iconic", aspects: ["pretape", "music"] },
+  { season: 44, title: "Wells for Boys", tier: "iconic", aspects: ["pretape", "ten-to-one"] },
+  { season: 44, title: "McKinnon doing every impression", tier: "deep_cut", aspects: ["impressions"] },
+  { season: 45, title: "Sara Lee Instagram", tier: "iconic", aspects: ["pretape"] },
+  { season: 45, title: "COVID remote monologues", tier: "deep_cut", aspects: ["loose", "topical"] },
+  { season: 46, title: "Bowen Yang as the Iceberg", tier: "iconic", aspects: ["update", "recurring"] },
+  { season: 46, title: "Maya as Kamala", tier: "iconic", aspects: ["impressions", "topical"] },
+  // S47-51
+  { season: 47, title: "Please Don't Destroy: Hard Seltzer", tier: "iconic", aspects: ["pretape"] },
+  { season: 47, title: "Sarah Sherman pieces", tier: "iconic", aspects: ["ten-to-one", "loose"] },
+  { season: 47, title: "Three Sad Virgins", tier: "deep_cut", aspects: ["pretape", "host", "music"] },
+  { season: 48, title: "Marcello arrives", tier: "iconic", aspects: ["recurring"] },
+  { season: 48, title: "Strong's farewell", tier: "iconic", aspects: ["recurring", "loose"] },
+  { season: 48, title: "Lisa from Temecula", tier: "deep_cut", aspects: ["recurring"] },
+  { season: 49, title: "Domingo (Beyond the Birthday Card)", tier: "iconic", aspects: ["recurring"] },
+  { season: 49, title: "JAJ's Trump cemented", tier: "iconic", aspects: ["impressions", "cold-open", "topical"] },
+  { season: 49, title: "Sarah Sherman cooks", tier: "deep_cut", aspects: ["ten-to-one", "loose"] },
+  { season: 50, title: "SNL50 anniversary specials", tier: "iconic", aspects: ["host"] },
+  { season: 50, title: "Maya returns as Kamala", tier: "iconic", aspects: ["impressions", "topical"] },
+  { season: 51, title: "1000th episode", tier: "iconic", aspects: ["host"] },
+  { season: 51, title: "Bad Bunny parent-teacher conference", tier: "iconic", aspects: ["host", "topical"] },
+  { season: 51, title: "Bowen's farewell", tier: "deep_cut", aspects: ["host", "loose"] },
+];
+
+function pickSketches(season, picks) {
+  const seasonSketches = SKETCHES.filter((s) => s.season === season);
+  if (seasonSketches.length === 0) return { popular: null, deep_cut: null };
+
+  const aspectsPick = picks[ASPECT_ROUND_INDEX];
+  const userAspects = aspectsPick?.value || [];
+
+  const scored = seasonSketches.map((s) => ({
+    ...s,
+    overlap: s.aspects.filter((a) => userAspects.includes(a)).length,
+  }));
+  scored.sort((a, b) => b.overlap - a.overlap);
+
+  return {
+    popular: scored.find((s) => s.tier === "iconic") || null,
+    deep_cut: scored.find((s) => s.tier === "deep_cut") || null,
+  };
+}
+
+function sketchYouTubeUrl(sketch) {
+  return `https://www.youtube.com/results?search_query=${encodeURIComponent(`SNL ${sketch.title} season ${sketch.season}`)}`;
+}
+
+/* ============================================================
    QUOTES
    ============================================================ */
 const QUOTES = [
@@ -1420,6 +1577,8 @@ function Results({ picks, onReset }) {
         <p className="font-body italic" style={{ color: "#c9b8a0", fontSize: "0.98rem", lineHeight: 1.4 }}>{archetype.line}</p>
       </div>
 
+      <WatchNext season={winner.season} picks={picks} />
+
       <div className="flex flex-col sm:flex-row gap-3 mb-10 justify-center">
         <a href={peacockLink(winner.season)} target="_blank" rel="noreferrer" className="font-display uppercase text-center px-6 py-3 border transition" style={{ borderColor: "#00a4a6", color: "#00a4a6", fontSize: "13px", letterSpacing: "0.2em", textDecoration: "none" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#00a4a6"; e.currentTarget.style.color = "#0a0710"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#00a4a6"; }}>▶ Watch on Peacock</a>
         <a href={youtubeLink(winner.season)} target="_blank" rel="noreferrer" className="font-display uppercase text-center px-6 py-3 border transition" style={{ borderColor: "#e63946", color: "#e63946", fontSize: "13px", letterSpacing: "0.2em", textDecoration: "none" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#e63946"; e.currentTarget.style.color = "#f4f1de"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#e63946"; }}>▶ Best Sketches on YouTube</a>
@@ -1542,6 +1701,40 @@ function BulbStrip({ top }) {
 
 function Grain() {
   return <div className="absolute inset-0 grain pointer-events-none" style={{ opacity: 0.3, mixBlendMode: "overlay" }} />;
+}
+
+function WatchNext({ season, picks }) {
+  const { popular, deep_cut } = pickSketches(season, picks);
+  if (!popular && !deep_cut) return null;
+  const row = (label, sketch, accent) => (
+    <a
+      href={sketchYouTubeUrl(sketch)}
+      target="_blank"
+      rel="noreferrer"
+      className="block group transition"
+      style={{ textDecoration: "none", padding: "14px 16px", borderLeft: `3px solid ${accent}` }}
+      onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.04)"; }}
+      onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
+    >
+      <div className="font-mono uppercase mb-1" style={{ color: accent, fontSize: "10px", letterSpacing: "0.3em" }}>
+        {label}
+      </div>
+      <div className="font-display uppercase" style={{ color: "#f4f1de", fontSize: "1.2rem", lineHeight: 1.2 }}>
+        {sketch.title} ▶
+      </div>
+    </a>
+  );
+  return (
+    <div className="mb-10 border" style={{ borderColor: "#00a4a6", background: "rgba(0, 164, 166, 0.04)" }}>
+      <div className="font-mono px-5 pt-5 pb-2" style={{ color: "#00a4a6", fontSize: "10px", letterSpacing: "0.3em" }}>
+        ★ WATCH THIS NEXT ★
+      </div>
+      <div className="px-3 pb-3">
+        {popular && row("THE CLASSIC", popular, "#ffc847")}
+        {deep_cut && row("THE DEEP CUT", deep_cut, "#e63946")}
+      </div>
+    </div>
+  );
 }
 
 function Footer() {
