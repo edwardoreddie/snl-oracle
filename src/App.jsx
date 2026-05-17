@@ -711,15 +711,34 @@ function useWikipediaPhotos(names, enabled) {
       const titles = batch.map((n) => n.replace(/ /g, "_")).join("|");
       const url =
         `https://en.wikipedia.org/w/api.php?action=query&format=json` +
-        `&titles=${encodeURIComponent(titles)}&prop=pageimages&pithumbsize=240&origin=*`;
+        `&titles=${encodeURIComponent(titles)}&prop=pageimages&pithumbsize=240&redirects=1&origin=*`;
       try {
         const res = await fetch(url);
         if (!res.ok) return false;
         const data = await res.json();
-        const pages = data?.query?.pages || {};
+        const query = data?.query || {};
+        const pages = query.pages || {};
+
+        // Build chain: requested name → normalized title → redirect target
+        // so we can key the photo by the originally-requested cast member name.
+        const requestedByResolved = {};
+        batch.forEach((n) => { requestedByResolved[n] = n; });
+        (query.normalized || []).forEach((r) => {
+          if (requestedByResolved[r.from]) {
+            requestedByResolved[r.to] = requestedByResolved[r.from];
+          }
+        });
+        (query.redirects || []).forEach((r) => {
+          if (requestedByResolved[r.from]) {
+            requestedByResolved[r.to] = requestedByResolved[r.from];
+          }
+        });
+
         const map = {};
         Object.values(pages).forEach((p) => {
-          if (p?.thumbnail?.source) map[p.title] = p.thumbnail.source;
+          if (!p?.thumbnail?.source) return;
+          const requestedName = requestedByResolved[p.title];
+          if (requestedName) map[requestedName] = p.thumbnail.source;
         });
         if (!cancelled && Object.keys(map).length > 0) {
           setPhotos((prev) => ({ ...prev, ...map }));
@@ -833,7 +852,8 @@ export default function App() {
           })
         : [];
       const allUsed = [...usedIds, ...coveredByAspects];
-      return pickNextAdaptive(picks, allUsed);
+      const next = pickNextAdaptive(picks, allUsed);
+      return next ? { ...next, type: "single" } : null;
     }
     return null;
   }, [round, picks]);
