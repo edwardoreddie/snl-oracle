@@ -762,6 +762,36 @@ function sketchYouTubeUrl(sketch) {
   return `https://www.youtube.com/results?search_query=${encodeURIComponent(`SNL ${sketch.title} season ${sketch.season}`)}`;
 }
 
+function pickCrossSeasonSketches(winningSeason, picks, n = 4) {
+  const aspectsPick = picks[ASPECT_ROUND_INDEX];
+  const userAspects = aspectsPick?.value || [];
+  if (userAspects.length === 0) return [];
+
+  const scored = SKETCHES
+    .filter((s) => s.season !== winningSeason)
+    .map((s) => ({
+      ...s,
+      overlap: s.aspects.filter((a) => userAspects.includes(a)).length,
+    }))
+    .filter((s) => s.overlap > 0)
+    .sort((a, b) => {
+      if (b.overlap !== a.overlap) return b.overlap - a.overlap;
+      if (a.tier !== b.tier) return a.tier === "iconic" ? -1 : 1;
+      return a.season - b.season;
+    });
+
+  // Diversify: at most one sketch per season so the list spans eras.
+  const seen = new Set();
+  const result = [];
+  for (const s of scored) {
+    if (seen.has(s.season)) continue;
+    result.push(s);
+    seen.add(s.season);
+    if (result.length >= n) break;
+  }
+  return result;
+}
+
 /* ============================================================
    QUOTES
    ============================================================ */
@@ -1179,8 +1209,8 @@ function Header() {
       <h1 className="font-marquee mb-2" style={{ color: "#f4f1de", fontSize: "clamp(2.5rem, 8vw, 4.5rem)", textShadow: "0 0 20px rgba(255, 200, 71, 0.4), 0 0 40px rgba(230, 57, 70, 0.2)", lineHeight: 1 }}>
         The SNL Oracle
       </h1>
-      <div className="font-body italic" style={{ color: "#c9b8a0", fontSize: "0.95rem" }}>
-        Tell us what you love. We'll tell you when you watched.
+      <div className="font-body italic mx-auto" style={{ color: "#c9b8a0", fontSize: "0.95rem", maxWidth: "440px", lineHeight: 1.45 }}>
+        A fan-built rewatch guide. Tell us what you love about SNL and we'll point you at the seasons and sketches you've been missing.
       </div>
     </div>
   );
@@ -1519,10 +1549,19 @@ function Results({ picks, onReset }) {
   const confidence = gap > 0.35 ? "STRONG MATCH" : gap > 0.15 ? "GOOD MATCH" : "TIGHT RACE";
   const confidenceColor = gap > 0.35 ? "#ffc847" : gap > 0.15 ? "#c9b8a0" : "#e63946";
 
-  const shareText = `My ultimate SNL season is S${winner.season} (${winnerMeta.year}–${winnerMeta.end}). I'm a ${archetype.name}. Find yours.`;
+  const siteUrl = typeof window !== "undefined" ? window.location.origin : "";
+  const shareText = `My ultimate SNL season is S${winner.season} (${winnerMeta.year}–${winnerMeta.end}). I'm ${archetype.name}. Find your peak SNL season:`;
+  const [copied, setCopied] = useState(false);
   const handleCopy = () => {
-    if (navigator.clipboard) navigator.clipboard.writeText(shareText);
+    if (!navigator.clipboard) return;
+    navigator.clipboard.writeText(`${shareText} ${siteUrl}`).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    });
   };
+  const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(siteUrl)}`;
+  const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(siteUrl)}`;
+  const threadsUrl = `https://www.threads.net/intent/post?text=${encodeURIComponent(`${shareText} ${siteUrl}`)}`;
 
   return (
     <div>
@@ -1571,6 +1610,8 @@ function Results({ picks, onReset }) {
         {winnerMeta.tag}
       </p>
 
+      <WhyThisSeason winner={winner} picks={picks} />
+
       <div className="mb-8 p-6 border" style={{ borderColor: "#ffc847", background: "rgba(255, 200, 71, 0.05)" }}>
         <div className="font-mono mb-2" style={{ color: "#ffc847", fontSize: "10px", letterSpacing: "0.3em" }}>YOUR ARCHETYPE</div>
         <div className="font-display uppercase mb-2" style={{ color: "#f4f1de", fontSize: "1.5rem", lineHeight: 1.1 }}>{archetype.name}</div>
@@ -1579,29 +1620,13 @@ function Results({ picks, onReset }) {
 
       <WatchNext season={winner.season} picks={picks} />
 
-      <div className="flex flex-col sm:flex-row gap-3 mb-10 justify-center">
-        <a href={peacockLink(winner.season)} target="_blank" rel="noreferrer" className="font-display uppercase text-center px-6 py-3 border transition" style={{ borderColor: "#00a4a6", color: "#00a4a6", fontSize: "13px", letterSpacing: "0.2em", textDecoration: "none" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#00a4a6"; e.currentTarget.style.color = "#0a0710"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#00a4a6"; }}>▶ Watch on Peacock</a>
-        <a href={youtubeLink(winner.season)} target="_blank" rel="noreferrer" className="font-display uppercase text-center px-6 py-3 border transition" style={{ borderColor: "#e63946", color: "#e63946", fontSize: "13px", letterSpacing: "0.2em", textDecoration: "none" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#e63946"; e.currentTarget.style.color = "#f4f1de"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#e63946"; }}>▶ Best Sketches on YouTube</a>
-      </div>
+      <MoreLikeYourTaste winner={winner} picks={picks} />
 
-      <div className="border-t border-b py-7 mb-10" style={{ borderColor: "#3a2f44" }}>
-        <div className="font-mono mb-5 text-center" style={{ color: "#a89684", fontSize: "10px", letterSpacing: "0.3em" }}>★ TWO PEOPLE WHO WOULD KNOW ★</div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {QUOTES.map((q, i) => (
-            <div key={i}>
-              <p className="font-body italic leading-relaxed" style={{ color: "#f4f1de", fontSize: "0.98rem" }}>“{q.text}”</p>
-              <div className="font-mono uppercase mt-3" style={{ color: "#8a7a6a", fontSize: "10px", letterSpacing: "0.2em" }}>— {q.attrib}</div>
-            </div>
-          ))}
-        </div>
-        {age && (
-          <div className="mt-7 text-center">
-            <div className="font-mono mb-2" style={{ color: "#ffc847", fontSize: "10px", letterSpacing: "0.3em" }}>★ THE LORNE EQUATION SAYS ★</div>
-            <p className="font-body" style={{ color: "#c9b8a0", fontSize: "1rem", maxWidth: "520px", margin: "0 auto", lineHeight: 1.5 }}>
-              If S{winner.season} is your peak, you were probably in high school during {winnerMeta.year}–{winnerMeta.end}. That puts you somewhere around <span style={{ color: "#f4f1de", fontWeight: "bold" }}>{age.ageMin}–{age.ageMax}</span> today. (Or, per Bill, you just like good comedy.)
-            </p>
-          </div>
-        )}
+      <CastSweetSpot picks={picks} winnerSeason={winner.season} />
+
+      <div className="flex flex-col sm:flex-row gap-3 mb-10 justify-center">
+        <a href={peacockLink(winner.season)} target="_blank" rel="noreferrer" className="font-display uppercase text-center px-6 py-3 border transition" style={{ borderColor: "#00a4a6", color: "#00a4a6", fontSize: "13px", letterSpacing: "0.2em", textDecoration: "none" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#00a4a6"; e.currentTarget.style.color = "#0a0710"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#00a4a6"; }}>▶ Watch S{winner.season} on Peacock</a>
+        <a href={youtubeLink(winner.season)} target="_blank" rel="noreferrer" className="font-display uppercase text-center px-6 py-3 border transition" style={{ borderColor: "#e63946", color: "#e63946", fontSize: "13px", letterSpacing: "0.2em", textDecoration: "none" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#e63946"; e.currentTarget.style.color = "#f4f1de"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#e63946"; }}>▶ Best Sketches on YouTube</a>
       </div>
 
       <div className="mb-10">
@@ -1673,10 +1698,38 @@ function Results({ picks, onReset }) {
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-3 justify-center">
-        <button onClick={handleCopy} className="font-display uppercase px-6 py-3 border transition" style={{ borderColor: "#c9b8a0", color: "#c9b8a0", fontSize: "12px", letterSpacing: "0.3em", background: "transparent", cursor: "pointer" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#c9b8a0"; e.currentTarget.style.color = "#0a0710"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#c9b8a0"; }}>
-          ⎘ Copy My Result
-        </button>
+      <div className="mb-10">
+        <div className="font-mono mb-4" style={{ color: "#a89684", fontSize: "10px", letterSpacing: "0.3em" }}>SHARE YOUR RESULT</div>
+        <div className="flex flex-wrap gap-2">
+          <a href={twitterUrl} target="_blank" rel="noreferrer" className="font-display uppercase border transition" style={{ borderColor: "#3a2f44", color: "#f4f1de", padding: "10px 16px", fontSize: "12px", letterSpacing: "0.2em", textDecoration: "none", background: "rgba(255,255,255,0.02)" }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#ffc847"; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#3a2f44"; }}>Post to X</a>
+          <a href={facebookUrl} target="_blank" rel="noreferrer" className="font-display uppercase border transition" style={{ borderColor: "#3a2f44", color: "#f4f1de", padding: "10px 16px", fontSize: "12px", letterSpacing: "0.2em", textDecoration: "none", background: "rgba(255,255,255,0.02)" }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#ffc847"; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#3a2f44"; }}>Share on Facebook</a>
+          <a href={threadsUrl} target="_blank" rel="noreferrer" className="font-display uppercase border transition" style={{ borderColor: "#3a2f44", color: "#f4f1de", padding: "10px 16px", fontSize: "12px", letterSpacing: "0.2em", textDecoration: "none", background: "rgba(255,255,255,0.02)" }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#ffc847"; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#3a2f44"; }}>Post to Threads</a>
+          <button onClick={handleCopy} className="font-display uppercase border transition" style={{ borderColor: copied ? "#ffc847" : "#3a2f44", color: copied ? "#ffc847" : "#f4f1de", padding: "10px 16px", fontSize: "12px", letterSpacing: "0.2em", background: "rgba(255,255,255,0.02)", cursor: "pointer" }} onMouseEnter={(e) => { if (!copied) e.currentTarget.style.borderColor = "#ffc847"; }} onMouseLeave={(e) => { if (!copied) e.currentTarget.style.borderColor = "#3a2f44"; }}>
+            {copied ? "✓ Copied" : "⎘ Copy Link"}
+          </button>
+        </div>
+      </div>
+
+      <div className="mb-10 pt-6 border-t" style={{ borderColor: "#3a2f44" }}>
+        <div className="font-mono mb-4 text-center" style={{ color: "#6a5a4a", fontSize: "9px", letterSpacing: "0.3em" }}>
+          ★ POSTSCRIPT — TWO PEOPLE WHO'D KNOW ★
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+          {QUOTES.map((q, i) => (
+            <div key={i}>
+              <p className="font-body italic" style={{ color: "#a89684", fontSize: "0.85rem", lineHeight: 1.5 }}>"{q.text}"</p>
+              <div className="font-mono uppercase mt-2" style={{ color: "#5a4a3a", fontSize: "9px", letterSpacing: "0.2em" }}>— {q.attrib}</div>
+            </div>
+          ))}
+        </div>
+        {age && (
+          <p className="font-body italic text-center" style={{ color: "#8a7a6a", fontSize: "0.85rem", maxWidth: "520px", margin: "0 auto", lineHeight: 1.5 }}>
+            Per Lorne's theory, if S{winner.season} is your peak you were in high school during {winnerMeta.year}–{winnerMeta.end} — putting you around {age.ageMin}–{age.ageMax} today. Or, per Bill, you just like good comedy.
+          </p>
+        )}
+      </div>
+
+      <div className="flex justify-center">
         <button onClick={onReset} className="font-display uppercase px-8 py-3 border transition" style={{ borderColor: "#ffc847", color: "#ffc847", fontSize: "12px", letterSpacing: "0.3em", background: "transparent", cursor: "pointer" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#ffc847"; e.currentTarget.style.color = "#0a0710"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#ffc847"; }}>
           ★ Run It Back ★
         </button>
@@ -1701,6 +1754,44 @@ function BulbStrip({ top }) {
 
 function Grain() {
   return <div className="absolute inset-0 grain pointer-events-none" style={{ opacity: 0.3, mixBlendMode: "overlay" }} />;
+}
+
+function WhyThisSeason({ winner, picks }) {
+  const aspectsPick = picks[ASPECT_ROUND_INDEX];
+  const castPick = picks.find((p) => p.type === "multi-cast");
+  const aspectLabels = (aspectsPick?.value || [])
+    .map((id) => ASPECTS[id]?.label?.toLowerCase())
+    .filter(Boolean);
+  const castNames = (castPick?.value || []);
+  const castOnSeason = castNames.filter((name) => {
+    const t = CAST_TENURE[name];
+    return t && winner.season >= t[0] && winner.season <= t[1];
+  });
+
+  return (
+    <div className="mb-8 px-2">
+      <div className="font-mono mb-3" style={{ color: "#a89684", fontSize: "10px", letterSpacing: "0.3em" }}>WHY THIS SEASON</div>
+      <p className="font-body" style={{ color: "#f4f1de", fontSize: "1.02rem", lineHeight: 1.55 }}>
+        You're drawn to {joinWithAnd(aspectLabels) || "the show"}
+        {castNames.length > 0 && (
+          <>, and you can't live without {joinWithAnd(castNames)}</>
+        )}
+        . S{winner.season} ({SEASONS[winner.season].year}–{String(SEASONS[winner.season].end).slice(2)}) is where that combination lives.
+        {castOnSeason.length > 0 && castNames.length > 0 && (
+          <> {castOnSeason.length === castNames.length
+            ? `All ${castOnSeason.length} of your picks were on the cast.`
+            : `${castOnSeason.length} of your ${castNames.length} cast picks (${castOnSeason.join(", ")}) were on this season.`}</>
+        )}
+      </p>
+    </div>
+  );
+}
+
+function joinWithAnd(arr) {
+  if (!arr || arr.length === 0) return "";
+  if (arr.length === 1) return arr[0];
+  if (arr.length === 2) return `${arr[0]} and ${arr[1]}`;
+  return `${arr.slice(0, -1).join(", ")}, and ${arr[arr.length - 1]}`;
 }
 
 function WatchNext({ season, picks }) {
@@ -1732,6 +1823,113 @@ function WatchNext({ season, picks }) {
       <div className="px-3 pb-3">
         {popular && row("THE CLASSIC", popular, "#ffc847")}
         {deep_cut && row("THE DEEP CUT", deep_cut, "#e63946")}
+      </div>
+    </div>
+  );
+}
+
+function castSweetSpots(picks) {
+  const castPick = picks.find((p) => p.type === "multi-cast");
+  if (!castPick || !castPick.value || castPick.value.length === 0) return null;
+  const names = castPick.value;
+  const perSeason = {};
+  for (let s = 1; s <= 51; s++) perSeason[s] = [];
+  names.forEach((name) => {
+    const t = CAST_TENURE[name];
+    if (!t) return;
+    for (let s = t[0]; s <= t[1]; s++) perSeason[s].push(name);
+  });
+  const seasons = Object.entries(perSeason)
+    .map(([s, n]) => ({ season: parseInt(s), names: n }))
+    .filter((x) => x.names.length > 0);
+  if (seasons.length === 0) return null;
+  const maxOverlap = Math.max(...seasons.map((x) => x.names.length));
+  return {
+    maxOverlap,
+    totalCast: names.length,
+    best: seasons.filter((x) => x.names.length === maxOverlap).sort((a, b) => a.season - b.season),
+  };
+}
+
+function CastSweetSpot({ picks, winnerSeason }) {
+  const sweet = castSweetSpots(picks);
+  if (!sweet) return null;
+  const isAllOverlap = sweet.maxOverlap === sweet.totalCast;
+  return (
+    <div className="mb-10 px-2">
+      <div className="font-mono mb-3" style={{ color: "#a89684", fontSize: "10px", letterSpacing: "0.3em" }}>
+        YOUR CAST OVERLAP
+      </div>
+      <p className="font-body mb-4" style={{ color: "#c9b8a0", fontSize: "0.95rem", lineHeight: 1.5 }}>
+        {isAllOverlap
+          ? `All ${sweet.totalCast} of your cast picks share these seasons. Start here:`
+          : `Your ${sweet.totalCast} cast picks never share a season — the closest you can get is ${sweet.maxOverlap} of ${sweet.totalCast}. These seasons get you there:`}
+      </p>
+      <div className="flex flex-wrap gap-2">
+        {sweet.best.slice(0, 10).map((x) => {
+          const isWinner = x.season === winnerSeason;
+          return (
+            <a
+              key={x.season}
+              href={peacockLink(x.season)}
+              target="_blank"
+              rel="noreferrer"
+              className="font-display uppercase border transition"
+              style={{
+                borderColor: isWinner ? "#e63946" : "#3a2f44",
+                color: isWinner ? "#e63946" : "#f4f1de",
+                padding: "8px 14px",
+                fontSize: "0.95rem",
+                letterSpacing: "0.05em",
+                textDecoration: "none",
+                background: isWinner ? "rgba(230, 57, 70, 0.12)" : "rgba(255,255,255,0.02)",
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#ffc847"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = isWinner ? "#e63946" : "#3a2f44"; }}
+              title={x.names.join(" + ")}
+            >
+              S{x.season} ▶
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function MoreLikeYourTaste({ winner, picks }) {
+  const sketches = pickCrossSeasonSketches(winner.season, picks);
+  if (sketches.length === 0) return null;
+  return (
+    <div className="mb-10 border" style={{ borderColor: "#e63946", background: "rgba(230, 57, 70, 0.04)" }}>
+      <div className="font-mono px-5 pt-5 pb-1" style={{ color: "#e63946", fontSize: "10px", letterSpacing: "0.3em" }}>
+        ★ ALSO IN YOUR LANE ★
+      </div>
+      <div className="font-body italic px-5 pb-3" style={{ color: "#c9b8a0", fontSize: "0.92rem" }}>
+        Sketches from other seasons that share your taste DNA.
+      </div>
+      <div className="px-3 pb-3">
+        {sketches.map((s) => (
+          <a
+            key={`${s.season}-${s.title}`}
+            href={sketchYouTubeUrl(s)}
+            target="_blank"
+            rel="noreferrer"
+            className="block transition"
+            style={{ textDecoration: "none", padding: "12px 16px", borderLeft: `3px solid ${s.tier === "iconic" ? "#ffc847" : "#c9b8a0"}` }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.04)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
+          >
+            <div className="flex items-baseline justify-between gap-3 flex-wrap">
+              <div className="font-display uppercase" style={{ color: "#f4f1de", fontSize: "1.1rem", lineHeight: 1.2 }}>
+                {s.title} ▶
+              </div>
+              <div className="font-mono" style={{ color: "#8a7a6a", fontSize: "10px", letterSpacing: "0.2em" }}>
+                S{s.season}
+              </div>
+            </div>
+          </a>
+        ))}
       </div>
     </div>
   );
