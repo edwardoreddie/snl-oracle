@@ -698,8 +698,25 @@ const TOTAL_ROUNDS = 9; // aspect + 3 subs + cast + 4 adaptive
 
 /* ============================================================
    WIKIPEDIA PHOTO HOOKS — uses action API with origin=*
-   for guaranteed CORS, batched up to 50 titles per request.
+   for guaranteed CORS. Two-phase: pageimage filename + thumb,
+   then imageinfo to verify a permissive license (CC / PD).
+   Filter ensures we only display freely-licensed images.
    ============================================================ */
+function isPermissiveLicense(rawLicense) {
+  if (!rawLicense) return false;
+  const norm = String(rawLicense).toLowerCase().replace(/[-_]/g, " ");
+  return (
+    norm.includes("cc by") ||
+    norm.includes("cc0") ||
+    norm.includes("public domain") ||
+    norm.includes("pdm") ||
+    norm.includes("free art") ||
+    norm.includes("no restrictions") ||
+    norm === "pd" ||
+    norm.startsWith("pd ")
+  );
+}
+
 function useWikipediaPhotos(names, enabled) {
   const [photos, setPhotos] = useState({});
   const [status, setStatus] = useState("idle"); // idle | loading | done | failed
@@ -710,45 +727,69 @@ function useWikipediaPhotos(names, enabled) {
     setStatus("loading");
 
     const fetchBatch = async (batch) => {
+      // Phase 1: get pageimage (file name) + thumbnail per cast article.
       const titles = batch.map((n) => n.replace(/ /g, "_")).join("|");
-      const url =
+      const phase1Url =
         `https://en.wikipedia.org/w/api.php?action=query&format=json` +
-        `&titles=${encodeURIComponent(titles)}&prop=pageimages&pithumbsize=240&redirects=1&origin=*`;
+        `&titles=${encodeURIComponent(titles)}&prop=pageimages&piprop=name%7Cthumbnail&pithumbsize=240&redirects=1&origin=*`;
+      let phase1;
       try {
-        const res = await fetch(url);
+        const res = await fetch(phase1Url);
         if (!res.ok) return false;
-        const data = await res.json();
-        const query = data?.query || {};
-        const pages = query.pages || {};
+        phase1 = await res.json();
+      } catch (e) { return false; }
 
-        // Build chain: requested name → normalized title → redirect target
-        // so we can key the photo by the originally-requested cast member name.
-        const requestedByResolved = {};
-        batch.forEach((n) => { requestedByResolved[n] = n; });
-        (query.normalized || []).forEach((r) => {
-          if (requestedByResolved[r.from]) {
-            requestedByResolved[r.to] = requestedByResolved[r.from];
-          }
-        });
-        (query.redirects || []).forEach((r) => {
-          if (requestedByResolved[r.from]) {
-            requestedByResolved[r.to] = requestedByResolved[r.from];
-          }
-        });
+      const q1 = phase1?.query || {};
+      const requestedByResolved = {};
+      batch.forEach((n) => { requestedByResolved[n] = n; });
+      (q1.normalized || []).forEach((r) => {
+        if (requestedByResolved[r.from]) requestedByResolved[r.to] = requestedByResolved[r.from];
+      });
+      (q1.redirects || []).forEach((r) => {
+        if (requestedByResolved[r.from]) requestedByResolved[r.to] = requestedByResolved[r.from];
+      });
 
-        const map = {};
-        Object.values(pages).forEach((p) => {
-          if (!p?.thumbnail?.source) return;
-          const requestedName = requestedByResolved[p.title];
-          if (requestedName) map[requestedName] = p.thumbnail.source;
-        });
-        if (!cancelled && Object.keys(map).length > 0) {
-          setPhotos((prev) => ({ ...prev, ...map }));
-        }
-        return true;
-      } catch (e) {
-        return false;
+      const candidates = [];
+      Object.values(q1.pages || {}).forEach((p) => {
+        if (!p?.thumbnail?.source || !p?.pageimage) return;
+        const requestedName = requestedByResolved[p.title];
+        if (!requestedName) return;
+        candidates.push({ requestedName, file: p.pageimage, thumb: p.thumbnail.source });
+      });
+
+      if (candidates.length === 0) return true;
+
+      // Phase 2: fetch license metadata for each pageimage File: page.
+      const fileTitles = candidates.map((c) => `File:${c.file}`).join("|");
+      const phase2Url =
+        `https://en.wikipedia.org/w/api.php?action=query&format=json` +
+        `&titles=${encodeURIComponent(fileTitles)}&prop=imageinfo&iiprop=extmetadata&origin=*`;
+      let phase2;
+      try {
+        const res = await fetch(phase2Url);
+        if (!res.ok) return true;
+        phase2 = await res.json();
+      } catch (e) { return true; }
+
+      const licenseByFile = {};
+      Object.values(phase2?.query?.pages || {}).forEach((p) => {
+        const info = p?.imageinfo?.[0];
+        const meta = info?.extmetadata || {};
+        const license = meta.License?.value || meta.LicenseShortName?.value || "";
+        const fileName = (p.title || "").replace(/^File:/, "").replace(/ /g, "_");
+        licenseByFile[fileName] = license;
+      });
+
+      const map = {};
+      candidates.forEach(({ requestedName, file, thumb }) => {
+        const license = licenseByFile[file.replace(/ /g, "_")] || licenseByFile[file] || "";
+        if (isPermissiveLicense(license)) map[requestedName] = thumb;
+      });
+
+      if (!cancelled && Object.keys(map).length > 0) {
+        setPhotos((prev) => ({ ...prev, ...map }));
       }
+      return true;
     };
 
     const batches = [];
@@ -759,11 +800,11 @@ function useWikipediaPhotos(names, enabled) {
       setStatus(results.some(Boolean) ? "done" : "failed");
     });
 
-    // Time out at 5s — if photos aren't loaded by then, mark as failed
+    // Two-phase needs a bit more headroom than one-phase.
     const timeoutId = setTimeout(() => {
       if (cancelled) return;
       setStatus((s) => (s === "loading" ? "failed" : s));
-    }, 5000);
+    }, 8000);
 
     return () => { cancelled = true; clearTimeout(timeoutId); };
   }, [enabled]);
@@ -776,23 +817,40 @@ function useSeasonPhoto(season) {
   useEffect(() => {
     if (!season) return;
     let cancelled = false;
-    // Wikipedia season pages use the format "Saturday_Night_Live_(season_X)"
     const slug = `Saturday_Night_Live_(season_${season})`;
-    const url =
+    const phase1Url =
       `https://en.wikipedia.org/w/api.php?action=query&format=json` +
-      `&titles=${encodeURIComponent(slug)}&prop=pageimages&pithumbsize=800&origin=*`;
-    fetch(url)
-      .then((r) => (r.ok ? r.json() : null))
-      .then((d) => {
-        if (cancelled || !d) return;
-        const pages = d?.query?.pages || {};
-        const p = Object.values(pages)[0];
-        if (p?.thumbnail?.source) setData({ url: p.thumbnail.source });
-      })
-      .catch(() => {});
+      `&titles=${encodeURIComponent(slug)}&prop=pageimages&piprop=name%7Cthumbnail&pithumbsize=800&redirects=1&origin=*`;
+    (async () => {
+      try {
+        const r1 = await fetch(phase1Url);
+        if (!r1.ok) return;
+        const d1 = await r1.json();
+        if (cancelled) return;
+        const p = Object.values(d1?.query?.pages || {})[0];
+        if (!p?.thumbnail?.source || !p?.pageimage) return;
+
+        const r2 = await fetch(
+          `https://en.wikipedia.org/w/api.php?action=query&format=json` +
+          `&titles=${encodeURIComponent(`File:${p.pageimage}`)}&prop=imageinfo&iiprop=extmetadata&origin=*`
+        );
+        if (!r2.ok || cancelled) return;
+        const d2 = await r2.json();
+        const info = Object.values(d2?.query?.pages || {})[0]?.imageinfo?.[0];
+        const meta = info?.extmetadata || {};
+        const license = meta.License?.value || meta.LicenseShortName?.value || "";
+        if (isPermissiveLicense(license)) setData({ url: p.thumbnail.source });
+      } catch (e) { /* swallow */ }
+    })();
     return () => { cancelled = true; };
   }, [season]);
   return data;
+}
+
+function castForSeason(season) {
+  return Object.entries(CAST_TENURE)
+    .filter(([_, [first, last]]) => season >= first && season <= last)
+    .map(([name]) => name);
 }
 
 const initials = (name) => name.split(" ").map((p) => p[0]).slice(0, 2).join("");
@@ -1258,13 +1316,26 @@ function Results({ picks, onReset }) {
         </div>
       </div>
 
-      {seasonPhoto.url && (
+      {seasonPhoto.url ? (
         <div className="mb-8 rise" style={{ animationDelay: "0.5s" }}>
           <div className="relative" style={{ border: "2px solid #3a2f44", background: "#0a0710" }}>
             <img src={seasonPhoto.url} alt={`Season ${winner.season} cast`} style={{ width: "100%", height: "auto", display: "block", filter: "contrast(1.05) saturate(0.95)" }} />
             <div className="font-mono uppercase" style={{ position: "absolute", bottom: "8px", left: "8px", background: "#0a0710", padding: "4px 8px", color: "#ffc847", fontSize: "9px", letterSpacing: "0.3em" }}>
               CAST / S{winner.season}
             </div>
+          </div>
+        </div>
+      ) : (
+        <div className="mb-8 rise" style={{ animationDelay: "0.5s", padding: "24px", border: "2px solid #3a2f44", background: "#0a0710" }}>
+          <div className="font-mono uppercase mb-4 text-center" style={{ color: "#ffc847", fontSize: "10px", letterSpacing: "0.3em" }}>
+            THE S{winner.season} CAST
+          </div>
+          <div className="flex flex-wrap justify-center" style={{ gap: "6px 14px" }}>
+            {castForSeason(winner.season).map((name) => (
+              <span key={name} className="font-display uppercase" style={{ color: "#f4f1de", fontSize: "0.95rem", letterSpacing: "0.02em" }}>
+                {name}
+              </span>
+            ))}
           </div>
         </div>
       )}
