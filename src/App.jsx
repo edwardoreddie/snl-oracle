@@ -632,7 +632,9 @@ function tradeOffsFor(season, picks) {
 function predictAge(season) {
   const meta = SEASONS[season];
   if (!meta) return null;
-  return { ageMin: 2026 - (meta.end - 18), ageMax: 2026 - (meta.year - 14) };
+  const low = 2026 - (meta.end - 18);
+  const high = 2026 - (meta.year - 14);
+  return { ageMin: Math.min(low, high), ageMax: Math.max(low, high) };
 }
 
 const youtubeLink = (s) => `https://www.youtube.com/results?search_query=SNL+season+${s}+best+sketches`;
@@ -878,6 +880,7 @@ export default function App() {
           ) : (
             <Results picks={picks} onReset={reset} />
           )}
+          <Footer />
         </div>
       </div>
     </>
@@ -1239,7 +1242,7 @@ function Results({ picks, onReset }) {
   return (
     <div>
       <div className="text-center mb-8">
-        <div className="font-mono mb-3" style={{ color: "#ffc847", fontSize: "11px", letterSpacing: "0.4em" }}>★ THE ORACLE HAS SPOKEN ★</div>
+        <div className="font-mono mb-3" style={{ color: "#ffc847", fontSize: "11px", letterSpacing: "0.4em" }}>★ YOUR RESULT ★</div>
         <div className="font-body italic mb-4" style={{ color: "#c9b8a0", fontSize: "1.05rem" }}>Your ultimate season is</div>
         <div className="font-display reveal" style={{ fontSize: "clamp(7rem, 22vw, 14rem)", color: "#e63946", textShadow: "0 0 30px rgba(230, 57, 70, 0.5), 0 0 60px rgba(230, 57, 70, 0.25), 4px 4px 0 #ffc847", letterSpacing: "-0.02em", lineHeight: 1 }}>
           S{winner.season}
@@ -1398,6 +1401,18 @@ function BulbStrip({ top }) {
 
 function Grain() {
   return <div className="absolute inset-0 grain pointer-events-none" style={{ opacity: 0.3, mixBlendMode: "overlay" }} />;
+}
+
+function Footer() {
+  return (
+    <div className="mt-14 pt-6 border-t text-center font-mono" style={{ borderColor: "#3a2f44", color: "#6a5a4a", fontSize: "10px", letterSpacing: "0.15em", lineHeight: 1.6 }}>
+      An unaffiliated fan project. Not associated with, endorsed by, or sponsored by
+      <br />
+      NBC, Broadway Video, or Saturday Night Live. SNL and all sketch / character
+      <br />
+      names are property of their respective owners. Photos via Wikimedia.
+    </div>
+  );
 }
 
 function Style() {
