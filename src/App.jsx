@@ -392,6 +392,40 @@ const ASPECTS = {
       ],
     },
   },
+  "topical": {
+    label: "Politics of the week",
+    sub: "Election years. Cold-open responses. Comedy as commentary.",
+    weight: { 14: 2, 15: 3, 18: 3, 19: 3, 22: 2, 23: 2, 24: 2, 25: 1, 26: 3, 27: 4, 30: 2, 34: 4, 40: 2, 41: 3, 42: 4, 43: 3, 44: 2, 45: 2, 46: 3, 49: 3, 50: 3 },
+    subQuestion: {
+      id: "topical-style",
+      title: "POLITICAL FLAVOR",
+      prompt: "What kind of political comedy fires you up?",
+      options: [
+        { label: "Impressions of sitting presidents", sub: "The week's biggest character — POTUS — performed back at us.", weight: { 14: 2, 15: 3, 18: 2, 19: 3, 22: 1, 23: 1, 24: 1, 25: 1, 26: 3, 27: 3, 34: 2, 41: 2, 42: 3, 43: 2, 44: 1, 45: 1, 46: 2, 49: 3, 50: 2 } },
+        { label: "Election-season chaos", sub: "Palin sketches. Trump-tower entry. Conventions to results night.", weight: { 14: 1, 18: 1, 22: 1, 26: 2, 30: 2, 34: 4, 38: 1, 42: 4, 46: 3, 50: 2 } },
+        { label: "Day-after-the-news cold opens", sub: "Mayor Giuliani after 9/11. Hallelujah after 2016. Real-time response.", weight: { 27: 4, 28: 1, 42: 3, 46: 3, 49: 1, 50: 1 } },
+        { label: "Cabinet & Congress — not just the president", sub: "McKinnon's Sessions & Kavanaugh's Matt Damon. The supporting cast.", weight: { 22: 1, 26: 1, 41: 1, 42: 2, 43: 3, 44: 3, 45: 2, 46: 2 } },
+        { label: "Pure satire, no impression required", sub: "Absurd-political takedowns where the joke isn't the lookalike.", weight: { 34: 3, 41: 2, 42: 3, 43: 2, 44: 2, 49: 1, 50: 1 } },
+      ],
+    },
+  },
+  "loose": {
+    label: "Loose, live-wire energy",
+    sub: "Raw stage feel. Cast breaking. Sketches that almost fall apart.",
+    weight: { 1: 4, 2: 4, 3: 3, 4: 3, 5: 3, 6: 3, 11: 2, 20: 2, 28: 2, 38: 2, 39: 1, 47: 2, 48: 3 },
+    subQuestion: {
+      id: "loose-flavor",
+      title: "LOOSE FLAVOR",
+      prompt: "What kind of looseness do you crave?",
+      options: [
+        { label: "Cast visibly breaking on camera", sub: "Hader as Stefon. Wiig and Bayer trying to hold it together.", weight: { 31: 2, 32: 2, 33: 2, 34: 1, 35: 2, 36: 3, 37: 3, 38: 1, 47: 2 } },
+        { label: "Raw downtown-NY theater energy", sub: "The early years when the show felt like an experiment.", weight: { 1: 4, 2: 4, 3: 3, 4: 3, 5: 3 } },
+        { label: "Sketches dying on air", sub: "Bombs and recoveries. The risk you only get live.", weight: { 5: 1, 6: 2, 11: 2, 20: 3, 38: 1, 48: 1 } },
+        { label: "A brand-new cast finding its feet", sub: "Reset years. The chaos before things click.", weight: { 6: 3, 11: 3, 20: 2, 21: 1, 28: 2, 38: 3, 40: 1, 48: 3 } },
+        { label: "Long-running bits getting weirder each appearance", sub: "Stefon's evolution. Domingo every other week.", weight: { 13: 2, 14: 2, 22: 2, 23: 2, 35: 2, 36: 3, 37: 3, 47: 2, 48: 2 } },
+      ],
+    },
+  },
 };
 
 const ASPECT_IDS = Object.keys(ASPECTS);
@@ -567,6 +601,8 @@ const ARCHETYPES = {
   "music": { name: "The Saturday Night DJ", line: "The musical guest is half the reason you're up. The band matters as much as the cast." },
   "ten-to-one": { name: "The 12:55 AM Citizen", line: "You're up for the weird stuff. The 10-to-1 is where the show takes its real risks." },
   "impressions": { name: "The Impression Scholar", line: "Decades of presidents and pop stars. You can rank every Trump and Clinton in order." },
+  "topical": { name: "The Newsroom Loyalist", line: "You watch SNL like the news. The political moment is the show's reason to exist." },
+  "loose": { name: "The Live-Wire Patron", line: "You're here for the danger. The unrehearsed glance, the breaking laugh, the sketch that almost fell apart." },
 };
 
 function archetypeFromPicks(picks) {
