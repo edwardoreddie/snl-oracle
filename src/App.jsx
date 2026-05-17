@@ -451,7 +451,46 @@ const CAST_ROUND = {
    ADAPTIVE POOL — refinement questions chosen dynamically
    for rounds 6-9 based on which one best discriminates between
    the user's current top season candidates.
+
+   Questions with `negate: true` apply NEGATIVE weight at scoring
+   time — "which of these would you skip?" deducts weight from
+   the picked option's associated seasons.
    ============================================================ */
+const MOMENT_OPTIONS = [
+  { label: "Land Shark", weight: { 1: 3, 2: 3 } },
+  { label: "Two Wild and Crazy Guys", weight: { 3: 3, 4: 3 } },
+  { label: "Mr. Robinson's Neighborhood", weight: { 7: 3, 8: 3, 9: 2 } },
+  { label: "White Like Me", weight: { 9: 4 } },
+  { label: "Church Lady", weight: { 13: 3, 14: 2, 15: 1 } },
+  { label: "Hans and Franz", weight: { 14: 2, 15: 3, 17: 2 } },
+  { label: "Wayne's World", weight: { 14: 3, 15: 3, 16: 3, 17: 3 } },
+  { label: "Stuart Smalley", weight: { 15: 3, 16: 2 } },
+  { label: "Coffee Talk", weight: { 17: 3, 18: 2 } },
+  { label: "Matt Foley van down by the river", weight: { 18: 4 } },
+  { label: "Spartan Cheerleaders", weight: { 20: 1, 21: 2, 22: 3, 23: 2 } },
+  { label: "Roxbury Guys", weight: { 22: 3, 23: 3 } },
+  { label: "Mary Katherine Gallagher", weight: { 22: 2, 23: 3, 24: 2 } },
+  { label: "Celebrity Jeopardy", weight: { 22: 2, 23: 2, 24: 2, 25: 2, 26: 2 } },
+  { label: "More Cowbell", weight: { 25: 4 } },
+  { label: "Debbie Downer", weight: { 29: 4 } },
+  { label: "Lazy Sunday", weight: { 31: 4 } },
+  { label: "Dick in a Box", weight: { 32: 4 } },
+  { label: "Iran So Far", weight: { 33: 4 } },
+  { label: "Sarah Palin cold opens", weight: { 34: 4 } },
+  { label: "I'm On a Boat", weight: { 34: 4 } },
+  { label: "Stefon at the desk", weight: { 35: 2, 36: 3, 37: 4 } },
+  { label: "The Californians", weight: { 37: 3, 38: 2 } },
+  { label: "Drunk Uncle", weight: { 38: 3, 39: 3 } },
+  { label: "McKinnon's Hillary cold opens", weight: { 40: 2, 41: 3, 42: 3 } },
+  { label: "Black Jeopardy with Tom Hanks", weight: { 42: 4 } },
+  { label: "Hallelujah cold open", weight: { 42: 4 } },
+  { label: "David S. Pumpkins", weight: { 42: 4 } },
+  { label: "Diner Lobster with Mulaney", weight: { 43: 4 } },
+  { label: "Bowen Yang as the Iceberg", weight: { 46: 4 } },
+  { label: "Please Don't Destroy: Hard Seltzer", weight: { 47: 4 } },
+  { label: "Bad Bunny premiere parent-teacher", weight: { 51: 4 } },
+];
+
 const ADAPTIVE_POOL = [
   {
     id: "update",
@@ -474,40 +513,15 @@ const ADAPTIVE_POOL = [
     id: "moment",
     title: "THE MOMENT",
     prompt: "Pick the moment that lives in your head.",
-    options: [
-      { label: "Land Shark", weight: { 1: 3, 2: 3 } },
-      { label: "Two Wild and Crazy Guys", weight: { 3: 3, 4: 3 } },
-      { label: "Mr. Robinson's Neighborhood", weight: { 7: 3, 8: 3, 9: 2 } },
-      { label: "White Like Me", weight: { 9: 4 } },
-      { label: "Church Lady", weight: { 13: 3, 14: 2, 15: 1 } },
-      { label: "Hans and Franz", weight: { 14: 2, 15: 3, 17: 2 } },
-      { label: "Wayne's World", weight: { 14: 3, 15: 3, 16: 3, 17: 3 } },
-      { label: "Stuart Smalley", weight: { 15: 3, 16: 2 } },
-      { label: "Coffee Talk", weight: { 17: 3, 18: 2 } },
-      { label: "Matt Foley van down by the river", weight: { 18: 4 } },
-      { label: "Spartan Cheerleaders", weight: { 20: 1, 21: 2, 22: 3, 23: 2 } },
-      { label: "Roxbury Guys", weight: { 22: 3, 23: 3 } },
-      { label: "Mary Katherine Gallagher", weight: { 22: 2, 23: 3, 24: 2 } },
-      { label: "Celebrity Jeopardy", weight: { 22: 2, 23: 2, 24: 2, 25: 2, 26: 2 } },
-      { label: "More Cowbell", weight: { 25: 4 } },
-      { label: "Debbie Downer", weight: { 29: 4 } },
-      { label: "Lazy Sunday", weight: { 31: 4 } },
-      { label: "Dick in a Box", weight: { 32: 4 } },
-      { label: "Iran So Far", weight: { 33: 4 } },
-      { label: "Sarah Palin cold opens", weight: { 34: 4 } },
-      { label: "I'm On a Boat", weight: { 34: 4 } },
-      { label: "Stefon at the desk", weight: { 35: 2, 36: 3, 37: 4 } },
-      { label: "The Californians", weight: { 37: 3, 38: 2 } },
-      { label: "Drunk Uncle", weight: { 38: 3, 39: 3 } },
-      { label: "McKinnon's Hillary cold opens", weight: { 40: 2, 41: 3, 42: 3 } },
-      { label: "Black Jeopardy with Tom Hanks", weight: { 42: 4 } },
-      { label: "Hallelujah cold open", weight: { 42: 4 } },
-      { label: "David S. Pumpkins", weight: { 42: 4 } },
-      { label: "Diner Lobster with Mulaney", weight: { 43: 4 } },
-      { label: "Bowen Yang as the Iceberg", weight: { 46: 4 } },
-      { label: "Please Don't Destroy: Hard Seltzer", weight: { 47: 4 } },
-      { label: "Bad Bunny premiere parent-teacher", weight: { 51: 4 } },
-    ],
+    options: MOMENT_OPTIONS,
+  },
+  {
+    id: "moment-skip",
+    negate: true,
+    title: "THE SKIP",
+    prompt: "Now pick the one you'd rather skip.",
+    sub: "Which of these would you not miss?",
+    options: MOMENT_OPTIONS,
   },
   {
     id: "sketch-type",
@@ -641,8 +655,12 @@ function scoreFromPicks(picks) {
         });
       });
     } else {
+      // Single-option pick: sub-question or adaptive. Adaptive questions
+      // flagged `negate: true` apply weight as a deduction instead of a boost.
+      const adaptiveQ = p.adaptiveId ? ADAPTIVE_POOL.find((q) => q.id === p.adaptiveId) : null;
+      const sign = adaptiveQ?.negate ? -1 : 1;
       const w = p.value.weight || {};
-      Object.entries(w).forEach(([s, v]) => { scores[parseInt(s)] += v * 5; });
+      Object.entries(w).forEach(([s, v]) => { scores[parseInt(s)] += v * 5 * sign; });
     }
   });
   return scores;
