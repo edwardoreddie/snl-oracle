@@ -587,6 +587,22 @@ const ADAPTIVE_POOL = [
       { label: "Bowen Yang plays an inanimate object", weight: { 45: 1, 46: 3, 47: 2, 48: 1, 49: 1, 50: 1 } },
     ],
   },
+  {
+    id: "bores",
+    negate: true,
+    title: "THE DEALBREAKER",
+    prompt: "Pick the kind of SNL that puts you off.",
+    sub: "What bores you, sours an episode, or makes you change the channel?",
+    options: [
+      { label: "Heavy political cold opens", sub: "When the show feels like the news.", weight: { 14: 1, 15: 2, 22: 1, 23: 1, 26: 2, 27: 3, 34: 4, 41: 2, 42: 4, 43: 3, 44: 2, 45: 2, 46: 3, 47: 1, 48: 1, 49: 2, 50: 3 } },
+      { label: "Catchphrase characters & broad bits", sub: "Roxbury Guys. Mary Katherine. Coffee Talk.", weight: { 13: 2, 14: 2, 15: 2, 17: 2, 18: 2, 22: 3, 23: 3, 24: 2, 25: 2, 37: 2, 38: 1 } },
+      { label: "Lonely Island-era digital shorts", sub: "Lazy Sunday. Dick in a Box. The pre-tape boom.", weight: { 31: 3, 32: 4, 33: 4, 34: 2, 35: 2, 36: 2, 37: 2 } },
+      { label: "Weird 10-to-1 absurdity", sub: "The bits at 12:55 that feel like dares.", weight: { 28: 1, 29: 1, 35: 2, 39: 2, 40: 1, 41: 1, 47: 3, 48: 3, 49: 3, 50: 2, 51: 2 } },
+      { label: "Game-show parodies on repeat", sub: "Celebrity Jeopardy. $25,000 Pyramid. Black Jeopardy.", weight: { 22: 2, 23: 2, 24: 2, 25: 2, 26: 2, 41: 1, 42: 3, 43: 1, 44: 1 } },
+      { label: "Sandler/Farley bro-comedy energy", sub: "Opera Man. Matt Foley. Roxbury. The mid-90s bench.", weight: { 16: 3, 17: 3, 18: 4, 19: 3, 20: 2 } },
+      { label: "Anything from the original-cast era", sub: "If it looks like the 70s, you skip it.", weight: { 1: 3, 2: 3, 3: 3, 4: 3, 5: 2, 6: 2 } },
+    ],
+  },
 ];
 
 /* ============================================================
