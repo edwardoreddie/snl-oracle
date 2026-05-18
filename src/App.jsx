@@ -1735,6 +1735,7 @@ function Results({ picks, onReset }) {
             "floating-chat.donateButton.text": "Tip the Oracle",
             "floating-chat.donateButton.background-color": "#ffc847",
             "floating-chat.donateButton.text-color": "#0a0710",
+            "floating-chat.position": "bottom-right",
           });
         } catch (e) { /* widget already drawn */ }
       }
@@ -1845,7 +1846,7 @@ function Results({ picks, onReset }) {
                     <div className="font-mono" style={{ color: "#ffc847", fontSize: "11px", letterSpacing: "0.15em", marginLeft: "auto" }}>{pct}%</div>
                   </div>
                   <p className="font-body mt-1" style={{ color: "#c9b8a0", fontSize: "0.95rem", lineHeight: 1.5 }}>{m.tag}</p>
-                  {tradeoffs.length > 0 && <div className="mt-2 font-mono" style={{ color: "#e63946", fontSize: "11px" }}>Trade-off: no {tradeoffs.join(" • no ")}</div>}
+                  {tradeoffs.length > 0 && <div className="mt-2 font-body italic" style={{ color: "#e63946", fontSize: "0.92rem" }}>Missing from this season: {tradeoffs.join(", ")}.</div>}
                   {i > 0 && (
                     <div className="flex gap-4 mt-3">
                       <a href={peacockLink(t.season)} target="_blank" rel="noreferrer" className="font-mono" style={{ color: "#00a4a6", fontSize: "10px", letterSpacing: "0.18em", textDecoration: "underline" }}>Peacock →</a>
