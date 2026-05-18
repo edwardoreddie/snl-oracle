@@ -1,5 +1,4 @@
-import { useState, useMemo, useEffect, useRef } from "react";
-import { toPng } from "html-to-image";
+import { useState, useMemo, useEffect } from "react";
 
 const KOFI_URL = "https://ko-fi.com/snloracle";
 
@@ -1635,8 +1634,8 @@ function Results({ picks, onReset }) {
   const winnerPct = Math.round((winner.score / totalScore) * 100);
   const archetype = archetypeFromPicks(picks);
   const seasonPhoto = useSeasonPhoto(winner.season);
-  const storyCardRef = useRef(null);
   const [savingStory, setSavingStory] = useState(false);
+  const [saveError, setSaveError] = useState(null);
 
   const downloadDataUrl = (dataUrl, filename) => {
     const link = document.createElement("a");
@@ -1647,26 +1646,36 @@ function Results({ picks, onReset }) {
     document.body.removeChild(link);
   };
 
-  const [saveError, setSaveError] = useState(null);
-  const handleSaveStory = async () => {
-    if (!storyCardRef.current || savingStory) return;
+  const renderStoryDataUrl = () => generateStoryImage(winner, archetype);
+  const storyFilename = `snl-oracle-s${winner.season}.png`;
+
+  const handleDownloadImage = async () => {
+    if (savingStory) return;
     setSavingStory(true);
     setSaveError(null);
     try {
-      const dataUrl = await toPng(storyCardRef.current, {
-        pixelRatio: 1,
-        cacheBust: true,
-        width: STORY_WIDTH,
-        height: STORY_HEIGHT,
-        skipFonts: true,
-      });
-      const filename = `snl-oracle-s${winner.season}.png`;
+      const dataUrl = renderStoryDataUrl();
+      if (!dataUrl) throw new Error("Couldn't render image");
+      downloadDataUrl(dataUrl, storyFilename);
+    } catch (e) {
+      console.error(e);
+      setSaveError(e?.message || "Couldn't render image — try again.");
+    }
+    setSavingStory(false);
+  };
 
-      // Try native share with file on mobile if available.
+  const handlePostToIG = async () => {
+    if (savingStory) return;
+    setSavingStory(true);
+    setSaveError(null);
+    try {
+      const dataUrl = renderStoryDataUrl();
+      if (!dataUrl) throw new Error("Couldn't render image");
+      // Mobile path: invoke native share sheet (Instagram appears as an option)
       if (typeof navigator !== "undefined" && navigator.canShare) {
         try {
           const blob = await (await fetch(dataUrl)).blob();
-          const file = new File([blob], filename, { type: "image/png" });
+          const file = new File([blob], storyFilename, { type: "image/png" });
           if (navigator.canShare({ files: [file] })) {
             await navigator.share({ files: [file], title: "My SNL Oracle result" });
             setSavingStory(false);
@@ -1674,9 +1683,10 @@ function Results({ picks, onReset }) {
           }
         } catch (e) { /* fall through to download */ }
       }
-      downloadDataUrl(dataUrl, filename);
+      // Desktop path: download the image, user manually uploads to IG.
+      downloadDataUrl(dataUrl, storyFilename);
     } catch (e) {
-      console.error("Story image capture failed:", e);
+      console.error(e);
       setSaveError(e?.message || "Couldn't render image — try again.");
     }
     setSavingStory(false);
@@ -1702,9 +1712,7 @@ function Results({ picks, onReset }) {
       setTimeout(() => setCopied(false), 1800);
     });
   };
-  const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(resultUrl)}`;
   const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(resultUrl)}`;
-  const threadsUrl = `https://www.threads.net/intent/post?text=${encodeURIComponent(`${shareText} ${resultUrl}`)}`;
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -1881,10 +1889,9 @@ function Results({ picks, onReset }) {
         </p>
         <div className="flex flex-wrap gap-2">
           {[
-            { label: savingStory ? "Rendering…" : "↓ Save story image", action: handleSaveStory, disabled: savingStory, isButton: true },
-            { label: "Post to X", href: twitterUrl },
-            { label: "Share on Facebook", href: facebookUrl },
-            { label: "Post to Threads", href: threadsUrl },
+            { label: savingStory ? "Rendering…" : "Post to Instagram", action: handlePostToIG, disabled: savingStory, isButton: true },
+            { label: "Post to Facebook", href: facebookUrl },
+            { label: savingStory ? "Rendering…" : "↓ Download image", action: handleDownloadImage, disabled: savingStory, isButton: true },
             { label: copied ? "✓ Copied" : "⎘ Copy link", action: handleCopy, isButton: true, highlighted: copied },
           ].map((item, i) => {
             const baseStyle = {
@@ -1916,8 +1923,6 @@ function Results({ picks, onReset }) {
           </div>
         )}
       </div>
-
-      <StoryCard winner={winner} archetype={archetype} forwardRef={storyCardRef} />
 
       <div className="my-10 text-center">
         <p className="font-body italic mb-3" style={{ color: "#8a7a6a", fontSize: "0.95rem" }}>
@@ -1971,65 +1976,92 @@ function Grain() {
   return <div className="absolute inset-0 grain pointer-events-none" style={{ opacity: 0.3, mixBlendMode: "overlay" }} />;
 }
 
-function StoryCard({ winner, archetype, forwardRef }) {
+function wrapTextCanvas(ctx, text, maxWidth) {
+  const words = text.split(/\s+/);
+  const lines = [];
+  let line = "";
+  for (const word of words) {
+    const test = line ? `${line} ${word}` : word;
+    if (ctx.measureText(test).width > maxWidth && line) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = test;
+    }
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
+function generateStoryImage(winner, archetype) {
   const meta = SEASONS[winner.season];
+  if (!meta) return null;
   const hotTake = HOT_TAKES[winner.season];
-  const host = typeof window !== "undefined" ? window.location.host : "";
-  return (
-    <div
-      ref={forwardRef}
-      style={{
-        position: "absolute",
-        left: "-99999px",
-        top: 0,
-        width: `${STORY_WIDTH}px`,
-        height: `${STORY_HEIGHT}px`,
-        background: "#000000",
-        color: "#f4f1de",
-        padding: "140px 80px",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "space-between",
-        fontFamily: "'Arial Black', 'Helvetica Neue', Impact, sans-serif",
-        boxSizing: "border-box",
-        overflow: "hidden",
-      }}
-    >
-      <div style={{ textAlign: "center" }}>
-        <div style={{ fontFamily: "'Arial Black', 'Helvetica Neue', Impact, sans-serif", color: "#c9b8a0", letterSpacing: "0.5em", fontSize: "32px", textTransform: "uppercase" }}>
-          A Digital Short
-        </div>
-      </div>
+  const host = typeof window !== "undefined" ? window.location.host : "the snl oracle";
 
-      <div style={{ textAlign: "center" }}>
-        <div style={{ fontFamily: "'Arial Black', 'Helvetica Neue', Impact, sans-serif", fontSize: "560px", color: "#f4f1de", lineHeight: 0.95, letterSpacing: "-0.03em" }}>
-          S{winner.season}
-        </div>
-        <div style={{ fontFamily: "'Arial Black', 'Helvetica Neue', Impact, sans-serif", textTransform: "uppercase", fontSize: "80px", marginTop: "28px", color: "#c9b8a0", letterSpacing: "0.08em" }}>
-          {meta.year}–{String(meta.end).slice(2)}
-        </div>
-      </div>
+  const canvas = document.createElement("canvas");
+  canvas.width = STORY_WIDTH;
+  canvas.height = STORY_HEIGHT;
+  const ctx = canvas.getContext("2d");
 
-      {hotTake && (
-        <div style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontStyle: "italic", textAlign: "center", fontSize: "40px", lineHeight: 1.4, color: "#c9b8a0", padding: "0 40px" }}>
-          "{hotTake}"
-        </div>
-      )}
+  ctx.fillStyle = "#000000";
+  ctx.fillRect(0, 0, STORY_WIDTH, STORY_HEIGHT);
+  ctx.textAlign = "center";
+  ctx.textBaseline = "alphabetic";
 
-      <div style={{ textAlign: "center", paddingTop: "40px", borderTop: "2px solid #2a2030", width: "100%", boxSizing: "border-box" }}>
-        <div style={{ fontFamily: "'Courier New', Consolas, monospace", color: "#6a5a4a", letterSpacing: "0.4em", fontSize: "22px", marginBottom: "16px", textTransform: "uppercase" }}>You Are</div>
-        <div style={{ fontFamily: "'Arial Black', 'Helvetica Neue', Impact, sans-serif", textTransform: "uppercase", fontSize: "60px", color: "#f4f1de", lineHeight: 1.1, letterSpacing: "0.04em" }}>
-          {archetype.name}
-        </div>
-      </div>
+  // A DIGITAL SHORT pretitle
+  ctx.fillStyle = "#c9b8a0";
+  ctx.font = '600 30px "Arial Black", Impact, sans-serif';
+  ctx.fillText("A   D I G I T A L   S H O R T", STORY_WIDTH / 2, 230);
 
-      <div style={{ textAlign: "center" }}>
-        <div style={{ fontFamily: "'Courier New', Consolas, monospace", color: "#6a5a4a", letterSpacing: "0.4em", fontSize: "22px", textTransform: "uppercase" }}>Find Yours</div>
-        <div style={{ fontFamily: "'Arial Black', 'Helvetica Neue', Impact, sans-serif", color: "#ffc847", letterSpacing: "0.18em", fontSize: "30px", marginTop: "12px", textTransform: "lowercase" }}>{host || "the snl oracle"}</div>
-      </div>
-    </div>
-  );
+  // Giant S##
+  ctx.fillStyle = "#f4f1de";
+  ctx.font = '900 540px "Arial Black", Impact, sans-serif';
+  ctx.fillText(`S${winner.season}`, STORY_WIDTH / 2, 760);
+
+  // Year range
+  ctx.fillStyle = "#c9b8a0";
+  ctx.font = '700 70px "Arial Black", Impact, sans-serif';
+  ctx.fillText(`${meta.year}–${String(meta.end).slice(2)}`, STORY_WIDTH / 2, 870);
+
+  // Hot take (italic serif, wrapped)
+  if (hotTake) {
+    ctx.fillStyle = "#c9b8a0";
+    ctx.font = 'italic 40px Georgia, "Times New Roman", serif';
+    const lines = wrapTextCanvas(ctx, `“${hotTake}”`, STORY_WIDTH - 240);
+    const lineHeight = 56;
+    const blockHeight = lines.length * lineHeight;
+    const startY = 1080 - blockHeight / 2;
+    lines.forEach((line, i) => {
+      ctx.fillText(line, STORY_WIDTH / 2, startY + i * lineHeight);
+    });
+  }
+
+  // Hairline divider
+  ctx.fillStyle = "#2a2030";
+  ctx.fillRect(120, 1440, STORY_WIDTH - 240, 2);
+
+  // YOU ARE label
+  ctx.fillStyle = "#6a5a4a";
+  ctx.font = '600 24px "Courier New", monospace';
+  ctx.fillText("Y O U   A R E", STORY_WIDTH / 2, 1530);
+
+  // Archetype name
+  ctx.fillStyle = "#f4f1de";
+  ctx.font = '900 58px "Arial Black", Impact, sans-serif';
+  ctx.fillText(archetype.name, STORY_WIDTH / 2, 1620);
+
+  // FIND YOURS label
+  ctx.fillStyle = "#6a5a4a";
+  ctx.font = '600 24px "Courier New", monospace';
+  ctx.fillText("F I N D   Y O U R S", STORY_WIDTH / 2, 1770);
+
+  // host URL in gold
+  ctx.fillStyle = "#ffc847";
+  ctx.font = '700 32px "Arial Black", Impact, sans-serif';
+  ctx.fillText(host, STORY_WIDTH / 2, 1830);
+
+  return canvas.toDataURL("image/png");
 }
 
 function FriendResult({ result, onStart }) {
