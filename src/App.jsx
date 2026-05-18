@@ -1,5 +1,8 @@
 import { useState, useMemo, useEffect } from "react";
 
+// Replace REPLACE_ME with the Ko-fi handle to point the tip jar to the right page.
+const KOFI_URL = "https://ko-fi.com/REPLACE_ME";
+
 /* ============================================================
    CAST TENURE — [firstSeason, lastSeason] inclusive
    Covers every credited cast & featured player from S1 (1975) to
@@ -208,10 +211,10 @@ const SEASONS = {
   14: { year: 1988, end: 1989, tag: "Wayne's World debuts. Hans and Franz pump you up. Hartman and Carvey at full stride." },
   15: { year: 1989, end: 1990, tag: "Mike Myers joins. Carvey doing Bush 41. Massive cultural footprint." },
   16: { year: 1990, end: 1991, tag: "Sandler, Farley, Rock, Spade, Sweeney as featured. The bench gets stacked." },
-  17: { year: 1991, end: 1992, tag: "Wayne's World goes to film. Schwarzenegger pumps up with Hans and Franz. Pat debuts." },
+  17: { year: 1991, end: 1992, tag: "Wayne's World goes to film. Schwarzenegger pumps up with Hans and Franz. Coffee Talk debuts." },
   18: { year: 1992, end: 1993, tag: "Farley as Matt Foley van down by the river. Sandler's Opera Man. The bad-boys era hits stride." },
-  19: { year: 1993, end: 1994, tag: "Hartman's farewell. Norm takes Update. Spartan Cheerleaders debut. Major transition." },
-  20: { year: 1994, end: 1995, tag: "The widely-panned year. Critics calling for the show's death. Massive turnover coming." },
+  19: { year: 1993, end: 1994, tag: "Hartman's farewell. Spartan Cheerleaders debut. Major transition coming." },
+  20: { year: 1994, end: 1995, tag: "Norm takes Update. The widely-panned year. Critics calling for the show's death. Massive turnover coming." },
   21: { year: 1995, end: 1996, tag: "Total reboot. Ferrell, Oteri, Hammond, McKinney, Koechner, Quinn arrive. The show is reborn." },
   22: { year: 1996, end: 1997, tag: "Celebrity Jeopardy debuts. Mango. Spartan Cheerleaders. Tracy Morgan and Ana Gasteyer join." },
   23: { year: 1997, end: 1998, tag: "Norm's last year on Update before he's fired. Roxbury Guys. Mary Katherine Gallagher peaks." },
@@ -267,8 +270,8 @@ const HOT_TAKES = {
   16: "Sandler + Farley arrive. The bench gets stacked.",
   17: "Wayne's World in theaters. Hans and Franz pump up Schwarzenegger.",
   18: "Matt Foley van down by the river. Opera Man. Farley + Sandler at full power.",
-  19: "Hartman exits. Norm takes Update. Spartans debut. Transition with sparks.",
-  20: "The widely-panned year. Cult favorite for contrarians. Bombs for everyone else.",
+  19: "Hartman exits. Spartans debut. Transition with sparks.",
+  20: "Norm takes Update. The widely-panned year. Cult favorite for contrarians.",
   21: "Total reboot. Ferrell + Oteri + Hammond + McKinney. The show is reborn.",
   22: "Mary Katherine peaks. Celebrity Jeopardy debuts. Mango. Catchphrase boom.",
   23: "Norm fired mid-season. Roxbury Guys. Heartbreak energy under the laughs.",
@@ -286,10 +289,10 @@ const HOT_TAKES = {
   35: "Stefon debuts. Forte's last year. The transition year.",
   36: "Stefon at the desk era. Pretty / pretty / pretty.",
   37: "The Californians. Stefon peak. Wiig farewell. Top-5 for many.",
-  38: "Stefon's farewell. Drunk Uncle. Massive cast transition.",
-  39: "Pharoah's Obama. Mooney pre-tapes. The Armisen/Hader farewell year.",
+  38: "Hader and Armisen's last year. Drunk Uncle in full swing. Massive cast transition.",
+  39: "Pharoah's Obama. Mooney's pre-tapes. Drunk Uncle on New Year's. Last year before Jost / Che.",
   40: "Jost + Che debut. McKinnon's Hillary. The 40th-anniversary show.",
-  41: "Trump hosts during his campaign. Black Jeopardy debuts. Strange and electric.",
+  41: "Trump hosts during his campaign. McKinnon's Hillary in full swing. Strange and electric.",
   42: "Hallelujah cold open. David S. Pumpkins. Black Jeopardy with Hanks. The Trump-I peak.",
   43: "Diner Lobster with Mulaney. Welcome to Hell. Strong year, often underrated.",
   44: "Mulaney as recurring host. Pete in his bag. Bowen as writer.",
@@ -297,7 +300,7 @@ const HOT_TAKES = {
   46: "Bowen as Iceberg. Maya as Kamala. Election-year urgency.",
   47: "Sherman + Please Don't Destroy arrive. McKinnon's farewell. The reset before the reset.",
   48: "Marcello arrives. Strong's farewell. The total reset year.",
-  49: "Domingo. JAJ's Trump cemented. Sarah Sherman at full weird.",
+  49: "Post-strike return. Bargatze's Washington Crosses the Delaware. JAJ's Trump locked in.",
   50: "50th-anniversary season. Maya as Kamala returns. Legacy mode.",
   51: "1000th episode. Bowen's farewell. The future's still unwritten.",
 };
@@ -376,7 +379,7 @@ const ASPECTS = {
         { label: "Comedian in their prime", sub: "Mulaney. Galifianakis. Sandler returning.", weight: { 24: 1, 25: 1, 41: 1, 42: 2, 43: 3, 44: 3, 47: 1 } },
         { label: "Pop star going double duty", sub: "Timberlake. Bieber. Carpenter. Bad Bunny.", weight: { 32: 3, 33: 2, 37: 2, 49: 2, 50: 1, 51: 3 } },
         { label: "Returning legend / Five-Timer", sub: "Murray. Ferrell. Hanks. Steve Martin. Fey.", weight: { 25: 2, 31: 2, 37: 2, 40: 2, 50: 4, 51: 3 } },
-        { label: "Athlete with surprising chops", sub: "Peyton. LeBron. Travis Kelce.", weight: { 32: 4, 33: 2, 49: 3 } },
+        { label: "Athlete with surprising chops", sub: "Peyton. LeBron. Travis Kelce.", weight: { 32: 4, 33: 2, 48: 3 } },
       ],
     },
   },
@@ -517,16 +520,16 @@ const MOMENT_OPTIONS = [
   { label: "Land Shark", weight: { 1: 3, 2: 3 } },
   { label: "Two Wild and Crazy Guys", weight: { 3: 3, 4: 3 } },
   { label: "Mr. Robinson's Neighborhood", weight: { 7: 3, 8: 3, 9: 2 } },
-  { label: "White Like Me", weight: { 9: 4 } },
-  { label: "Church Lady", weight: { 13: 3, 14: 2, 15: 1 } },
-  { label: "Hans and Franz", weight: { 14: 2, 15: 3, 17: 2 } },
+  { label: "White Like Me", weight: { 10: 4 } },
+  { label: "Church Lady", weight: { 12: 2, 13: 3, 14: 3, 15: 2 } },
+  { label: "Hans and Franz", weight: { 13: 2, 14: 3, 15: 3, 17: 2 } },
   { label: "Wayne's World", weight: { 14: 3, 15: 3, 16: 3, 17: 3 } },
-  { label: "Stuart Smalley", weight: { 15: 3, 16: 2 } },
+  { label: "Stuart Smalley", weight: { 16: 3, 17: 2 } },
   { label: "Coffee Talk", weight: { 17: 3, 18: 2 } },
   { label: "Matt Foley van down by the river", weight: { 18: 4 } },
-  { label: "Spartan Cheerleaders", weight: { 20: 1, 21: 2, 22: 3, 23: 2 } },
+  { label: "Spartan Cheerleaders", weight: { 19: 2, 20: 2, 21: 3, 22: 3, 23: 2 } },
   { label: "Roxbury Guys", weight: { 22: 3, 23: 3 } },
-  { label: "Mary Katherine Gallagher", weight: { 22: 2, 23: 3, 24: 2 } },
+  { label: "Mary Katherine Gallagher", weight: { 21: 2, 22: 3, 23: 3, 24: 2 } },
   { label: "Celebrity Jeopardy", weight: { 22: 2, 23: 2, 24: 2, 25: 2, 26: 2 } },
   { label: "More Cowbell", weight: { 25: 4 } },
   { label: "Debbie Downer", weight: { 29: 4 } },
@@ -537,7 +540,7 @@ const MOMENT_OPTIONS = [
   { label: "I'm On a Boat", weight: { 34: 4 } },
   { label: "Stefon at the desk", weight: { 35: 2, 36: 3, 37: 4 } },
   { label: "The Californians", weight: { 37: 3, 38: 2 } },
-  { label: "Drunk Uncle", weight: { 38: 3, 39: 3 } },
+  { label: "Drunk Uncle", weight: { 37: 2, 38: 3, 39: 3 } },
   { label: "McKinnon's Hillary cold opens", weight: { 40: 2, 41: 3, 42: 3 } },
   { label: "Black Jeopardy with Tom Hanks", weight: { 42: 4 } },
   { label: "Hallelujah cold open", weight: { 42: 4 } },
@@ -674,19 +677,18 @@ const SKETCHES = [
   { season: 1, title: "The Killer Bees", tier: "iconic", aspects: ["recurring"] },
   { season: 1, title: "Mr. Mike's Least-Loved Bedtime Stories", tier: "deep_cut", aspects: ["pretape", "loose"] },
   { season: 2, title: "The Coneheads", tier: "iconic", aspects: ["recurring", "loose"] },
-  { season: 2, title: "Samurai Futaba", tier: "deep_cut", aspects: ["host", "recurring"] },
+  { season: 2, title: "Bass-O-Matic '76", tier: "deep_cut", aspects: ["pretape", "recurring"] },
   { season: 3, title: "Olympia Cafe — Cheeseburger Cheeseburger", tier: "iconic", aspects: ["recurring", "host"] },
   { season: 3, title: "Mr. Bill", tier: "iconic", aspects: ["pretape", "loose"] },
-  { season: 3, title: "King Bee with Stevie Wonder", tier: "deep_cut", aspects: ["host", "music"] },
   { season: 4, title: "Two Wild and Crazy Guys", tier: "iconic", aspects: ["recurring", "host"] },
-  { season: 4, title: "Bass-O-Matic", tier: "deep_cut", aspects: ["pretape", "recurring"] },
+  { season: 4, title: "King Bee with Stevie Wonder", tier: "deep_cut", aspects: ["host", "music"] },
   { season: 5, title: "Nick the Lounge Singer", tier: "iconic", aspects: ["recurring", "host"] },
   // Eddie era
   { season: 7, title: "Mister Robinson's Neighborhood", tier: "iconic", aspects: ["recurring", "topical"] },
   { season: 7, title: "Buckwheat", tier: "iconic", aspects: ["recurring"] },
   { season: 8, title: "James Brown's Celebrity Hot Tub Party", tier: "iconic", aspects: ["recurring", "music", "host"] },
   { season: 8, title: "Velvet Jones", tier: "deep_cut", aspects: ["recurring"] },
-  { season: 9, title: "White Like Me", tier: "iconic", aspects: ["pretape", "topical"] },
+  { season: 10, title: "White Like Me", tier: "iconic", aspects: ["pretape", "topical"] },
   // S10 — Crystal/Short/Guest
   { season: 10, title: "Synchronized Swimming", tier: "iconic", aspects: ["pretape", "host"] },
   { season: 10, title: "Ed Grimley", tier: "iconic", aspects: ["recurring"] },
@@ -700,19 +702,18 @@ const SKETCHES = [
   { season: 14, title: "Toonces the Driving Cat", tier: "deep_cut", aspects: ["recurring"] },
   { season: 15, title: "Wayne's World — Garth's Wedding", tier: "iconic", aspects: ["recurring"] },
   { season: 15, title: "Carvey's Bush 41", tier: "iconic", aspects: ["impressions", "topical"] },
-  { season: 15, title: "Stuart Smalley debut", tier: "deep_cut", aspects: ["recurring"] },
   // S16-20 — Sandler/Farley
   { season: 16, title: "Wayne's World", tier: "iconic", aspects: ["recurring"] },
-  { season: 16, title: "Stuart Smalley", tier: "iconic", aspects: ["recurring"] },
-  { season: 17, title: "Coffee Talk", tier: "iconic", aspects: ["recurring"] },
+  { season: 16, title: "Stuart Smalley debut", tier: "iconic", aspects: ["recurring"] },
+  { season: 16, title: "Pat debut", tier: "deep_cut", aspects: ["recurring"] },
+  { season: 17, title: "Coffee Talk debut", tier: "iconic", aspects: ["recurring"] },
   { season: 17, title: "Hans and Franz pump up Schwarzenegger", tier: "iconic", aspects: ["recurring", "host"] },
-  { season: 17, title: "Pat", tier: "deep_cut", aspects: ["recurring"] },
   { season: 18, title: "Matt Foley — van down by the river", tier: "iconic", aspects: ["recurring"] },
   { season: 18, title: "Opera Man", tier: "iconic", aspects: ["update", "recurring"] },
-  { season: 18, title: "Sandler's Hanukkah Song", tier: "deep_cut", aspects: ["update", "music"] },
   { season: 19, title: "Spartan Cheerleaders debut", tier: "iconic", aspects: ["recurring"] },
-  { season: 19, title: "Norm takes Update", tier: "iconic", aspects: ["update"] },
-  { season: 20, title: "Update with Norm", tier: "iconic", aspects: ["update"] },
+  { season: 19, title: "Hartman's farewell shows", tier: "deep_cut", aspects: ["host"] },
+  { season: 20, title: "Norm takes Update", tier: "iconic", aspects: ["update"] },
+  { season: 20, title: "Sandler's Hanukkah Song", tier: "deep_cut", aspects: ["update", "music"] },
   // S21-25 — Reborn era
   { season: 21, title: "Spartan Cheerleaders", tier: "iconic", aspects: ["recurring"] },
   { season: 21, title: "Mary Katherine Gallagher debut", tier: "iconic", aspects: ["recurring"] },
@@ -748,7 +749,8 @@ const SKETCHES = [
   { season: 34, title: "I'm On a Boat", tier: "iconic", aspects: ["pretape", "music"] },
   { season: 34, title: "Motherlover", tier: "deep_cut", aspects: ["pretape", "music"] },
   { season: 35, title: "Stefon debut", tier: "iconic", aspects: ["update", "recurring"] },
-  { season: 35, title: "MacGruber", tier: "iconic", aspects: ["recurring"] },
+  { season: 32, title: "MacGruber debut", tier: "deep_cut", aspects: ["recurring"] },
+  { season: 35, title: "MacGruber movie tie-in sketches", tier: "deep_cut", aspects: ["recurring"] },
   { season: 35, title: "Gilly", tier: "deep_cut", aspects: ["recurring"] },
   // S36-40
   { season: 36, title: "Stefon at the desk", tier: "iconic", aspects: ["update", "recurring"] },
@@ -756,7 +758,7 @@ const SKETCHES = [
   { season: 37, title: "The Californians debut", tier: "iconic", aspects: ["recurring", "loose"] },
   { season: 37, title: "Stefon peak", tier: "iconic", aspects: ["update", "recurring"] },
   { season: 37, title: "Wiig's Sue (the surprise lady)", tier: "deep_cut", aspects: ["recurring"] },
-  { season: 38, title: "Drunk Uncle debut", tier: "iconic", aspects: ["update", "recurring"] },
+  { season: 37, title: "Drunk Uncle debut", tier: "iconic", aspects: ["update", "recurring"] },
   { season: 38, title: "Stefon farewell at the desk", tier: "iconic", aspects: ["update", "recurring", "loose"] },
   { season: 39, title: "Drunk Uncle on New Year's", tier: "iconic", aspects: ["update", "recurring"] },
   { season: 39, title: "Pharoah's Obama", tier: "iconic", aspects: ["impressions", "topical"] },
@@ -765,7 +767,7 @@ const SKETCHES = [
   { season: 40, title: "Jost & Che take Update", tier: "iconic", aspects: ["update"] },
   // S41-46 — Trump I era
   { season: 41, title: "Trump hosts", tier: "iconic", aspects: ["host", "topical"] },
-  { season: 41, title: "Black Jeopardy debut", tier: "iconic", aspects: ["recurring"] },
+  { season: 39, title: "Black Jeopardy debut", tier: "iconic", aspects: ["recurring", "topical"] },
   { season: 41, title: "Strong's Cathy Anne", tier: "deep_cut", aspects: ["update", "recurring"] },
   { season: 42, title: "David S. Pumpkins", tier: "iconic", aspects: ["recurring", "ten-to-one", "host"] },
   { season: 42, title: "Black Jeopardy with Tom Hanks", tier: "iconic", aspects: ["recurring", "host", "topical"] },
@@ -773,7 +775,7 @@ const SKETCHES = [
   { season: 42, title: "Baldwin's Trump", tier: "deep_cut", aspects: ["cold-open", "impressions", "topical"] },
   { season: 43, title: "Diner Lobster with Mulaney", tier: "iconic", aspects: ["host", "pretape"] },
   { season: 43, title: "Welcome to Hell", tier: "iconic", aspects: ["pretape", "music"] },
-  { season: 44, title: "Wells for Boys", tier: "iconic", aspects: ["pretape", "ten-to-one"] },
+  { season: 42, title: "Wells for Boys (Emma Stone)", tier: "iconic", aspects: ["pretape", "ten-to-one"] },
   { season: 44, title: "McKinnon doing every impression", tier: "deep_cut", aspects: ["impressions"] },
   { season: 45, title: "Sara Lee Instagram", tier: "iconic", aspects: ["pretape"] },
   { season: 45, title: "COVID remote monologues", tier: "deep_cut", aspects: ["loose", "topical"] },
@@ -786,7 +788,7 @@ const SKETCHES = [
   { season: 48, title: "Marcello arrives", tier: "iconic", aspects: ["recurring"] },
   { season: 48, title: "Strong's farewell", tier: "iconic", aspects: ["recurring", "loose"] },
   { season: 48, title: "Lisa from Temecula", tier: "deep_cut", aspects: ["recurring"] },
-  { season: 49, title: "Domingo (Beyond the Birthday Card)", tier: "iconic", aspects: ["recurring"] },
+  { season: 50, title: "Domingo (Beyond Bachelorette)", tier: "iconic", aspects: ["recurring"] },
   { season: 49, title: "JAJ's Trump cemented", tier: "iconic", aspects: ["impressions", "cold-open", "topical"] },
   { season: 49, title: "Sarah Sherman cooks", tier: "deep_cut", aspects: ["ten-to-one", "loose"] },
   { season: 50, title: "SNL50 anniversary specials", tier: "iconic", aspects: ["host"] },
@@ -1807,6 +1809,15 @@ function Results({ picks, onReset }) {
             {copied ? "✓ Copied" : "⎘ Copy Link"}
           </button>
         </div>
+      </div>
+
+      <div className="text-center my-10">
+        <p className="font-body italic" style={{ color: "#8a7a6a", fontSize: "0.95rem" }}>
+          "Ladies and gentlemen, the tip jar."
+        </p>
+        <a href={KOFI_URL} target="_blank" rel="noreferrer" className="inline-block mt-2 font-mono uppercase transition" style={{ color: "#ffc847", letterSpacing: "0.25em", fontSize: "11px", textDecoration: "none", borderBottom: "1px solid #ffc847", paddingBottom: "2px" }} onMouseEnter={(e) => { e.currentTarget.style.color = "#f4f1de"; e.currentTarget.style.borderColor = "#f4f1de"; }} onMouseLeave={(e) => { e.currentTarget.style.color = "#ffc847"; e.currentTarget.style.borderColor = "#ffc847"; }}>
+          Tip on Ko-fi →
+        </a>
       </div>
 
       <div className="mb-10 pt-6 border-t" style={{ borderColor: "#3a2f44" }}>
