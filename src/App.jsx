@@ -1675,23 +1675,35 @@ function Results({ picks, onReset }) {
     if (savingStory) return;
     setSavingStory(true);
     setSaveError(null);
+    setIgToast(null);
     try {
       const dataUrl = renderStoryDataUrl();
       if (!dataUrl) throw new Error("Couldn't render image");
-      // Mobile path: invoke native share sheet (Instagram appears as an option)
+      // Mobile path: invoke native share sheet with image + caption text.
+      // Instagram appears as an option; caption auto-fills.
       if (typeof navigator !== "undefined" && navigator.canShare) {
         try {
           const blob = await (await fetch(dataUrl)).blob();
           const file = new File([blob], storyFilename, { type: "image/png" });
           if (navigator.canShare({ files: [file] })) {
-            await navigator.share({ files: [file], title: "My SNL Oracle result" });
+            await navigator.share({
+              files: [file],
+              text: captionText,
+              title: "My SNL Oracle result",
+            });
             setSavingStory(false);
             return;
           }
-        } catch (e) { /* fall through to download */ }
+        } catch (e) { /* fall through to desktop path */ }
       }
-      // Desktop path: download the image, user manually uploads to IG.
+      // Desktop path: download the image AND copy the caption to clipboard
+      // so the user can paste it directly into Instagram.
       downloadDataUrl(dataUrl, storyFilename);
+      if (navigator.clipboard) {
+        try { await navigator.clipboard.writeText(captionText); } catch (e) { /* clipboard blocked */ }
+      }
+      setIgToast("Image downloaded · caption copied. Open Instagram and paste.");
+      setTimeout(() => setIgToast(null), 5000);
     } catch (e) {
       console.error(e);
       setSaveError(e?.message || "Couldn't render image — try again.");
@@ -1710,11 +1722,17 @@ function Results({ picks, onReset }) {
   resultParams.set("s", String(winner.season));
   if (primaryAspectId) resultParams.set("a", primaryAspectId);
   const resultUrl = `${siteUrl}/?${resultParams.toString()}`;
-  const shareText = `My ultimate SNL season is S${winner.season} (${winnerMeta.year}–${winnerMeta.end}). I'm ${archetype.name}. Find your peak SNL season:`;
+  const hotTakeForShare = HOT_TAKES[winner.season];
+  const captionText = [
+    `★ My SNL Oracle peak season: S${winner.season} (${winnerMeta.year}–${winnerMeta.end}) ★`,
+    hotTakeForShare ? `\n"${hotTakeForShare}"\n` : "",
+    `I'm ${archetype.name}. Find your peak: ${resultUrl}`,
+  ].filter(Boolean).join("\n");
   const [copied, setCopied] = useState(false);
+  const [igToast, setIgToast] = useState(null);
   const handleCopy = () => {
     if (!navigator.clipboard) return;
-    navigator.clipboard.writeText(`${shareText} ${resultUrl}`).then(() => {
+    navigator.clipboard.writeText(captionText).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 1800);
     });
@@ -1938,7 +1956,7 @@ function Results({ picks, onReset }) {
             { label: savingStory ? "Rendering…" : "Post to Instagram", action: handlePostToIG, disabled: savingStory, isButton: true },
             { label: "Post to Facebook", href: facebookUrl },
             { label: savingStory ? "Rendering…" : "↓ Download image", action: handleDownloadImage, disabled: savingStory, isButton: true },
-            { label: copied ? "✓ Copied" : "⎘ Copy link", action: handleCopy, isButton: true, highlighted: copied },
+            { label: copied ? "✓ Copied" : "⎘ Copy caption", action: handleCopy, isButton: true, highlighted: copied },
           ].map((item, i) => {
             const baseStyle = {
               borderColor: item.highlighted ? "#ffc847" : "#3a2f44",
@@ -1966,6 +1984,11 @@ function Results({ picks, onReset }) {
         {saveError && (
           <div className="font-mono mt-3" style={{ color: "#e63946", fontSize: "10px", letterSpacing: "0.2em" }}>
             ✕ {saveError}
+          </div>
+        )}
+        {igToast && (
+          <div className="font-mono mt-3" style={{ color: "#ffc847", fontSize: "10px", letterSpacing: "0.2em" }}>
+            ✓ {igToast}
           </div>
         )}
       </div>
