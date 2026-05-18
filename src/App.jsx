@@ -798,9 +798,9 @@ const SKETCHES = [
   { season: 51, title: "Bowen's farewell", tier: "deep_cut", aspects: ["host", "loose"] },
 ];
 
-function pickSketches(season, picks) {
+function pickSketches(season, picks, n = 3) {
   const seasonSketches = SKETCHES.filter((s) => s.season === season);
-  if (seasonSketches.length === 0) return { popular: null, deep_cut: null };
+  if (seasonSketches.length === 0) return [];
 
   const aspectsPick = picks[ASPECT_ROUND_INDEX];
   const userAspects = aspectsPick?.value || [];
@@ -809,12 +809,14 @@ function pickSketches(season, picks) {
     ...s,
     overlap: s.aspects.filter((a) => userAspects.includes(a)).length,
   }));
-  scored.sort((a, b) => b.overlap - a.overlap);
-
-  return {
-    popular: scored.find((s) => s.tier === "iconic") || null,
-    deep_cut: scored.find((s) => s.tier === "deep_cut") || null,
-  };
+  // Sort: most aspect overlap first; iconic before deep_cut as a tiebreaker
+  // (iconic = more findable on YouTube); finally stable order.
+  scored.sort((a, b) => {
+    if (b.overlap !== a.overlap) return b.overlap - a.overlap;
+    if (a.tier !== b.tier) return a.tier === "iconic" ? -1 : 1;
+    return 0;
+  });
+  return scored.slice(0, n);
 }
 
 function sketchYouTubeUrl(sketch) {
@@ -2161,37 +2163,33 @@ function joinWithAnd(arr) {
 }
 
 function WatchNext({ season, picks }) {
-  const { popular, deep_cut } = pickSketches(season, picks);
-  if (!popular && !deep_cut) return null;
-  const row = (label, sketch, accent) => (
-    <a
-      href={sketchYouTubeUrl(sketch)}
-      target="_blank"
-      rel="noreferrer"
-      className="block transition"
-      style={{ textDecoration: "none", padding: "16px 4px", borderBottom: "1px solid #3a2f44" }}
-      onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.02)"; }}
-      onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
-    >
-      <div className="font-mono mb-2" style={{ color: accent, fontSize: "10px", letterSpacing: "0.3em" }}>
-        {label}
-      </div>
-      <div className="font-body" style={{ color: "#f4f1de", fontSize: "1.15rem", lineHeight: 1.3, fontWeight: 600 }}>
-        {sketch.title} →
-      </div>
-    </a>
-  );
+  const sketches = pickSketches(season, picks, 3);
+  if (sketches.length === 0) return null;
   return (
     <div className="mb-12">
       <div className="font-mono mb-1" style={{ color: "#ffc847", fontSize: "10px", letterSpacing: "0.3em" }}>
         Watch this next
       </div>
       <p className="font-body italic mb-4" style={{ color: "#8a7a6a", fontSize: "0.92rem" }}>
-        One classic and one deep cut from your season.
+        Sketches from your season worth queuing up.
       </p>
       <div style={{ borderTop: "1px solid #3a2f44" }}>
-        {popular && row("The Classic", popular, "#c9b8a0")}
-        {deep_cut && row("The Deep Cut", deep_cut, "#8a7a6a")}
+        {sketches.map((s) => (
+          <a
+            key={`${s.season}-${s.title}`}
+            href={sketchYouTubeUrl(s)}
+            target="_blank"
+            rel="noreferrer"
+            className="block transition"
+            style={{ textDecoration: "none", padding: "16px 4px", borderBottom: "1px solid #3a2f44" }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.02)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
+          >
+            <div className="font-body" style={{ color: "#f4f1de", fontSize: "1.15rem", lineHeight: 1.3, fontWeight: 600 }}>
+              {s.title} →
+            </div>
+          </a>
+        ))}
       </div>
     </div>
   );
