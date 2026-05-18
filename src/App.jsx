@@ -1,7 +1,11 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
+import { toPng } from "html-to-image";
 
 // Replace REPLACE_ME with the Ko-fi handle to point the tip jar to the right page.
 const KOFI_URL = "https://ko-fi.com/REPLACE_ME";
+
+const STORY_WIDTH = 1080;
+const STORY_HEIGHT = 1920;
 
 /* ============================================================
    CAST TENURE — [firstSeason, lastSeason] inclusive
@@ -1624,6 +1628,48 @@ function Results({ picks, onReset }) {
   const winnerPct = Math.round((winner.score / totalScore) * 100);
   const archetype = archetypeFromPicks(picks);
   const seasonPhoto = useSeasonPhoto(winner.season);
+  const storyCardRef = useRef(null);
+  const [savingStory, setSavingStory] = useState(false);
+
+  const downloadDataUrl = (dataUrl, filename) => {
+    const link = document.createElement("a");
+    link.download = filename;
+    link.href = dataUrl;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleSaveStory = async () => {
+    if (!storyCardRef.current || savingStory) return;
+    setSavingStory(true);
+    try {
+      const dataUrl = await toPng(storyCardRef.current, {
+        pixelRatio: 1,
+        cacheBust: true,
+        width: STORY_WIDTH,
+        height: STORY_HEIGHT,
+      });
+      const filename = `snl-oracle-s${winner.season}.png`;
+
+      // Try native share with file on mobile if available.
+      if (typeof navigator !== "undefined" && navigator.canShare) {
+        try {
+          const blob = await (await fetch(dataUrl)).blob();
+          const file = new File([blob], filename, { type: "image/png" });
+          if (navigator.canShare({ files: [file] })) {
+            await navigator.share({ files: [file], title: "My SNL Oracle result" });
+            setSavingStory(false);
+            return;
+          }
+        } catch (e) { /* fall through to download */ }
+      }
+      downloadDataUrl(dataUrl, filename);
+    } catch (e) {
+      // Swallow — button will reset and user can try again.
+    }
+    setSavingStory(false);
+  };
 
   // Confidence: how clearly does the winner lead? Wide gap = strong match
   const gap = top[1] ? (winner.score - top[1].score) / Math.max(winner.score, 1) : 1;
@@ -1802,6 +1848,9 @@ function Results({ picks, onReset }) {
       <div className="mb-10">
         <div className="font-mono mb-4" style={{ color: "#a89684", fontSize: "10px", letterSpacing: "0.3em" }}>SHARE YOUR RESULT</div>
         <div className="flex flex-wrap gap-2">
+          <button onClick={handleSaveStory} disabled={savingStory} className="font-display uppercase border transition" style={{ borderColor: "#e63946", color: savingStory ? "#5a4a3a" : "#e63946", padding: "10px 16px", fontSize: "12px", letterSpacing: "0.2em", background: "rgba(230, 57, 70, 0.06)", cursor: savingStory ? "not-allowed" : "pointer" }} onMouseEnter={(e) => { if (!savingStory) e.currentTarget.style.background = "rgba(230, 57, 70, 0.16)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(230, 57, 70, 0.06)"; }}>
+            {savingStory ? "Rendering…" : "↓ Save Story Image"}
+          </button>
           <a href={twitterUrl} target="_blank" rel="noreferrer" className="font-display uppercase border transition" style={{ borderColor: "#3a2f44", color: "#f4f1de", padding: "10px 16px", fontSize: "12px", letterSpacing: "0.2em", textDecoration: "none", background: "rgba(255,255,255,0.02)" }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#ffc847"; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#3a2f44"; }}>Post to X</a>
           <a href={facebookUrl} target="_blank" rel="noreferrer" className="font-display uppercase border transition" style={{ borderColor: "#3a2f44", color: "#f4f1de", padding: "10px 16px", fontSize: "12px", letterSpacing: "0.2em", textDecoration: "none", background: "rgba(255,255,255,0.02)" }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#ffc847"; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#3a2f44"; }}>Share on Facebook</a>
           <a href={threadsUrl} target="_blank" rel="noreferrer" className="font-display uppercase border transition" style={{ borderColor: "#3a2f44", color: "#f4f1de", padding: "10px 16px", fontSize: "12px", letterSpacing: "0.2em", textDecoration: "none", background: "rgba(255,255,255,0.02)" }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#ffc847"; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#3a2f44"; }}>Post to Threads</a>
@@ -1809,7 +1858,12 @@ function Results({ picks, onReset }) {
             {copied ? "✓ Copied" : "⎘ Copy Link"}
           </button>
         </div>
+        <div className="font-mono mt-2" style={{ color: "#6a5a4a", fontSize: "10px", letterSpacing: "0.15em" }}>
+          Save story image is sized for IG / TikTok stories (1080×1920). Drop it straight into your story.
+        </div>
       </div>
+
+      <StoryCard winner={winner} archetype={archetype} forwardRef={storyCardRef} />
 
       <div className="text-center my-10">
         <p className="font-body italic" style={{ color: "#8a7a6a", fontSize: "0.95rem" }}>
@@ -1864,6 +1918,68 @@ function BulbStrip({ top }) {
 
 function Grain() {
   return <div className="absolute inset-0 grain pointer-events-none" style={{ opacity: 0.3, mixBlendMode: "overlay" }} />;
+}
+
+function StoryCard({ winner, archetype, forwardRef }) {
+  const meta = SEASONS[winner.season];
+  const hotTake = HOT_TAKES[winner.season];
+  const host = typeof window !== "undefined" ? window.location.host : "";
+  return (
+    <div
+      ref={forwardRef}
+      style={{
+        position: "absolute",
+        left: "-99999px",
+        top: 0,
+        width: `${STORY_WIDTH}px`,
+        height: `${STORY_HEIGHT}px`,
+        background: "radial-gradient(ellipse at top, #1a1424 0%, #0a0710 60%, #050306 100%)",
+        color: "#f4f1de",
+        padding: "120px 80px",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "space-between",
+        fontFamily: "'Newsreader', Georgia, serif",
+        boxSizing: "border-box",
+        overflow: "hidden",
+      }}
+    >
+      <div style={{ textAlign: "center" }}>
+        <div style={{ fontFamily: "'DM Mono', monospace", color: "#ffc847", letterSpacing: "0.4em", fontSize: "30px", fontWeight: 500 }}>★ THE SNL ORACLE ★</div>
+        <div style={{ fontFamily: "'Limelight', Georgia, serif", marginTop: "32px", fontSize: "64px", color: "#f4f1de", lineHeight: 1.1 }}>
+          My peak SNL season is
+        </div>
+      </div>
+
+      <div style={{ textAlign: "center" }}>
+        <div style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: "520px", color: "#e63946", textShadow: "0 0 50px rgba(230,57,70,0.5), 14px 14px 0 #ffc847", lineHeight: 1, letterSpacing: "-0.02em" }}>
+          S{winner.season}
+        </div>
+        <div style={{ fontFamily: "'Limelight', Georgia, serif", fontSize: "66px", marginTop: "24px", color: "#f4f1de" }}>
+          {meta.year}–{String(meta.end).slice(2)}
+        </div>
+      </div>
+
+      {hotTake && (
+        <div style={{ fontStyle: "italic", textAlign: "center", fontSize: "38px", lineHeight: 1.45, color: "#c9b8a0", padding: "0 30px" }}>
+          "{hotTake}"
+        </div>
+      )}
+
+      <div style={{ textAlign: "center", padding: "44px 60px", border: "4px solid #ffc847", background: "rgba(255,200,71,0.08)", width: "100%", boxSizing: "border-box" }}>
+        <div style={{ fontFamily: "'DM Mono', monospace", color: "#ffc847", letterSpacing: "0.3em", fontSize: "22px", marginBottom: "14px" }}>I AM</div>
+        <div style={{ fontFamily: "'Anton', Impact, sans-serif", textTransform: "uppercase", fontSize: "62px", color: "#f4f1de", lineHeight: 1.1 }}>
+          {archetype.name}
+        </div>
+      </div>
+
+      <div style={{ textAlign: "center" }}>
+        <div style={{ fontFamily: "'DM Mono', monospace", color: "#8a7a6a", letterSpacing: "0.3em", fontSize: "22px" }}>FIND YOURS</div>
+        <div style={{ fontFamily: "'DM Mono', monospace", color: "#ffc847", letterSpacing: "0.2em", fontSize: "30px", marginTop: "10px" }}>{host || "the snl oracle"}</div>
+      </div>
+    </div>
+  );
 }
 
 function FriendResult({ result, onStart }) {
