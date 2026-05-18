@@ -1741,13 +1741,13 @@ function Results({ picks, onReset }) {
           </div>
         </div>
       ) : (
-        <div className="mb-10 rise" style={{ animationDelay: "0.5s", padding: "28px", border: "1px solid #3a2f44", background: "#0a0710" }}>
+        <div className="mb-10 rise" style={{ animationDelay: "0.5s", paddingTop: "20px", paddingBottom: "20px", borderTop: "1px solid #3a2f44", borderBottom: "1px solid #3a2f44" }}>
           <div className="font-mono mb-5 text-center" style={{ color: "#ffc847", fontSize: "10px", letterSpacing: "0.3em" }}>
             The S{winner.season} cast
           </div>
-          <div className="flex flex-wrap justify-center" style={{ gap: "8px 16px" }}>
+          <div className="flex flex-wrap justify-center" style={{ gap: "6px 16px" }}>
             {castForSeason(winner.season).map((name) => (
-              <span key={name} className="font-body" style={{ color: "#f4f1de", fontSize: "1rem", letterSpacing: "0.01em", fontWeight: 500 }}>
+              <span key={name} className="font-body" style={{ color: "#c9b8a0", fontSize: "0.98rem", letterSpacing: "0.01em", fontWeight: 500 }}>
                 {name}
               </span>
             ))}
@@ -1777,7 +1777,7 @@ function Results({ picks, onReset }) {
       </div>
 
       <div className="mb-12">
-        <div className="font-mono mb-4" style={{ color: "#a89684", fontSize: "10px", letterSpacing: "0.3em" }}>The podium · what you'd trade away</div>
+        <div className="font-mono mb-4" style={{ color: "#ffc847", fontSize: "10px", letterSpacing: "0.3em" }}>The podium · what you'd trade away</div>
         <div className="space-y-5">
           {top.map((t, i) => {
             const m = SEASONS[t.season];
@@ -1808,32 +1808,32 @@ function Results({ picks, onReset }) {
       </div>
 
       {age && (
-        <div className="mb-12 p-8" style={{ border: "1px solid #3a2f44", background: "rgba(255, 200, 71, 0.04)" }}>
-          <div className="font-mono mb-4 text-center" style={{ color: "#ffc847", fontSize: "10px", letterSpacing: "0.35em" }}>
+        <div className="mb-12 py-10" style={{ borderTop: "1px solid #3a2f44", borderBottom: "1px solid #3a2f44" }}>
+          <div className="font-mono mb-5 text-center" style={{ color: "#ffc847", fontSize: "10px", letterSpacing: "0.35em" }}>
             And one more thing
           </div>
-          <p className="font-body text-center" style={{ color: "#c9b8a0", fontSize: "1rem", lineHeight: 1.5 }}>
+          <p className="font-body text-center" style={{ color: "#8a7a6a", fontSize: "0.95rem", lineHeight: 1.5 }}>
             The Oracle's guess at your age:
           </p>
-          <div className="text-center my-5">
+          <div className="text-center my-4">
             <span className="font-digital" style={{ color: "#f4f1de", fontSize: "clamp(3.5rem, 12vw, 5.5rem)", lineHeight: 1, letterSpacing: "-0.01em" }}>
               {age.ageMin}–{age.ageMax}
             </span>
           </div>
-          <p className="font-body italic mx-auto" style={{ color: "#c9b8a0", fontSize: "0.95rem", maxWidth: "560px", lineHeight: 1.65 }}>
+          <p className="font-body italic mx-auto mt-6" style={{ color: "#c9b8a0", fontSize: "0.95rem", maxWidth: "560px", lineHeight: 1.65, textAlign: "center" }}>
             "{LORNE_QUOTE.text}"
           </p>
-          <div className="font-mono mt-3" style={{ color: "#8a7a6a", fontSize: "10px", letterSpacing: "0.2em" }}>
+          <div className="font-mono mt-3 text-center" style={{ color: "#6a5a4a", fontSize: "10px", letterSpacing: "0.2em" }}>
             — {LORNE_QUOTE.attrib}
           </div>
-          <p className="font-body text-center mt-6 mx-auto" style={{ color: "#c9b8a0", fontSize: "0.95rem", maxWidth: "560px", lineHeight: 1.55 }}>
+          <p className="font-body text-center mt-6 mx-auto" style={{ color: "#8a7a6a", fontSize: "0.9rem", maxWidth: "560px", lineHeight: 1.55 }}>
             If S{winner.season} is your peak, you were in high school during {winnerMeta.year}–{winnerMeta.end}. That's the math.
           </p>
         </div>
       )}
 
       <div className="mb-10">
-        <div className="font-mono mb-4" style={{ color: "#a89684", fontSize: "10px", letterSpacing: "0.3em" }}>Your picks</div>
+        <div className="font-mono mb-4" style={{ color: "#ffc847", fontSize: "10px", letterSpacing: "0.3em" }}>Your picks</div>
         <div className="space-y-2">
           {picks.map((p, i) => {
             let prompt = "";
@@ -1871,39 +1871,68 @@ function Results({ picks, onReset }) {
       </div>
 
       <div className="mb-10">
-        <div className="font-mono mb-4" style={{ color: "#a89684", fontSize: "10px", letterSpacing: "0.3em" }}>Share your result</div>
+        <div className="font-mono mb-1" style={{ color: "#ffc847", fontSize: "10px", letterSpacing: "0.3em" }}>Share your result</div>
+        <p className="font-body italic mb-4" style={{ color: "#8a7a6a", fontSize: "0.92rem" }}>
+          The story image is sized for IG / TikTok (1080×1920).
+        </p>
         <div className="flex flex-wrap gap-2">
-          <button onClick={handleSaveStory} disabled={savingStory} className="font-mono border transition" style={{ borderColor: "#e63946", color: savingStory ? "#5a4a3a" : "#e63946", padding: "10px 16px", fontSize: "11px", letterSpacing: "0.18em", background: "rgba(230, 57, 70, 0.06)", cursor: savingStory ? "not-allowed" : "pointer" }} onMouseEnter={(e) => { if (!savingStory) e.currentTarget.style.background = "rgba(230, 57, 70, 0.16)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(230, 57, 70, 0.06)"; }}>
-            {savingStory ? "Rendering…" : "↓ Save story image"}
-          </button>
-          <a href={twitterUrl} target="_blank" rel="noreferrer" className="font-mono border transition" style={{ borderColor: "#3a2f44", color: "#f4f1de", padding: "10px 16px", fontSize: "11px", letterSpacing: "0.18em", textDecoration: "none", background: "rgba(255,255,255,0.02)" }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#ffc847"; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#3a2f44"; }}>Post to X</a>
-          <a href={facebookUrl} target="_blank" rel="noreferrer" className="font-mono border transition" style={{ borderColor: "#3a2f44", color: "#f4f1de", padding: "10px 16px", fontSize: "11px", letterSpacing: "0.18em", textDecoration: "none", background: "rgba(255,255,255,0.02)" }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#ffc847"; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#3a2f44"; }}>Share on Facebook</a>
-          <a href={threadsUrl} target="_blank" rel="noreferrer" className="font-mono border transition" style={{ borderColor: "#3a2f44", color: "#f4f1de", padding: "10px 16px", fontSize: "11px", letterSpacing: "0.18em", textDecoration: "none", background: "rgba(255,255,255,0.02)" }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#ffc847"; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#3a2f44"; }}>Post to Threads</a>
-          <button onClick={handleCopy} className="font-mono border transition" style={{ borderColor: copied ? "#ffc847" : "#3a2f44", color: copied ? "#ffc847" : "#f4f1de", padding: "10px 16px", fontSize: "11px", letterSpacing: "0.18em", background: "rgba(255,255,255,0.02)", cursor: "pointer" }} onMouseEnter={(e) => { if (!copied) e.currentTarget.style.borderColor = "#ffc847"; }} onMouseLeave={(e) => { if (!copied) e.currentTarget.style.borderColor = "#3a2f44"; }}>
-            {copied ? "✓ Copied" : "⎘ Copy link"}
-          </button>
-        </div>
-        <div className="font-mono mt-2" style={{ color: "#6a5a4a", fontSize: "10px", letterSpacing: "0.15em" }}>
-          Save story image is sized for IG / TikTok stories (1080×1920). Drop it straight into your story.
+          {[
+            { label: savingStory ? "Rendering…" : "↓ Save story image", action: handleSaveStory, disabled: savingStory, isButton: true },
+            { label: "Post to X", href: twitterUrl },
+            { label: "Share on Facebook", href: facebookUrl },
+            { label: "Post to Threads", href: threadsUrl },
+            { label: copied ? "✓ Copied" : "⎘ Copy link", action: handleCopy, isButton: true, highlighted: copied },
+          ].map((item, i) => {
+            const baseStyle = {
+              borderColor: item.highlighted ? "#ffc847" : "#3a2f44",
+              color: item.highlighted ? "#ffc847" : (item.disabled ? "#5a4a3a" : "#f4f1de"),
+              padding: "10px 16px",
+              fontSize: "11px",
+              letterSpacing: "0.18em",
+              background: "rgba(255,255,255,0.02)",
+              cursor: item.disabled ? "not-allowed" : "pointer",
+              textDecoration: "none",
+            };
+            const onEnter = (e) => { if (!item.disabled && !item.highlighted) e.currentTarget.style.borderColor = "#ffc847"; };
+            const onLeave = (e) => { if (!item.highlighted) e.currentTarget.style.borderColor = "#3a2f44"; };
+            return item.isButton ? (
+              <button key={i} onClick={item.action} disabled={item.disabled} className="font-mono border transition" style={baseStyle} onMouseEnter={onEnter} onMouseLeave={onLeave}>
+                {item.label}
+              </button>
+            ) : (
+              <a key={i} href={item.href} target="_blank" rel="noreferrer" className="font-mono border transition" style={baseStyle} onMouseEnter={onEnter} onMouseLeave={onLeave}>
+                {item.label}
+              </a>
+            );
+          })}
         </div>
       </div>
 
       <StoryCard winner={winner} archetype={archetype} forwardRef={storyCardRef} />
 
-      <div className="my-10">
-        <p className="font-body italic text-center mb-4" style={{ color: "#8a7a6a", fontSize: "0.95rem" }}>
+      <div className="my-10 text-center">
+        <p className="font-body italic mb-3" style={{ color: "#8a7a6a", fontSize: "0.95rem" }}>
           "Ladies and gentlemen, the tip jar."
         </p>
-        <div style={{ maxWidth: "560px", margin: "0 auto" }}>
-          <iframe
-            id="kofiframe"
-            src="https://ko-fi.com/snloracle/?hidefeed=true&widget=true&embed=true&preview=true"
-            style={{ border: "none", width: "100%", padding: "4px", background: "#f9f9f9", borderRadius: "4px", display: "block" }}
-            height="540"
-            title="Tip the SNL Oracle on Ko-fi"
-            loading="lazy"
-          />
-        </div>
+        <a
+          href={KOFI_URL}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-block font-mono transition"
+          style={{
+            color: "#ffc847",
+            border: "1px solid #ffc847",
+            padding: "10px 22px",
+            fontSize: "11px",
+            letterSpacing: "0.25em",
+            textDecoration: "none",
+            background: "transparent",
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = "#ffc847"; e.currentTarget.style.color = "#0a0710"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#ffc847"; }}
+        >
+          Tip on Ko-fi →
+        </a>
       </div>
 
       <div className="flex justify-center mb-6">
@@ -2044,8 +2073,8 @@ function WhyThisSeason({ winner, picks }) {
   });
 
   return (
-    <div className="mb-8 px-2">
-      <div className="font-mono mb-3" style={{ color: "#a89684", fontSize: "10px", letterSpacing: "0.3em" }}>WHY THIS SEASON</div>
+    <div className="mb-12">
+      <div className="font-mono mb-3" style={{ color: "#ffc847", fontSize: "10px", letterSpacing: "0.3em" }}>Why this season</div>
       <p className="font-body" style={{ color: "#f4f1de", fontSize: "1.02rem", lineHeight: 1.55 }}>
         You're drawn to {joinWithAnd(aspectLabels) || "the show"}
         {castNames.length > 0 && (
@@ -2078,29 +2107,29 @@ function WatchNext({ season, picks }) {
       target="_blank"
       rel="noreferrer"
       className="block transition"
-      style={{ textDecoration: "none", padding: "16px 18px", borderLeft: `3px solid ${accent}` }}
-      onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.04)"; }}
+      style={{ textDecoration: "none", padding: "16px 4px", borderBottom: "1px solid #3a2f44" }}
+      onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.02)"; }}
       onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
     >
       <div className="font-mono mb-2" style={{ color: accent, fontSize: "10px", letterSpacing: "0.3em" }}>
         {label}
       </div>
-      <div className="font-body" style={{ color: "#f4f1de", fontSize: "1.2rem", lineHeight: 1.3, fontWeight: 600 }}>
+      <div className="font-body" style={{ color: "#f4f1de", fontSize: "1.15rem", lineHeight: 1.3, fontWeight: 600 }}>
         {sketch.title} →
       </div>
     </a>
   );
   return (
-    <div className="mb-10 border" style={{ borderColor: "#00a4a6", background: "rgba(0, 164, 166, 0.04)" }}>
-      <div className="font-mono px-5 pt-5 pb-1" style={{ color: "#00a4a6", fontSize: "10px", letterSpacing: "0.3em" }}>
+    <div className="mb-12">
+      <div className="font-mono mb-1" style={{ color: "#ffc847", fontSize: "10px", letterSpacing: "0.3em" }}>
         Watch this next
       </div>
-      <p className="font-body italic px-5 pb-3" style={{ color: "#c9b8a0", fontSize: "0.92rem" }}>
+      <p className="font-body italic mb-4" style={{ color: "#8a7a6a", fontSize: "0.92rem" }}>
         One classic and one deep cut from your season.
       </p>
-      <div className="px-3 pb-3">
-        {popular && row("The Classic", popular, "#ffc847")}
-        {deep_cut && row("The Deep Cut", deep_cut, "#e63946")}
+      <div style={{ borderTop: "1px solid #3a2f44" }}>
+        {popular && row("The Classic", popular, "#c9b8a0")}
+        {deep_cut && row("The Deep Cut", deep_cut, "#8a7a6a")}
       </div>
     </div>
   );
@@ -2134,8 +2163,8 @@ function CastSweetSpot({ picks, winnerSeason }) {
   if (!sweet) return null;
   const isAllOverlap = sweet.maxOverlap === sweet.totalCast;
   return (
-    <div className="mb-10 px-2">
-      <div className="font-mono mb-3" style={{ color: "#a89684", fontSize: "10px", letterSpacing: "0.3em" }}>
+    <div className="mb-12">
+      <div className="font-mono mb-3" style={{ color: "#ffc847", fontSize: "10px", letterSpacing: "0.3em" }}>
         Your cast overlap
       </div>
       <p className="font-body mb-4" style={{ color: "#c9b8a0", fontSize: "0.95rem", lineHeight: 1.5 }}>
@@ -2179,14 +2208,14 @@ function MoreLikeYourTaste({ winner, picks }) {
   const sketches = pickCrossSeasonSketches(winner.season, picks);
   if (sketches.length === 0) return null;
   return (
-    <div className="mb-10 border" style={{ borderColor: "#e63946", background: "rgba(230, 57, 70, 0.04)" }}>
-      <div className="font-mono px-5 pt-5 pb-1" style={{ color: "#e63946", fontSize: "10px", letterSpacing: "0.3em" }}>
+    <div className="mb-12">
+      <div className="font-mono mb-1" style={{ color: "#ffc847", fontSize: "10px", letterSpacing: "0.3em" }}>
         Also in your lane
       </div>
-      <p className="font-body italic px-5 pb-3" style={{ color: "#c9b8a0", fontSize: "0.92rem" }}>
+      <p className="font-body italic mb-4" style={{ color: "#8a7a6a", fontSize: "0.92rem" }}>
         Sketches from other seasons that share your taste DNA.
       </p>
-      <div className="px-3 pb-3">
+      <div style={{ borderTop: "1px solid #3a2f44" }}>
         {sketches.map((s) => (
           <a
             key={`${s.season}-${s.title}`}
@@ -2194,8 +2223,8 @@ function MoreLikeYourTaste({ winner, picks }) {
             target="_blank"
             rel="noreferrer"
             className="block transition"
-            style={{ textDecoration: "none", padding: "14px 16px", borderLeft: `3px solid ${s.tier === "iconic" ? "#ffc847" : "#c9b8a0"}` }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.04)"; }}
+            style={{ textDecoration: "none", padding: "14px 4px", borderBottom: "1px solid #3a2f44" }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.02)"; }}
             onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
           >
             <div className="flex items-baseline justify-between gap-3 flex-wrap">
