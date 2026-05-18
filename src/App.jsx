@@ -246,6 +246,63 @@ const SEASONS = {
 };
 
 /* ============================================================
+   HOT TAKES — opinionated one-liner per season for the result.
+   ============================================================ */
+const HOT_TAKES = {
+  1: "The myth. Every other season gets judged against this one.",
+  2: "Less iconic than people remember. Still essential.",
+  3: "Original cast at full power. Where Cheeseburger Cheeseburger lives.",
+  4: "Belushi and Aykroyd's last full year. The format crystallized.",
+  5: "Belushi-less. Murray and Radner do the heavy lifting. Underrated.",
+  6: "The famous bad year. NBC nearly pulls the plug. Only for completionists.",
+  7: "Eddie arrives and everything changes. Watch this if you've only seen modern SNL.",
+  8: "Eddie's solo show. Mister Robinson + Buckwheat in their bag.",
+  9: "Eddie's farewell. The last great year before a long slump.",
+  10: "Crystal / Short / Guest, one and done. Ringers for a single season.",
+  11: "Lorne returns to a wilderness year. Joan Cusack, RDJ, mostly forgotten.",
+  12: "The reset works. Carvey + Hartman + Lovitz arrive. Hold-onto-your-hat era begins.",
+  13: "Church Lady's coronation. Catchphrase era ignites.",
+  14: "Wayne's World debuts. Cultural footprint becomes massive.",
+  15: "Carvey's Bush 41 at peak. Wayne's World still hot. Polished-machine era.",
+  16: "Sandler + Farley arrive. The bench gets stacked.",
+  17: "Wayne's World in theaters. Hans and Franz pump up Schwarzenegger.",
+  18: "Matt Foley van down by the river. Opera Man. Farley + Sandler at full power.",
+  19: "Hartman exits. Norm takes Update. Spartans debut. Transition with sparks.",
+  20: "The widely-panned year. Cult favorite for contrarians. Bombs for everyone else.",
+  21: "Total reboot. Ferrell + Oteri + Hammond + McKinney. The show is reborn.",
+  22: "Mary Katherine peaks. Celebrity Jeopardy debuts. Mango. Catchphrase boom.",
+  23: "Norm fired mid-season. Roxbury Guys. Heartbreak energy under the laughs.",
+  24: "Ferrell at full Bush. Spartans peak. Strong all-rounder year.",
+  25: "More Cowbell drops. 25th anniversary. The era's last big swing.",
+  26: "Tina + Jimmy on Update. The new direction begins.",
+  27: "Post-9/11 season. Mayor Giuliani opens. Ferrell's farewell. Heavy and tender.",
+  28: "Forte + Armisen arrive. Transitional. Forgotten gem.",
+  29: "Debbie Downer year. Tina + Jimmy peak. Wah wah waaaah.",
+  30: "Tina + Amy on Update. The friend-group era starts here.",
+  31: "Lazy Sunday changes the internet. Pre-tape boom begins.",
+  32: "Dick in a Box. Peyton Manning's United Way. The polished pre-tape peak.",
+  33: "Writers strike. Iran So Far. Most density per minute on this list.",
+  34: "Sarah Palin. The entire year. Cultural-moment season.",
+  35: "Stefon debuts. Forte's last year. The transition year.",
+  36: "Stefon at the desk era. Pretty / pretty / pretty.",
+  37: "The Californians. Stefon peak. Wiig farewell. Top-5 for many.",
+  38: "Stefon's farewell. Drunk Uncle. Massive cast transition.",
+  39: "Pharoah's Obama. Mooney pre-tapes. The Armisen/Hader farewell year.",
+  40: "Jost + Che debut. McKinnon's Hillary. The 40th-anniversary show.",
+  41: "Trump hosts during his campaign. Black Jeopardy debuts. Strange and electric.",
+  42: "Hallelujah cold open. David S. Pumpkins. Black Jeopardy with Hanks. The Trump-I peak.",
+  43: "Diner Lobster with Mulaney. Welcome to Hell. Strong year, often underrated.",
+  44: "Mulaney as recurring host. Pete in his bag. Bowen as writer.",
+  45: "COVID hits in March. The show goes remote. Singular year, hard to compare.",
+  46: "Bowen as Iceberg. Maya as Kamala. Election-year urgency.",
+  47: "Sherman + Please Don't Destroy arrive. McKinnon's farewell. The reset before the reset.",
+  48: "Marcello arrives. Strong's farewell. The total reset year.",
+  49: "Domingo. JAJ's Trump cemented. Sarah Sherman at full weird.",
+  50: "50th-anniversary season. Maya as Kamala returns. Legacy mode.",
+  51: "1000th episode. Bowen's farewell. The future's still unwritten.",
+};
+
+/* ============================================================
    ASPECTS — the 8 dimensions of SNL fandom.
    Round 1 asks the user to pick 3. Each aspect's sub-question
    gets asked in rounds 2, 3, 4 (in the order picked).
@@ -1606,9 +1663,18 @@ function Results({ picks, onReset }) {
         </div>
       )}
 
-      <p className="font-body mx-auto mb-8 text-center" style={{ color: "#c9b8a0", fontSize: "1.05rem", maxWidth: "560px", lineHeight: 1.5 }}>
+      <p className="font-body mx-auto mb-3 text-center" style={{ color: "#c9b8a0", fontSize: "1.05rem", maxWidth: "560px", lineHeight: 1.5 }}>
         {winnerMeta.tag}
       </p>
+
+      {HOT_TAKES[winner.season] && (
+        <div className="mx-auto mb-8 text-center" style={{ maxWidth: "560px" }}>
+          <div className="font-mono mb-1" style={{ color: "#e63946", fontSize: "10px", letterSpacing: "0.3em" }}>HOT TAKE</div>
+          <p className="font-body italic" style={{ color: "#f4f1de", fontSize: "1.05rem", lineHeight: 1.5 }}>
+            {HOT_TAKES[winner.season]}
+          </p>
+        </div>
+      )}
 
       <WhyThisSeason winner={winner} picks={picks} />
 
