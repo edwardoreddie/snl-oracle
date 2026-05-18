@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { Analytics } from "@vercel/analytics/react";
 
 const FEEDBACK_URL = "https://tally.so/r/Gxqb6O";
 
@@ -1276,6 +1277,7 @@ export default function App() {
 
   return (
     <>
+      <Analytics />
       <Style />
       <div className="min-h-screen w-full relative overflow-hidden" style={{ background: "radial-gradient(ellipse at top, #1a1424 0%, #0a0710 60%, #050306 100%)" }}>
         <Grain />
