@@ -1730,7 +1730,7 @@ function Results({ picks, onReset }) {
         try {
           window.kofiWidgetOverlay.draw("snloracle", {
             type: "floating-chat",
-            "floating-chat.donateButton.text": "Tip on Ko-fi",
+            "floating-chat.donateButton.text": "Tip the Oracle",
             "floating-chat.donateButton.background-color": "#ffc847",
             "floating-chat.donateButton.text-color": "#0a0710",
           });
