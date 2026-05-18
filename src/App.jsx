@@ -1353,7 +1353,7 @@ function AspectsRound({ q, onAnswer, index, total }) {
         <span style={{ color: ready ? "#ffc847" : "#e63946" }}>
           {ready ? `LOCKED IN 3 / 3` : `PICK ${remaining} MORE`}
         </span>
-        <button onClick={submit} disabled={!ready} className="font-display uppercase px-5 py-2 border transition" style={{ borderColor: ready ? "#ffc847" : "#3a2f44", color: ready ? "#0a0710" : "#5a4a3a", background: ready ? "#ffc847" : "transparent", fontSize: "12px", letterSpacing: "0.2em", cursor: ready ? "pointer" : "not-allowed" }}>
+        <button onClick={submit} disabled={!ready} className="font-mono px-5 py-2 border transition" style={{ borderColor: ready ? "#ffc847" : "#3a2f44", color: ready ? "#0a0710" : "#5a4a3a", background: ready ? "#ffc847" : "transparent", fontSize: "11px", letterSpacing: "0.25em", cursor: ready ? "pointer" : "not-allowed" }}>
           ★ Next ★
         </button>
       </div>
@@ -1380,7 +1380,7 @@ function AspectsRound({ q, onAnswer, index, total }) {
               }}
             >
               {order && (
-                <div className="font-display" style={{ position: "absolute", top: 10, right: 14, color: "#e63946", fontSize: "1.5rem", lineHeight: 1 }}>
+                <div className="font-digital" style={{ position: "absolute", top: 10, right: 14, color: "#e63946", fontSize: "1.4rem", lineHeight: 1 }}>
                   {order}
                 </div>
               )}
@@ -1489,7 +1489,7 @@ function MultiCastRound({ q, onAnswer, index, total, photos, photosStatus }) {
           <span style={{ color: empty ? "#e63946" : "#ffc847" }}>
             {empty ? "TAP A FACE BELOW ↓" : `SELECTED ${selected.length} / ${q.max}`}
           </span>
-          <button onClick={submit} disabled={empty} className="font-display uppercase px-5 py-2 border transition" style={{ borderColor: empty ? "#3a2f44" : "#ffc847", color: empty ? "#5a4a3a" : "#0a0710", background: empty ? "transparent" : "#ffc847", fontSize: "12px", letterSpacing: "0.2em", cursor: empty ? "not-allowed" : "pointer" }}>
+          <button onClick={submit} disabled={empty} className="font-mono px-5 py-2 border transition" style={{ borderColor: empty ? "#3a2f44" : "#ffc847", color: empty ? "#5a4a3a" : "#0a0710", background: empty ? "transparent" : "#ffc847", fontSize: "11px", letterSpacing: "0.25em", cursor: empty ? "not-allowed" : "pointer" }}>
             ★ Lock In ★
           </button>
         </div>
@@ -1574,9 +1574,9 @@ function MultiCastRound({ q, onAnswer, index, total, photos, photosStatus }) {
                 ) : (
                   <>
                     <div
-                      className="font-display"
+                      className="font-digital"
                       style={{
-                        fontSize: "2rem",
+                        fontSize: "1.8rem",
                         color: isSel ? "#f4f1de" : `hsl(${hue}, 60%, 75%)`,
                         letterSpacing: "0.05em",
                         textShadow: "0 2px 12px rgba(0, 0, 0, 0.4)",
@@ -1647,15 +1647,18 @@ function Results({ picks, onReset }) {
     document.body.removeChild(link);
   };
 
+  const [saveError, setSaveError] = useState(null);
   const handleSaveStory = async () => {
     if (!storyCardRef.current || savingStory) return;
     setSavingStory(true);
+    setSaveError(null);
     try {
       const dataUrl = await toPng(storyCardRef.current, {
         pixelRatio: 1,
         cacheBust: true,
         width: STORY_WIDTH,
         height: STORY_HEIGHT,
+        skipFonts: true,
       });
       const filename = `snl-oracle-s${winner.season}.png`;
 
@@ -1673,7 +1676,8 @@ function Results({ picks, onReset }) {
       }
       downloadDataUrl(dataUrl, filename);
     } catch (e) {
-      // Swallow — button will reset and user can try again.
+      console.error("Story image capture failed:", e);
+      setSaveError(e?.message || "Couldn't render image — try again.");
     }
     setSavingStory(false);
   };
@@ -1717,7 +1721,7 @@ function Results({ picks, onReset }) {
         <div className="font-digital reveal" style={{ fontSize: "clamp(6.5rem, 22vw, 13rem)", color: "#f4f1de", letterSpacing: "-0.02em", lineHeight: 0.95 }}>
           S{winner.season}
         </div>
-        <div className="font-marquee mt-5" style={{ color: "#c9b8a0", fontSize: "clamp(1.3rem, 4vw, 1.9rem)", letterSpacing: "0.02em" }}>
+        <div className="font-digital mt-5" style={{ color: "#c9b8a0", fontSize: "clamp(1.3rem, 4vw, 1.9rem)", letterSpacing: "0.05em" }}>
           {winnerMeta.year}–{String(winnerMeta.end).slice(2)}
         </div>
         <div className="mt-12 pt-7" style={{ borderTop: "1px solid #2a2030" }}>
@@ -1906,6 +1910,11 @@ function Results({ picks, onReset }) {
             );
           })}
         </div>
+        {saveError && (
+          <div className="font-mono mt-3" style={{ color: "#e63946", fontSize: "10px", letterSpacing: "0.2em" }}>
+            ✕ {saveError}
+          </div>
+        )}
       </div>
 
       <StoryCard winner={winner} archetype={archetype} forwardRef={storyCardRef} />
@@ -1982,42 +1991,42 @@ function StoryCard({ winner, archetype, forwardRef }) {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "space-between",
-        fontFamily: "'Archivo Black', 'Helvetica Neue', Arial, sans-serif",
+        fontFamily: "'Arial Black', 'Helvetica Neue', Impact, sans-serif",
         boxSizing: "border-box",
         overflow: "hidden",
       }}
     >
       <div style={{ textAlign: "center" }}>
-        <div style={{ fontFamily: "'Archivo Black', 'Helvetica Neue', sans-serif", color: "#c9b8a0", letterSpacing: "0.5em", fontSize: "32px", textTransform: "uppercase" }}>
+        <div style={{ fontFamily: "'Arial Black', 'Helvetica Neue', Impact, sans-serif", color: "#c9b8a0", letterSpacing: "0.5em", fontSize: "32px", textTransform: "uppercase" }}>
           A Digital Short
         </div>
       </div>
 
       <div style={{ textAlign: "center" }}>
-        <div style={{ fontFamily: "'Archivo Black', 'Helvetica Neue', sans-serif", fontSize: "560px", color: "#f4f1de", lineHeight: 0.95, letterSpacing: "-0.03em" }}>
+        <div style={{ fontFamily: "'Arial Black', 'Helvetica Neue', Impact, sans-serif", fontSize: "560px", color: "#f4f1de", lineHeight: 0.95, letterSpacing: "-0.03em" }}>
           S{winner.season}
         </div>
-        <div style={{ fontFamily: "'Archivo Black', 'Helvetica Neue', sans-serif", textTransform: "uppercase", fontSize: "80px", marginTop: "28px", color: "#c9b8a0", letterSpacing: "0.08em" }}>
+        <div style={{ fontFamily: "'Arial Black', 'Helvetica Neue', Impact, sans-serif", textTransform: "uppercase", fontSize: "80px", marginTop: "28px", color: "#c9b8a0", letterSpacing: "0.08em" }}>
           {meta.year}–{String(meta.end).slice(2)}
         </div>
       </div>
 
       {hotTake && (
-        <div style={{ fontFamily: "'Newsreader', Georgia, serif", fontStyle: "italic", textAlign: "center", fontSize: "40px", lineHeight: 1.4, color: "#c9b8a0", padding: "0 40px" }}>
+        <div style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontStyle: "italic", textAlign: "center", fontSize: "40px", lineHeight: 1.4, color: "#c9b8a0", padding: "0 40px" }}>
           "{hotTake}"
         </div>
       )}
 
       <div style={{ textAlign: "center", paddingTop: "40px", borderTop: "2px solid #2a2030", width: "100%", boxSizing: "border-box" }}>
-        <div style={{ fontFamily: "'DM Mono', monospace", color: "#6a5a4a", letterSpacing: "0.4em", fontSize: "22px", marginBottom: "16px", textTransform: "uppercase" }}>You Are</div>
-        <div style={{ fontFamily: "'Archivo Black', 'Helvetica Neue', sans-serif", textTransform: "uppercase", fontSize: "60px", color: "#f4f1de", lineHeight: 1.1, letterSpacing: "0.04em" }}>
+        <div style={{ fontFamily: "'Courier New', Consolas, monospace", color: "#6a5a4a", letterSpacing: "0.4em", fontSize: "22px", marginBottom: "16px", textTransform: "uppercase" }}>You Are</div>
+        <div style={{ fontFamily: "'Arial Black', 'Helvetica Neue', Impact, sans-serif", textTransform: "uppercase", fontSize: "60px", color: "#f4f1de", lineHeight: 1.1, letterSpacing: "0.04em" }}>
           {archetype.name}
         </div>
       </div>
 
       <div style={{ textAlign: "center" }}>
-        <div style={{ fontFamily: "'DM Mono', monospace", color: "#6a5a4a", letterSpacing: "0.4em", fontSize: "22px", textTransform: "uppercase" }}>Find Yours</div>
-        <div style={{ fontFamily: "'Archivo Black', 'Helvetica Neue', sans-serif", color: "#ffc847", letterSpacing: "0.18em", fontSize: "30px", marginTop: "12px", textTransform: "lowercase" }}>{host || "the snl oracle"}</div>
+        <div style={{ fontFamily: "'Courier New', Consolas, monospace", color: "#6a5a4a", letterSpacing: "0.4em", fontSize: "22px", textTransform: "uppercase" }}>Find Yours</div>
+        <div style={{ fontFamily: "'Arial Black', 'Helvetica Neue', Impact, sans-serif", color: "#ffc847", letterSpacing: "0.18em", fontSize: "30px", marginTop: "12px", textTransform: "lowercase" }}>{host || "the snl oracle"}</div>
       </div>
     </div>
   );
@@ -2257,9 +2266,8 @@ function Footer() {
 function Style() {
   return (
     <style>{`
-      @import url('https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=Limelight&family=DM+Mono:wght@300;400;500&family=Newsreader:ital,wght@0,400;0,600;1,400&display=swap');
-      .font-display { font-family: 'Anton', 'Impact', sans-serif; letter-spacing: 0.02em; }
-      .font-digital { font-family: 'Archivo Black', 'Helvetica Neue', Arial, sans-serif; letter-spacing: 0.01em; }
+      @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Limelight&family=DM+Mono:wght@300;400;500&family=Newsreader:ital,wght@0,400;0,600;1,400&display=swap');
+      .font-digital { font-family: 'Archivo Black', 'Arial Black', 'Helvetica Neue', sans-serif; letter-spacing: 0.01em; }
       .font-marquee { font-family: 'Limelight', 'Georgia', serif; }
       .font-mono { font-family: 'DM Mono', 'Courier New', monospace; }
       .font-body { font-family: 'Newsreader', 'Georgia', serif; }
