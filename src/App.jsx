@@ -327,7 +327,7 @@ const ASPECTS = {
       title: "COLD OPEN ENERGY",
       prompt: "What lights you up about a cold open?",
       options: [
-        { label: "Pure presidential impression", sub: "Carvey-Bush. Ferrell-Bush. McKinnon-Hillary. JAJ-Trump.", weight: { 14: 2, 15: 3, 22: 2, 24: 2, 25: 2, 26: 3, 27: 3, 40: 2, 41: 2, 42: 3, 47: 2, 48: 2, 49: 3, 50: 2 } },
+        { label: "Pure presidential impression", sub: "Hartman-Reagan. Carvey-Bush. Ferrell-Bush. JAJ-Trump.", weight: { 12: 1, 13: 1, 14: 2, 15: 3, 22: 2, 24: 2, 25: 2, 26: 3, 27: 3, 40: 2, 41: 2, 42: 3, 47: 2, 48: 2, 49: 3, 50: 2 } },
         { label: "Dramatic event response", sub: "Mayor Giuliani after 9/11. McKinnon's Hallelujah. Maya as Kamala.", weight: { 27: 4, 42: 4, 46: 3 } },
         { label: "Political satire takedown", sub: "Palin sketches. Trump-Tower entry. Baldwin-as-Trump.", weight: { 34: 4, 41: 3, 42: 4, 43: 3, 44: 2, 45: 2, 46: 3 } },
         { label: "Absurd or off-political premise", sub: "When SNL opens with something weird instead.", weight: { 36: 2, 37: 2, 43: 1, 44: 1, 47: 2, 48: 2, 49: 1, 50: 1 } },
@@ -337,7 +337,7 @@ const ASPECTS = {
   "update": {
     label: "Weekend Update",
     sub: "The desk, the jokes, the correspondents",
-    weight: { 1: 2, 11: 2, 12: 2, 13: 2, 14: 2, 15: 2, 20: 1, 21: 3, 22: 3, 23: 3, 24: 2, 25: 2, 26: 3, 27: 3, 28: 2, 29: 3, 30: 3, 31: 3, 32: 4, 33: 4, 34: 2, 35: 2, 36: 2, 37: 3, 38: 1, 39: 2, 40: 1, 41: 1, 42: 1, 43: 1, 44: 1, 45: 1, 46: 2, 47: 1, 48: 1, 49: 1, 50: 1, 51: 1 },
+    weight: { 1: 3, 2: 2, 3: 1, 4: 1, 5: 2, 11: 2, 12: 2, 13: 2, 14: 2, 15: 2, 20: 1, 21: 3, 22: 3, 23: 3, 24: 2, 25: 2, 26: 3, 27: 3, 28: 2, 29: 3, 30: 3, 31: 3, 32: 4, 33: 4, 34: 2, 35: 2, 36: 2, 37: 3, 38: 1, 39: 2, 40: 1, 41: 1, 42: 1, 43: 1, 44: 1, 45: 1, 46: 2, 47: 1, 48: 1, 49: 1, 50: 1, 51: 1 },
     subQuestion: {
       id: "update-style",
       title: "UPDATE STYLE",
@@ -354,13 +354,13 @@ const ASPECTS = {
   "recurring": {
     label: "Recurring characters",
     sub: "Catchphrases, taglines, the bit you've quoted for 20 years",
-    weight: { 7: 2, 8: 2, 13: 2, 14: 3, 15: 2, 17: 2, 18: 3, 22: 3, 23: 3, 24: 3, 25: 2, 29: 2, 32: 2, 36: 2, 37: 3, 38: 2, 39: 2, 42: 2, 43: 2, 47: 1 },
+    weight: { 5: 1, 6: 1, 7: 3, 8: 3, 9: 2, 10: 3, 12: 3, 13: 3, 14: 3, 15: 2, 17: 2, 18: 3, 22: 3, 23: 3, 24: 3, 25: 2, 29: 2, 32: 2, 36: 2, 37: 3, 38: 2, 39: 2, 42: 2, 43: 2, 47: 1 },
     subQuestion: {
       id: "recurring-type",
       title: "RECURRING TYPE",
       prompt: "Which recurring type owns you?",
       options: [
-        { label: "Big personalities with catchphrases", sub: "Church Lady. Mary Katherine Gallagher. Stefon. Goat Boy.", weight: { 13: 3, 14: 2, 17: 1, 22: 3, 23: 3, 24: 3, 25: 2, 36: 2, 37: 3 } },
+        { label: "Big personalities with catchphrases", sub: "Mr. Robinson. Church Lady. Mary Katherine Gallagher. Stefon.", weight: { 7: 3, 8: 3, 9: 2, 10: 2, 12: 3, 13: 3, 14: 2, 17: 1, 22: 3, 23: 3, 24: 3, 25: 2, 36: 2, 37: 3 } },
         { label: "Loser archetypes", sub: "Matt Foley. Hans & Franz. Roxbury Guys. Drunk Uncle.", weight: { 14: 2, 15: 2, 17: 3, 18: 4, 22: 3, 23: 3, 38: 2, 39: 2 } },
         { label: "Suburban absurdity", sub: "Wayne's World. Spartan Cheerleaders. The Californians.", weight: { 14: 3, 15: 3, 16: 3, 17: 3, 20: 1, 21: 2, 22: 3, 23: 2, 37: 3, 38: 2 } },
         { label: "Surreal weirdos", sub: "Mango. Gilly. David S. Pumpkins. The Whisperer.", weight: { 22: 2, 23: 2, 35: 2, 36: 3, 37: 3, 42: 3, 43: 2 } },
@@ -388,7 +388,7 @@ const ASPECTS = {
   "pretape": {
     label: "Pre-tapes & digital shorts",
     sub: "The polished pieces that go viral on Sunday",
-    weight: { 2: 1, 3: 1, 31: 4, 32: 4, 33: 3, 34: 3, 35: 3, 36: 2, 37: 2, 38: 1, 39: 2, 40: 2, 42: 2, 43: 3, 44: 2, 45: 2, 46: 3, 47: 4, 48: 2, 49: 3, 50: 2, 51: 2 },
+    weight: { 2: 1, 3: 1, 9: 1, 10: 2, 22: 2, 23: 3, 24: 3, 25: 3, 26: 2, 27: 2, 28: 2, 29: 2, 30: 2, 31: 4, 32: 4, 33: 3, 34: 3, 35: 3, 36: 2, 37: 2, 38: 1, 39: 2, 40: 2, 42: 2, 43: 3, 44: 2, 45: 2, 46: 3, 47: 4, 48: 2, 49: 3, 50: 2, 51: 2 },
     subQuestion: {
       id: "pretape-type",
       title: "PRE-TAPE TYPE",
@@ -439,7 +439,7 @@ const ASPECTS = {
   "impressions": {
     label: "Political impressions",
     sub: "Bush. Clinton. Palin. Trump. The defining ones.",
-    weight: { 14: 2, 15: 3, 18: 3, 19: 3, 22: 2, 23: 2, 24: 2, 25: 2, 26: 3, 27: 3, 34: 4, 40: 2, 41: 3, 42: 4, 43: 3, 44: 2, 45: 1, 46: 2, 47: 2, 48: 2, 49: 2, 50: 2 },
+    weight: { 12: 2, 13: 2, 14: 2, 15: 3, 18: 3, 19: 3, 22: 2, 23: 2, 24: 2, 25: 2, 26: 3, 27: 3, 34: 4, 40: 2, 41: 3, 42: 4, 43: 3, 44: 2, 45: 1, 46: 2, 47: 2, 48: 2, 49: 2, 50: 2 },
     subQuestion: {
       id: "impression-era",
       title: "IMPRESSION ERA",
@@ -457,7 +457,7 @@ const ASPECTS = {
   "topical": {
     label: "Politics of the week",
     sub: "Election years. Cold-open responses. Comedy as commentary.",
-    weight: { 14: 2, 15: 3, 18: 3, 19: 3, 22: 2, 23: 2, 24: 2, 25: 1, 26: 3, 27: 4, 30: 2, 34: 4, 40: 2, 41: 3, 42: 4, 43: 3, 44: 2, 45: 2, 46: 3, 49: 3, 50: 3 },
+    weight: { 12: 2, 13: 2, 14: 2, 15: 3, 18: 3, 19: 3, 22: 2, 23: 2, 24: 2, 25: 1, 26: 3, 27: 4, 30: 2, 34: 4, 40: 2, 41: 3, 42: 4, 43: 3, 44: 2, 45: 2, 46: 3, 49: 3, 50: 3 },
     subQuestion: {
       id: "topical-style",
       title: "POLITICAL FLAVOR",
@@ -522,6 +522,11 @@ const MOMENT_OPTIONS = [
   { label: "Land Shark", weight: { 1: 3, 2: 3 } },
   { label: "Two Wild and Crazy Guys", weight: { 3: 3, 4: 3 } },
   { label: "Mr. Robinson's Neighborhood", weight: { 7: 3, 8: 3, 9: 2 } },
+  { label: "Buckwheat", weight: { 7: 3, 8: 2, 9: 2, 10: 3 } },
+  { label: "Nick the Lounge Singer", weight: { 4: 1, 5: 3 } },
+  { label: "Synchronized Swimming (Guest / Short)", weight: { 10: 4 } },
+  { label: "Ed Grimley", weight: { 10: 3 } },
+  { label: "Master Thespian (Acting!)", weight: { 12: 3, 13: 2 } },
   { label: "White Like Me", weight: { 10: 4 } },
   { label: "Church Lady", weight: { 12: 2, 13: 3, 14: 3, 15: 2 } },
   { label: "Hans and Franz", weight: { 13: 2, 14: 3, 15: 3, 17: 2 } },
