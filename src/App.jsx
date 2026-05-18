@@ -1,7 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
 
-const KOFI_URL = "https://ko-fi.com/snloracle";
-
 const STORY_WIDTH = 1080;
 const STORY_HEIGHT = 1920;
 
@@ -1720,6 +1718,44 @@ function Results({ picks, onReset }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [winner.season, primaryAspectId]);
 
+  // Conditional Ko-fi floating tip button — only on the result page,
+  // styled to match the site (gold + near-black instead of white).
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const SCRIPT_ID = "kofi-overlay-script";
+    const initOverlay = () => {
+      if (window.kofiWidgetOverlay && typeof window.kofiWidgetOverlay.draw === "function") {
+        try {
+          window.kofiWidgetOverlay.draw("snloracle", {
+            type: "floating-chat",
+            "floating-chat.donateButton.text": "Tip on Ko-fi",
+            "floating-chat.donateButton.background-color": "#ffc847",
+            "floating-chat.donateButton.text-color": "#0a0710",
+          });
+        } catch (e) { /* widget already drawn */ }
+      }
+    };
+    let script = document.getElementById(SCRIPT_ID);
+    if (script) {
+      initOverlay();
+    } else {
+      script = document.createElement("script");
+      script.id = SCRIPT_ID;
+      script.src = "https://storage.ko-fi.com/cdn/scripts/overlay-widget.js";
+      script.async = true;
+      script.onload = initOverlay;
+      document.body.appendChild(script);
+    }
+    return () => {
+      // Ko-fi injects elements with IDs starting with "kofi-" plus an
+      // overlay <div>; remove them so the floating button vanishes
+      // when leaving the result page.
+      document.querySelectorAll(
+        '[id^="kofi-widget-overlay"], [id^="kofi-button"], [id^="floating-chat"], #kofi-widget-overlay'
+      ).forEach((el) => el.remove());
+    };
+  }, []);
+
   return (
     <div>
       <div className="mb-10 text-center" style={{ background: "#000", padding: "80px 24px 60px", border: "1px solid #1a1424" }}>
@@ -1922,31 +1958,6 @@ function Results({ picks, onReset }) {
             ✕ {saveError}
           </div>
         )}
-      </div>
-
-      <div className="my-10 text-center">
-        <p className="font-body italic mb-3" style={{ color: "#8a7a6a", fontSize: "0.95rem" }}>
-          "Ladies and gentlemen, the tip jar."
-        </p>
-        <a
-          href={KOFI_URL}
-          target="_blank"
-          rel="noreferrer"
-          className="inline-block font-mono transition"
-          style={{
-            color: "#ffc847",
-            border: "1px solid #ffc847",
-            padding: "10px 22px",
-            fontSize: "11px",
-            letterSpacing: "0.25em",
-            textDecoration: "none",
-            background: "transparent",
-          }}
-          onMouseEnter={(e) => { e.currentTarget.style.background = "#ffc847"; e.currentTarget.style.color = "#0a0710"; }}
-          onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#ffc847"; }}
-        >
-          Tip on Ko-fi →
-        </a>
       </div>
 
       <div className="flex justify-center mb-6">
