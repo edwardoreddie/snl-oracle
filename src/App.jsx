@@ -1312,15 +1312,15 @@ function Round({ q, onAnswer, index, total, photos, photosStatus }) {
 function RoundHeader({ q, index, total }) {
   return (
     <>
-      <div className="font-digital uppercase text-center mb-1" style={{ color: "#8a7a6a", fontSize: "11px", letterSpacing: "0.45em" }}>
-        A DIGITAL SHORT
+      <div className="font-mono text-center mb-2" style={{ color: "#6a5a4a", fontSize: "10px", letterSpacing: "0.4em" }}>
+        A Digital Short
       </div>
-      <div className="flex items-center justify-between mb-5 font-mono" style={{ color: "#a89684", fontSize: "10px", letterSpacing: "0.3em" }}>
+      <div className="flex items-center justify-between mb-6 font-mono" style={{ color: "#a89684", fontSize: "10px", letterSpacing: "0.3em" }}>
         <span>{q.title}</span>
         <span>{String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}</span>
       </div>
-      <h2 className="font-digital uppercase mb-2" style={{ color: "#f4f1de", fontSize: "clamp(1.75rem, 5vw, 2.5rem)", lineHeight: 1.05 }}>{q.prompt}</h2>
-      {q.sub && <p className="font-body italic mb-7" style={{ color: "#c9b8a0", fontSize: "1rem", lineHeight: 1.4 }}>{q.sub}</p>}
+      <h2 className="font-body mb-3" style={{ color: "#f4f1de", fontSize: "clamp(1.6rem, 4.5vw, 2.3rem)", lineHeight: 1.2, fontWeight: 600 }}>{q.prompt}</h2>
+      {q.sub && <p className="font-body italic mb-8" style={{ color: "#c9b8a0", fontSize: "1.02rem", lineHeight: 1.55 }}>{q.sub}</p>}
     </>
   );
 }
@@ -1379,10 +1379,10 @@ function AspectsRound({ q, onAnswer, index, total }) {
                   {order}
                 </div>
               )}
-              <div className="font-display uppercase" style={{ color: "#f4f1de", fontSize: "1.15rem", lineHeight: 1.15 }}>
+              <div className="font-body" style={{ color: "#f4f1de", fontSize: "1.15rem", lineHeight: 1.25, fontWeight: 600 }}>
                 {a.label}
               </div>
-              <div className="font-body italic mt-1" style={{ color: "#8a7a6a", fontSize: "0.9rem" }}>
+              <div className="font-body italic mt-1" style={{ color: "#8a7a6a", fontSize: "0.92rem", lineHeight: 1.45 }}>
                 {a.sub}
               </div>
             </button>
@@ -1417,8 +1417,8 @@ function BinaryRound({ q, onAnswer, index, total }) {
             <div className="font-mono mb-1" style={{ color: "#ffc847", fontSize: "10px", letterSpacing: "0.3em" }}>
               {i === 0 ? "↞ THIS" : "THAT ↠"}
             </div>
-            <div className="font-display uppercase" style={{ color: "#f4f1de", fontSize: "1.5rem" }}>{opt.label}</div>
-            <div className="font-body italic mt-1" style={{ color: "#8a7a6a", fontSize: "0.95rem" }}>{opt.sub}</div>
+            <div className="font-body" style={{ color: "#f4f1de", fontSize: "1.3rem", fontWeight: 600, lineHeight: 1.25 }}>{opt.label}</div>
+            <div className="font-body italic mt-1" style={{ color: "#8a7a6a", fontSize: "0.95rem", lineHeight: 1.45 }}>{opt.sub}</div>
           </button>
         ))}
       </div>
@@ -1446,8 +1446,8 @@ function SingleRound({ q, onAnswer, index, total }) {
             onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#ffc847"; e.currentTarget.style.background = "rgba(230, 57, 70, 0.08)"; }}
             onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#3a2f44"; e.currentTarget.style.background = "rgba(255,255,255,0.02)"; }}
           >
-            <div className="font-display uppercase" style={{ color: "#f4f1de", fontSize: "1.05rem", lineHeight: 1.15 }}>{opt.label}</div>
-            {opt.sub && <div className="font-mono mt-1" style={{ color: "#8a7a6a", fontSize: "11px" }}>{opt.sub}</div>}
+            <div className="font-body" style={{ color: "#f4f1de", fontSize: "1.05rem", lineHeight: 1.3, fontWeight: 600 }}>{opt.label}</div>
+            {opt.sub && <div className="font-body italic mt-1" style={{ color: "#8a7a6a", fontSize: "0.92rem", lineHeight: 1.45 }}>{opt.sub}</div>}
           </button>
         ))}
       </div>
@@ -1591,7 +1591,7 @@ function MultiCastRound({ q, onAnswer, index, total, photos, photosStatus }) {
                   </>
                 )}
               </div>
-              <div className="font-display uppercase mt-2" style={{ fontSize: "10px", color: isSel ? "#e63946" : "#f4f1de", letterSpacing: "0.04em", lineHeight: 1.15 }}>
+              <div className="font-body mt-2 text-center" style={{ fontSize: "11px", color: isSel ? "#e63946" : "#f4f1de", lineHeight: 1.25, fontWeight: 500 }}>
                 {name}
               </div>
             </button>
@@ -1705,24 +1705,24 @@ function Results({ picks, onReset }) {
 
   return (
     <div>
-      <div className="mb-8 text-center" style={{ background: "#000", padding: "72px 24px", border: "1px solid #1a1424" }}>
-        <div className="font-digital uppercase mb-10" style={{ color: "#c9b8a0", fontSize: "13px", letterSpacing: "0.5em" }}>
-          A DIGITAL SHORT
+      <div className="mb-10 text-center" style={{ background: "#000", padding: "80px 24px 60px", border: "1px solid #1a1424" }}>
+        <div className="font-mono mb-12" style={{ color: "#8a7a6a", fontSize: "11px", letterSpacing: "0.45em" }}>
+          A Digital Short
         </div>
         <div className="font-digital reveal" style={{ fontSize: "clamp(6.5rem, 22vw, 13rem)", color: "#f4f1de", letterSpacing: "-0.02em", lineHeight: 0.95 }}>
           S{winner.season}
         </div>
-        <div className="font-digital uppercase mt-4" style={{ color: "#c9b8a0", fontSize: "clamp(1.2rem, 4vw, 1.8rem)", letterSpacing: "0.08em" }}>
+        <div className="font-marquee mt-5" style={{ color: "#c9b8a0", fontSize: "clamp(1.3rem, 4vw, 1.9rem)", letterSpacing: "0.02em" }}>
           {winnerMeta.year}–{String(winnerMeta.end).slice(2)}
         </div>
-        <div className="mt-10 pt-6" style={{ borderTop: "1px solid #2a2030" }}>
-          <div className="font-mono uppercase mb-2" style={{ color: "#6a5a4a", fontSize: "10px", letterSpacing: "0.4em" }}>YOU ARE</div>
-          <div className="font-digital uppercase" style={{ color: "#f4f1de", fontSize: "clamp(1.2rem, 4vw, 1.6rem)", letterSpacing: "0.05em" }}>
+        <div className="mt-12 pt-7" style={{ borderTop: "1px solid #2a2030" }}>
+          <div className="font-mono mb-3" style={{ color: "#6a5a4a", fontSize: "10px", letterSpacing: "0.4em" }}>You are</div>
+          <div className="font-body" style={{ color: "#f4f1de", fontSize: "clamp(1.4rem, 4.5vw, 1.9rem)", lineHeight: 1.2, fontWeight: 600 }}>
             {archetype.name}
           </div>
         </div>
-        <div className="font-mono mt-8" style={{ color: confidenceColor, fontSize: "10px", letterSpacing: "0.4em" }}>
-          {winnerPct}% MATCH · {confidence}
+        <div className="font-mono mt-8" style={{ color: confidenceColor, fontSize: "10px", letterSpacing: "0.35em" }}>
+          {winnerPct}% match · {confidence.toLowerCase()}
         </div>
       </div>
 
@@ -1736,13 +1736,13 @@ function Results({ picks, onReset }) {
           </div>
         </div>
       ) : (
-        <div className="mb-8 rise" style={{ animationDelay: "0.5s", padding: "24px", border: "2px solid #3a2f44", background: "#0a0710" }}>
-          <div className="font-mono uppercase mb-4 text-center" style={{ color: "#ffc847", fontSize: "10px", letterSpacing: "0.3em" }}>
-            THE S{winner.season} CAST
+        <div className="mb-10 rise" style={{ animationDelay: "0.5s", padding: "28px", border: "1px solid #3a2f44", background: "#0a0710" }}>
+          <div className="font-mono mb-5 text-center" style={{ color: "#ffc847", fontSize: "10px", letterSpacing: "0.3em" }}>
+            The S{winner.season} cast
           </div>
-          <div className="flex flex-wrap justify-center" style={{ gap: "6px 14px" }}>
+          <div className="flex flex-wrap justify-center" style={{ gap: "8px 16px" }}>
             {castForSeason(winner.season).map((name) => (
-              <span key={name} className="font-display uppercase" style={{ color: "#f4f1de", fontSize: "0.95rem", letterSpacing: "0.02em" }}>
+              <span key={name} className="font-body" style={{ color: "#f4f1de", fontSize: "1rem", letterSpacing: "0.01em", fontWeight: 500 }}>
                 {name}
               </span>
             ))}
@@ -1775,13 +1775,13 @@ function Results({ picks, onReset }) {
 
       <CastSweetSpot picks={picks} winnerSeason={winner.season} />
 
-      <div className="flex flex-col sm:flex-row gap-3 mb-10 justify-center">
-        <a href={peacockLink(winner.season)} target="_blank" rel="noreferrer" className="font-display uppercase text-center px-6 py-3 border transition" style={{ borderColor: "#00a4a6", color: "#00a4a6", fontSize: "13px", letterSpacing: "0.2em", textDecoration: "none" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#00a4a6"; e.currentTarget.style.color = "#0a0710"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#00a4a6"; }}>▶ Watch S{winner.season} on Peacock</a>
-        <a href={youtubeLink(winner.season)} target="_blank" rel="noreferrer" className="font-display uppercase text-center px-6 py-3 border transition" style={{ borderColor: "#e63946", color: "#e63946", fontSize: "13px", letterSpacing: "0.2em", textDecoration: "none" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#e63946"; e.currentTarget.style.color = "#f4f1de"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#e63946"; }}>▶ Best Sketches on YouTube</a>
+      <div className="flex flex-col sm:flex-row gap-3 mb-12 justify-center">
+        <a href={peacockLink(winner.season)} target="_blank" rel="noreferrer" className="font-mono text-center px-6 py-3 border transition" style={{ borderColor: "#00a4a6", color: "#00a4a6", fontSize: "12px", letterSpacing: "0.18em", textDecoration: "none" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#00a4a6"; e.currentTarget.style.color = "#0a0710"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#00a4a6"; }}>▶ Watch S{winner.season} on Peacock</a>
+        <a href={youtubeLink(winner.season)} target="_blank" rel="noreferrer" className="font-mono text-center px-6 py-3 border transition" style={{ borderColor: "#e63946", color: "#e63946", fontSize: "12px", letterSpacing: "0.18em", textDecoration: "none" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#e63946"; e.currentTarget.style.color = "#f4f1de"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#e63946"; }}>▶ Best sketches on YouTube</a>
       </div>
 
-      <div className="mb-10">
-        <div className="font-mono mb-4" style={{ color: "#a89684", fontSize: "10px", letterSpacing: "0.3em" }}>THE PODIUM / WHAT YOU'D TRADE AWAY</div>
+      <div className="mb-12">
+        <div className="font-mono mb-4" style={{ color: "#a89684", fontSize: "10px", letterSpacing: "0.3em" }}>The podium · what you'd trade away</div>
         <div className="space-y-5">
           {top.map((t, i) => {
             const m = SEASONS[t.season];
@@ -1789,19 +1789,19 @@ function Results({ picks, onReset }) {
             const pct = Math.round((t.score / totalScore) * 100);
             return (
               <div key={t.season} className="flex items-start gap-4 pb-4 border-b" style={{ borderColor: "#3a2f44" }}>
-                <div className="font-display" style={{ color: i === 0 ? "#e63946" : "#ffc847", fontSize: "2rem", lineHeight: 1, minWidth: "36px" }}>{i + 1}</div>
+                <div className="font-digital" style={{ color: i === 0 ? "#e63946" : "#ffc847", fontSize: "2rem", lineHeight: 1, minWidth: "36px" }}>{i + 1}</div>
                 <div className="flex-1">
                   <div className="flex items-baseline gap-3 flex-wrap">
-                    <div className="font-display uppercase" style={{ color: "#f4f1de", fontSize: "1.25rem" }}>Season {t.season}</div>
+                    <div className="font-body" style={{ color: "#f4f1de", fontSize: "1.2rem", fontWeight: 600 }}>Season {t.season}</div>
                     <div className="font-mono" style={{ color: "#8a7a6a", fontSize: "11px" }}>{m.year}–{String(m.end).slice(2)}</div>
                     <div className="font-mono" style={{ color: "#ffc847", fontSize: "11px", letterSpacing: "0.15em", marginLeft: "auto" }}>{pct}%</div>
                   </div>
-                  <p className="font-body mt-1" style={{ color: "#c9b8a0", fontSize: "0.95rem", lineHeight: 1.4 }}>{m.tag}</p>
-                  {tradeoffs.length > 0 && <div className="mt-2 font-mono" style={{ color: "#e63946", fontSize: "11px" }}>✗ TRADE-OFF: no {tradeoffs.join(" • no ")}</div>}
+                  <p className="font-body mt-1" style={{ color: "#c9b8a0", fontSize: "0.95rem", lineHeight: 1.5 }}>{m.tag}</p>
+                  {tradeoffs.length > 0 && <div className="mt-2 font-mono" style={{ color: "#e63946", fontSize: "11px" }}>Trade-off: no {tradeoffs.join(" • no ")}</div>}
                   {i > 0 && (
-                    <div className="flex gap-3 mt-3">
-                      <a href={peacockLink(t.season)} target="_blank" rel="noreferrer" className="font-mono uppercase" style={{ color: "#00a4a6", fontSize: "10px", letterSpacing: "0.2em", textDecoration: "underline" }}>Peacock ▶</a>
-                      <a href={youtubeLink(t.season)} target="_blank" rel="noreferrer" className="font-mono uppercase" style={{ color: "#e63946", fontSize: "10px", letterSpacing: "0.2em", textDecoration: "underline" }}>YouTube ▶</a>
+                    <div className="flex gap-4 mt-3">
+                      <a href={peacockLink(t.season)} target="_blank" rel="noreferrer" className="font-mono" style={{ color: "#00a4a6", fontSize: "10px", letterSpacing: "0.18em", textDecoration: "underline" }}>Peacock →</a>
+                      <a href={youtubeLink(t.season)} target="_blank" rel="noreferrer" className="font-mono" style={{ color: "#e63946", fontSize: "10px", letterSpacing: "0.18em", textDecoration: "underline" }}>YouTube →</a>
                     </div>
                   )}
                 </div>
@@ -1811,8 +1811,30 @@ function Results({ picks, onReset }) {
         </div>
       </div>
 
+      {age && (
+        <div className="mb-12 p-8" style={{ border: "1px solid #3a2f44", background: "rgba(255, 200, 71, 0.04)" }}>
+          <div className="font-mono mb-4 text-center" style={{ color: "#ffc847", fontSize: "10px", letterSpacing: "0.35em" }}>
+            And one more thing
+          </div>
+          <p className="font-body text-center" style={{ color: "#c9b8a0", fontSize: "1rem", lineHeight: 1.5 }}>
+            The Oracle's guess at your age:
+          </p>
+          <div className="text-center my-5">
+            <span className="font-digital" style={{ color: "#f4f1de", fontSize: "clamp(3.5rem, 12vw, 5.5rem)", lineHeight: 1, letterSpacing: "-0.01em" }}>
+              {age.ageMin}–{age.ageMax}
+            </span>
+          </div>
+          <p className="font-body italic text-center mx-auto" style={{ color: "#c9b8a0", fontSize: "0.95rem", maxWidth: "500px", lineHeight: 1.55 }}>
+            Lorne Michaels' theory: people insist their cast is the best because that's when they were in high school. If S{winner.season} is your peak, you were in high school during {winnerMeta.year}–{winnerMeta.end}.
+          </p>
+          <p className="font-body italic text-center mx-auto mt-3" style={{ color: "#8a7a6a", fontSize: "0.9rem", maxWidth: "500px", lineHeight: 1.5 }}>
+            Or, per Bill Murray: you just like good comedy.
+          </p>
+        </div>
+      )}
+
       <div className="mb-10">
-        <div className="font-mono mb-4" style={{ color: "#a89684", fontSize: "10px", letterSpacing: "0.3em" }}>YOUR PICKS</div>
+        <div className="font-mono mb-4" style={{ color: "#a89684", fontSize: "10px", letterSpacing: "0.3em" }}>Your picks</div>
         <div className="space-y-2">
           {picks.map((p, i) => {
             let prompt = "";
@@ -1837,10 +1859,10 @@ function Results({ picks, onReset }) {
             }
 
             return (
-              <div key={i} className="flex items-baseline gap-3 font-body" style={{ color: "#c9b8a0", fontSize: "0.95rem" }}>
+              <div key={i} className="flex items-baseline gap-3 font-body" style={{ color: "#c9b8a0", fontSize: "0.92rem" }}>
                 <span className="font-mono" style={{ color: "#ffc847", fontSize: "10px" }}>0{i + 1}</span>
                 <span style={{ color: "#8a7a6a" }} className="italic">{prompt}</span>
-                <span className="font-display uppercase" style={{ color: "#f4f1de", fontSize: "0.85rem", marginLeft: "auto", textAlign: "right" }}>
+                <span style={{ color: "#f4f1de", fontSize: "0.92rem", marginLeft: "auto", textAlign: "right", fontWeight: 500 }}>
                   {displayValue}
                 </span>
               </div>
@@ -1850,16 +1872,16 @@ function Results({ picks, onReset }) {
       </div>
 
       <div className="mb-10">
-        <div className="font-mono mb-4" style={{ color: "#a89684", fontSize: "10px", letterSpacing: "0.3em" }}>SHARE YOUR RESULT</div>
+        <div className="font-mono mb-4" style={{ color: "#a89684", fontSize: "10px", letterSpacing: "0.3em" }}>Share your result</div>
         <div className="flex flex-wrap gap-2">
-          <button onClick={handleSaveStory} disabled={savingStory} className="font-display uppercase border transition" style={{ borderColor: "#e63946", color: savingStory ? "#5a4a3a" : "#e63946", padding: "10px 16px", fontSize: "12px", letterSpacing: "0.2em", background: "rgba(230, 57, 70, 0.06)", cursor: savingStory ? "not-allowed" : "pointer" }} onMouseEnter={(e) => { if (!savingStory) e.currentTarget.style.background = "rgba(230, 57, 70, 0.16)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(230, 57, 70, 0.06)"; }}>
-            {savingStory ? "Rendering…" : "↓ Save Story Image"}
+          <button onClick={handleSaveStory} disabled={savingStory} className="font-mono border transition" style={{ borderColor: "#e63946", color: savingStory ? "#5a4a3a" : "#e63946", padding: "10px 16px", fontSize: "11px", letterSpacing: "0.18em", background: "rgba(230, 57, 70, 0.06)", cursor: savingStory ? "not-allowed" : "pointer" }} onMouseEnter={(e) => { if (!savingStory) e.currentTarget.style.background = "rgba(230, 57, 70, 0.16)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(230, 57, 70, 0.06)"; }}>
+            {savingStory ? "Rendering…" : "↓ Save story image"}
           </button>
-          <a href={twitterUrl} target="_blank" rel="noreferrer" className="font-display uppercase border transition" style={{ borderColor: "#3a2f44", color: "#f4f1de", padding: "10px 16px", fontSize: "12px", letterSpacing: "0.2em", textDecoration: "none", background: "rgba(255,255,255,0.02)" }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#ffc847"; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#3a2f44"; }}>Post to X</a>
-          <a href={facebookUrl} target="_blank" rel="noreferrer" className="font-display uppercase border transition" style={{ borderColor: "#3a2f44", color: "#f4f1de", padding: "10px 16px", fontSize: "12px", letterSpacing: "0.2em", textDecoration: "none", background: "rgba(255,255,255,0.02)" }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#ffc847"; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#3a2f44"; }}>Share on Facebook</a>
-          <a href={threadsUrl} target="_blank" rel="noreferrer" className="font-display uppercase border transition" style={{ borderColor: "#3a2f44", color: "#f4f1de", padding: "10px 16px", fontSize: "12px", letterSpacing: "0.2em", textDecoration: "none", background: "rgba(255,255,255,0.02)" }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#ffc847"; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#3a2f44"; }}>Post to Threads</a>
-          <button onClick={handleCopy} className="font-display uppercase border transition" style={{ borderColor: copied ? "#ffc847" : "#3a2f44", color: copied ? "#ffc847" : "#f4f1de", padding: "10px 16px", fontSize: "12px", letterSpacing: "0.2em", background: "rgba(255,255,255,0.02)", cursor: "pointer" }} onMouseEnter={(e) => { if (!copied) e.currentTarget.style.borderColor = "#ffc847"; }} onMouseLeave={(e) => { if (!copied) e.currentTarget.style.borderColor = "#3a2f44"; }}>
-            {copied ? "✓ Copied" : "⎘ Copy Link"}
+          <a href={twitterUrl} target="_blank" rel="noreferrer" className="font-mono border transition" style={{ borderColor: "#3a2f44", color: "#f4f1de", padding: "10px 16px", fontSize: "11px", letterSpacing: "0.18em", textDecoration: "none", background: "rgba(255,255,255,0.02)" }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#ffc847"; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#3a2f44"; }}>Post to X</a>
+          <a href={facebookUrl} target="_blank" rel="noreferrer" className="font-mono border transition" style={{ borderColor: "#3a2f44", color: "#f4f1de", padding: "10px 16px", fontSize: "11px", letterSpacing: "0.18em", textDecoration: "none", background: "rgba(255,255,255,0.02)" }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#ffc847"; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#3a2f44"; }}>Share on Facebook</a>
+          <a href={threadsUrl} target="_blank" rel="noreferrer" className="font-mono border transition" style={{ borderColor: "#3a2f44", color: "#f4f1de", padding: "10px 16px", fontSize: "11px", letterSpacing: "0.18em", textDecoration: "none", background: "rgba(255,255,255,0.02)" }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#ffc847"; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#3a2f44"; }}>Post to Threads</a>
+          <button onClick={handleCopy} className="font-mono border transition" style={{ borderColor: copied ? "#ffc847" : "#3a2f44", color: copied ? "#ffc847" : "#f4f1de", padding: "10px 16px", fontSize: "11px", letterSpacing: "0.18em", background: "rgba(255,255,255,0.02)", cursor: "pointer" }} onMouseEnter={(e) => { if (!copied) e.currentTarget.style.borderColor = "#ffc847"; }} onMouseLeave={(e) => { if (!copied) e.currentTarget.style.borderColor = "#3a2f44"; }}>
+            {copied ? "✓ Copied" : "⎘ Copy link"}
           </button>
         </div>
         <div className="font-mono mt-2" style={{ color: "#6a5a4a", fontSize: "10px", letterSpacing: "0.15em" }}>
@@ -1878,27 +1900,8 @@ function Results({ picks, onReset }) {
         </a>
       </div>
 
-      <div className="mb-10 pt-6 border-t" style={{ borderColor: "#3a2f44" }}>
-        <div className="font-mono mb-4 text-center" style={{ color: "#6a5a4a", fontSize: "9px", letterSpacing: "0.3em" }}>
-          ★ POSTSCRIPT — TWO PEOPLE WHO'D KNOW ★
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
-          {QUOTES.map((q, i) => (
-            <div key={i}>
-              <p className="font-body italic" style={{ color: "#a89684", fontSize: "0.85rem", lineHeight: 1.5 }}>"{q.text}"</p>
-              <div className="font-mono uppercase mt-2" style={{ color: "#5a4a3a", fontSize: "9px", letterSpacing: "0.2em" }}>— {q.attrib}</div>
-            </div>
-          ))}
-        </div>
-        {age && (
-          <p className="font-body italic text-center" style={{ color: "#8a7a6a", fontSize: "0.85rem", maxWidth: "520px", margin: "0 auto", lineHeight: 1.5 }}>
-            Per Lorne's theory, if S{winner.season} is your peak you were in high school during {winnerMeta.year}–{winnerMeta.end} — putting you around {age.ageMin}–{age.ageMax} today. Or, per Bill, you just like good comedy.
-          </p>
-        )}
-      </div>
-
-      <div className="flex justify-center">
-        <button onClick={onReset} className="font-display uppercase px-8 py-3 border transition" style={{ borderColor: "#ffc847", color: "#ffc847", fontSize: "12px", letterSpacing: "0.3em", background: "transparent", cursor: "pointer" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#ffc847"; e.currentTarget.style.color = "#0a0710"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#ffc847"; }}>
+      <div className="flex justify-center mb-6">
+        <button onClick={onReset} className="font-mono px-8 py-3 border transition" style={{ borderColor: "#ffc847", color: "#ffc847", fontSize: "11px", letterSpacing: "0.3em", background: "transparent", cursor: "pointer" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#ffc847"; e.currentTarget.style.color = "#0a0710"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#ffc847"; }}>
           ★ Run It Back ★
         </button>
       </div>
@@ -2070,27 +2073,30 @@ function WatchNext({ season, picks }) {
       href={sketchYouTubeUrl(sketch)}
       target="_blank"
       rel="noreferrer"
-      className="block group transition"
-      style={{ textDecoration: "none", padding: "14px 16px", borderLeft: `3px solid ${accent}` }}
+      className="block transition"
+      style={{ textDecoration: "none", padding: "16px 18px", borderLeft: `3px solid ${accent}` }}
       onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.04)"; }}
       onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
     >
-      <div className="font-mono uppercase mb-1" style={{ color: accent, fontSize: "10px", letterSpacing: "0.3em" }}>
+      <div className="font-mono mb-2" style={{ color: accent, fontSize: "10px", letterSpacing: "0.3em" }}>
         {label}
       </div>
-      <div className="font-display uppercase" style={{ color: "#f4f1de", fontSize: "1.2rem", lineHeight: 1.2 }}>
-        {sketch.title} ▶
+      <div className="font-body" style={{ color: "#f4f1de", fontSize: "1.2rem", lineHeight: 1.3, fontWeight: 600 }}>
+        {sketch.title} →
       </div>
     </a>
   );
   return (
     <div className="mb-10 border" style={{ borderColor: "#00a4a6", background: "rgba(0, 164, 166, 0.04)" }}>
-      <div className="font-mono px-5 pt-5 pb-2" style={{ color: "#00a4a6", fontSize: "10px", letterSpacing: "0.3em" }}>
-        ★ WATCH THIS NEXT ★
+      <div className="font-mono px-5 pt-5 pb-1" style={{ color: "#00a4a6", fontSize: "10px", letterSpacing: "0.3em" }}>
+        Watch this next
       </div>
+      <p className="font-body italic px-5 pb-3" style={{ color: "#c9b8a0", fontSize: "0.92rem" }}>
+        One classic and one deep cut from your season.
+      </p>
       <div className="px-3 pb-3">
-        {popular && row("THE CLASSIC", popular, "#ffc847")}
-        {deep_cut && row("THE DEEP CUT", deep_cut, "#e63946")}
+        {popular && row("The Classic", popular, "#ffc847")}
+        {deep_cut && row("The Deep Cut", deep_cut, "#e63946")}
       </div>
     </div>
   );
@@ -2126,7 +2132,7 @@ function CastSweetSpot({ picks, winnerSeason }) {
   return (
     <div className="mb-10 px-2">
       <div className="font-mono mb-3" style={{ color: "#a89684", fontSize: "10px", letterSpacing: "0.3em" }}>
-        YOUR CAST OVERLAP
+        Your cast overlap
       </div>
       <p className="font-body mb-4" style={{ color: "#c9b8a0", fontSize: "0.95rem", lineHeight: 1.5 }}>
         {isAllOverlap
@@ -2142,12 +2148,12 @@ function CastSweetSpot({ picks, winnerSeason }) {
               href={peacockLink(x.season)}
               target="_blank"
               rel="noreferrer"
-              className="font-display uppercase border transition"
+              className="font-mono border transition"
               style={{
                 borderColor: isWinner ? "#e63946" : "#3a2f44",
                 color: isWinner ? "#e63946" : "#f4f1de",
                 padding: "8px 14px",
-                fontSize: "0.95rem",
+                fontSize: "0.9rem",
                 letterSpacing: "0.05em",
                 textDecoration: "none",
                 background: isWinner ? "rgba(230, 57, 70, 0.12)" : "rgba(255,255,255,0.02)",
@@ -2156,7 +2162,7 @@ function CastSweetSpot({ picks, winnerSeason }) {
               onMouseLeave={(e) => { e.currentTarget.style.borderColor = isWinner ? "#e63946" : "#3a2f44"; }}
               title={x.names.join(" + ")}
             >
-              S{x.season} ▶
+              S{x.season} →
             </a>
           );
         })}
@@ -2171,11 +2177,11 @@ function MoreLikeYourTaste({ winner, picks }) {
   return (
     <div className="mb-10 border" style={{ borderColor: "#e63946", background: "rgba(230, 57, 70, 0.04)" }}>
       <div className="font-mono px-5 pt-5 pb-1" style={{ color: "#e63946", fontSize: "10px", letterSpacing: "0.3em" }}>
-        ★ ALSO IN YOUR LANE ★
+        Also in your lane
       </div>
-      <div className="font-body italic px-5 pb-3" style={{ color: "#c9b8a0", fontSize: "0.92rem" }}>
+      <p className="font-body italic px-5 pb-3" style={{ color: "#c9b8a0", fontSize: "0.92rem" }}>
         Sketches from other seasons that share your taste DNA.
-      </div>
+      </p>
       <div className="px-3 pb-3">
         {sketches.map((s) => (
           <a
@@ -2184,13 +2190,13 @@ function MoreLikeYourTaste({ winner, picks }) {
             target="_blank"
             rel="noreferrer"
             className="block transition"
-            style={{ textDecoration: "none", padding: "12px 16px", borderLeft: `3px solid ${s.tier === "iconic" ? "#ffc847" : "#c9b8a0"}` }}
+            style={{ textDecoration: "none", padding: "14px 16px", borderLeft: `3px solid ${s.tier === "iconic" ? "#ffc847" : "#c9b8a0"}` }}
             onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.04)"; }}
             onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
           >
             <div className="flex items-baseline justify-between gap-3 flex-wrap">
-              <div className="font-display uppercase" style={{ color: "#f4f1de", fontSize: "1.1rem", lineHeight: 1.2 }}>
-                {s.title} ▶
+              <div className="font-body" style={{ color: "#f4f1de", fontSize: "1.1rem", lineHeight: 1.3, fontWeight: 600 }}>
+                {s.title} →
               </div>
               <div className="font-mono" style={{ color: "#8a7a6a", fontSize: "10px", letterSpacing: "0.2em" }}>
                 S{s.season}
