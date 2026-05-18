@@ -1182,6 +1182,14 @@ function nameHue(name) {
 export default function App() {
   const [round, setRound] = useState(0);
   const [picks, setPicks] = useState([]);
+  const [friendResult, setFriendResult] = useState(() => {
+    if (typeof window === "undefined") return null;
+    const params = new URLSearchParams(window.location.search);
+    const s = parseInt(params.get("s") || "", 10);
+    const a = params.get("a");
+    if (!s || !SEASONS[s]) return null;
+    return { season: s, archetypeId: a && ARCHETYPES[a] ? a : null };
+  });
 
   // Scroll back to top whenever we change rounds — UX polish for long question screens
   useEffect(() => {
@@ -1193,9 +1201,21 @@ export default function App() {
     setRound(round + 1);
   };
 
+  const clearShareParams = () => {
+    if (typeof window !== "undefined") {
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  };
+
   const reset = () => {
     setRound(0);
     setPicks([]);
+    clearShareParams();
+  };
+
+  const startFromFriend = () => {
+    setFriendResult(null);
+    clearShareParams();
   };
 
   // Determine the current question based on round number and prior picks
@@ -1247,7 +1267,9 @@ export default function App() {
         <BulbStrip />
         <div className="relative max-w-3xl mx-auto px-5 sm:px-6 pt-14 pb-20" style={{ zIndex: 20 }}>
           <Header />
-          {!isDone && currentQ ? (
+          {friendResult && picks.length === 0 ? (
+            <FriendResult result={friendResult} onStart={startFromFriend} />
+          ) : !isDone && currentQ ? (
             <Round q={currentQ} onAnswer={advance} index={round} total={TOTAL_ROUNDS} photos={photos} photosStatus={photosStatus} />
           ) : (
             <Results picks={picks} onReset={reset} />
@@ -1607,18 +1629,29 @@ function Results({ picks, onReset }) {
   const confidenceColor = gap > 0.35 ? "#ffc847" : gap > 0.15 ? "#c9b8a0" : "#e63946";
 
   const siteUrl = typeof window !== "undefined" ? window.location.origin : "";
+  const primaryAspectId = picks[ASPECT_ROUND_INDEX]?.value?.[0];
+  const resultParams = new URLSearchParams();
+  resultParams.set("s", String(winner.season));
+  if (primaryAspectId) resultParams.set("a", primaryAspectId);
+  const resultUrl = `${siteUrl}/?${resultParams.toString()}`;
   const shareText = `My ultimate SNL season is S${winner.season} (${winnerMeta.year}–${winnerMeta.end}). I'm ${archetype.name}. Find your peak SNL season:`;
   const [copied, setCopied] = useState(false);
   const handleCopy = () => {
     if (!navigator.clipboard) return;
-    navigator.clipboard.writeText(`${shareText} ${siteUrl}`).then(() => {
+    navigator.clipboard.writeText(`${shareText} ${resultUrl}`).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 1800);
     });
   };
-  const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(siteUrl)}`;
-  const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(siteUrl)}`;
-  const threadsUrl = `https://www.threads.net/intent/post?text=${encodeURIComponent(`${shareText} ${siteUrl}`)}`;
+  const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(resultUrl)}`;
+  const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(resultUrl)}`;
+  const threadsUrl = `https://www.threads.net/intent/post?text=${encodeURIComponent(`${shareText} ${resultUrl}`)}`;
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.history.replaceState({}, "", `${window.location.pathname}?${resultParams.toString()}`);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [winner.season, primaryAspectId]);
 
   return (
     <div>
@@ -1820,6 +1853,37 @@ function BulbStrip({ top }) {
 
 function Grain() {
   return <div className="absolute inset-0 grain pointer-events-none" style={{ opacity: 0.3, mixBlendMode: "overlay" }} />;
+}
+
+function FriendResult({ result, onStart }) {
+  const meta = SEASONS[result.season];
+  const archetype = result.archetypeId ? ARCHETYPES[result.archetypeId] : null;
+  return (
+    <div className="rise text-center">
+      <div className="font-mono mb-4" style={{ color: "#ffc847", fontSize: "11px", letterSpacing: "0.4em" }}>★ A FRIEND'S RESULT ★</div>
+      <div className="font-body italic mb-3" style={{ color: "#c9b8a0", fontSize: "1.05rem" }}>Their ultimate SNL season is</div>
+      <div className="font-display" style={{ fontSize: "clamp(6rem, 18vw, 11rem)", color: "#e63946", textShadow: "0 0 30px rgba(230, 57, 70, 0.5), 0 0 60px rgba(230, 57, 70, 0.25), 4px 4px 0 #ffc847", letterSpacing: "-0.02em", lineHeight: 1 }}>
+        S{result.season}
+      </div>
+      <div className="font-marquee mt-3 mb-2" style={{ color: "#f4f1de", fontSize: "clamp(1.2rem, 4vw, 1.8rem)" }}>
+        {meta.year}–{String(meta.end).slice(2)}
+      </div>
+      {HOT_TAKES[result.season] && (
+        <p className="font-body italic mx-auto mt-4 mb-6" style={{ color: "#c9b8a0", fontSize: "1rem", maxWidth: "500px", lineHeight: 1.5 }}>
+          "{HOT_TAKES[result.season]}"
+        </p>
+      )}
+      {archetype && (
+        <div className="mb-8 mx-auto p-5 border" style={{ borderColor: "#ffc847", background: "rgba(255, 200, 71, 0.05)", maxWidth: "440px" }}>
+          <div className="font-mono mb-2" style={{ color: "#ffc847", fontSize: "10px", letterSpacing: "0.3em" }}>THEIR ARCHETYPE</div>
+          <div className="font-display uppercase" style={{ color: "#f4f1de", fontSize: "1.3rem", lineHeight: 1.1 }}>{archetype.name}</div>
+        </div>
+      )}
+      <button onClick={onStart} className="font-display uppercase px-8 py-4 border transition" style={{ borderColor: "#ffc847", color: "#ffc847", fontSize: "13px", letterSpacing: "0.3em", background: "transparent", cursor: "pointer" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#ffc847"; e.currentTarget.style.color = "#0a0710"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#ffc847"; }}>
+        ★ Take the quiz to find yours ★
+      </button>
+    </div>
+  );
 }
 
 function WhyThisSeason({ winner, picks }) {
