@@ -1,5 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 
+const FEEDBACK_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfS6iQpDQtu7TcN2TdQVIxHREutOceDIBntyBcvlGNIbW0NKQ/viewform";
+
 const STORY_WIDTH = 1080;
 const STORY_HEIGHT = 1920;
 
@@ -1966,6 +1968,18 @@ function Results({ picks, onReset }) {
         <button onClick={onReset} className="font-mono px-8 py-3 border transition" style={{ borderColor: "#ffc847", color: "#ffc847", fontSize: "11px", letterSpacing: "0.3em", background: "transparent", cursor: "pointer" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#ffc847"; e.currentTarget.style.color = "#0a0710"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#ffc847"; }}>
           ★ Run It Back ★
         </button>
+      </div>
+
+      <div className="text-center mb-2">
+        <a
+          href={FEEDBACK_URL}
+          target="_blank"
+          rel="noreferrer"
+          className="font-body italic"
+          style={{ color: "#8a7a6a", fontSize: "0.9rem", textDecoration: "underline", textDecorationColor: "#3a2f44", textUnderlineOffset: "3px" }}
+        >
+          Found something off? Help us make it better →
+        </a>
       </div>
     </div>
   );
