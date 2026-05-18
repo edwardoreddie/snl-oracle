@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 
-const FEEDBACK_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfS6iQpDQtu7TcN2TdQVIxHREutOceDIBntyBcvlGNIbW0NKQ/viewform";
+const FEEDBACK_URL = "https://tally.so/r/Gxqb6O";
 
 const STORY_WIDTH = 1080;
 const STORY_HEIGHT = 1920;
