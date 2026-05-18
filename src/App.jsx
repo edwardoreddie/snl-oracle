@@ -1,8 +1,7 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import { toPng } from "html-to-image";
 
-// Replace REPLACE_ME with the Ko-fi handle to point the tip jar to the right page.
-const KOFI_URL = "https://ko-fi.com/REPLACE_ME";
+const KOFI_URL = "https://ko-fi.com/snloracle";
 
 const STORY_WIDTH = 1080;
 const STORY_HEIGHT = 1920;
@@ -1313,11 +1312,14 @@ function Round({ q, onAnswer, index, total, photos, photosStatus }) {
 function RoundHeader({ q, index, total }) {
   return (
     <>
+      <div className="font-digital uppercase text-center mb-1" style={{ color: "#8a7a6a", fontSize: "11px", letterSpacing: "0.45em" }}>
+        A DIGITAL SHORT
+      </div>
       <div className="flex items-center justify-between mb-5 font-mono" style={{ color: "#a89684", fontSize: "10px", letterSpacing: "0.3em" }}>
         <span>{q.title}</span>
         <span>{String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}</span>
       </div>
-      <h2 className="font-display uppercase mb-2" style={{ color: "#f4f1de", fontSize: "clamp(1.75rem, 5vw, 2.5rem)", lineHeight: 1.05 }}>{q.prompt}</h2>
+      <h2 className="font-digital uppercase mb-2" style={{ color: "#f4f1de", fontSize: "clamp(1.75rem, 5vw, 2.5rem)", lineHeight: 1.05 }}>{q.prompt}</h2>
       {q.sub && <p className="font-body italic mb-7" style={{ color: "#c9b8a0", fontSize: "1rem", lineHeight: 1.4 }}>{q.sub}</p>}
     </>
   );
@@ -1703,20 +1705,24 @@ function Results({ picks, onReset }) {
 
   return (
     <div>
-      <div className="text-center mb-8">
-        <div className="font-mono mb-3" style={{ color: "#ffc847", fontSize: "11px", letterSpacing: "0.4em" }}>★ YOUR RESULT ★</div>
-        <div className="font-body italic mb-4" style={{ color: "#c9b8a0", fontSize: "1.05rem" }}>Your ultimate season is</div>
-        <div className="font-display reveal" style={{ fontSize: "clamp(7rem, 22vw, 14rem)", color: "#e63946", textShadow: "0 0 30px rgba(230, 57, 70, 0.5), 0 0 60px rgba(230, 57, 70, 0.25), 4px 4px 0 #ffc847", letterSpacing: "-0.02em", lineHeight: 1 }}>
+      <div className="mb-8 text-center" style={{ background: "#000", padding: "72px 24px", border: "1px solid #1a1424" }}>
+        <div className="font-digital uppercase mb-10" style={{ color: "#c9b8a0", fontSize: "13px", letterSpacing: "0.5em" }}>
+          A DIGITAL SHORT
+        </div>
+        <div className="font-digital reveal" style={{ fontSize: "clamp(6.5rem, 22vw, 13rem)", color: "#f4f1de", letterSpacing: "-0.02em", lineHeight: 0.95 }}>
           S{winner.season}
         </div>
-        <div className="font-marquee mt-3" style={{ color: "#f4f1de", fontSize: "clamp(1.4rem, 4vw, 2rem)" }}>
+        <div className="font-digital uppercase mt-4" style={{ color: "#c9b8a0", fontSize: "clamp(1.2rem, 4vw, 1.8rem)", letterSpacing: "0.08em" }}>
           {winnerMeta.year}–{String(winnerMeta.end).slice(2)}
         </div>
-        <div className="font-mono mt-2" style={{ color: "#ffc847", fontSize: "11px", letterSpacing: "0.3em" }}>
-          {winnerPct}% MATCH AGAINST YOUR TOP 3
+        <div className="mt-10 pt-6" style={{ borderTop: "1px solid #2a2030" }}>
+          <div className="font-mono uppercase mb-2" style={{ color: "#6a5a4a", fontSize: "10px", letterSpacing: "0.4em" }}>YOU ARE</div>
+          <div className="font-digital uppercase" style={{ color: "#f4f1de", fontSize: "clamp(1.2rem, 4vw, 1.6rem)", letterSpacing: "0.05em" }}>
+            {archetype.name}
+          </div>
         </div>
-        <div className="font-mono mt-1" style={{ color: confidenceColor, fontSize: "10px", letterSpacing: "0.4em" }}>
-          ◆ {confidence} ◆
+        <div className="font-mono mt-8" style={{ color: confidenceColor, fontSize: "10px", letterSpacing: "0.4em" }}>
+          {winnerPct}% MATCH · {confidence}
         </div>
       </div>
 
@@ -1759,11 +1765,9 @@ function Results({ picks, onReset }) {
 
       <WhyThisSeason winner={winner} picks={picks} />
 
-      <div className="mb-8 p-6 border" style={{ borderColor: "#ffc847", background: "rgba(255, 200, 71, 0.05)" }}>
-        <div className="font-mono mb-2" style={{ color: "#ffc847", fontSize: "10px", letterSpacing: "0.3em" }}>YOUR ARCHETYPE</div>
-        <div className="font-display uppercase mb-2" style={{ color: "#f4f1de", fontSize: "1.5rem", lineHeight: 1.1 }}>{archetype.name}</div>
-        <p className="font-body italic" style={{ color: "#c9b8a0", fontSize: "0.98rem", lineHeight: 1.4 }}>{archetype.line}</p>
-      </div>
+      <p className="font-body italic mx-auto mb-10 text-center" style={{ color: "#c9b8a0", fontSize: "1.02rem", maxWidth: "560px", lineHeight: 1.55 }}>
+        {archetype.line}
+      </p>
 
       <WatchNext season={winner.season} picks={picks} />
 
@@ -1933,50 +1937,49 @@ function StoryCard({ winner, archetype, forwardRef }) {
         top: 0,
         width: `${STORY_WIDTH}px`,
         height: `${STORY_HEIGHT}px`,
-        background: "radial-gradient(ellipse at top, #1a1424 0%, #0a0710 60%, #050306 100%)",
+        background: "#000000",
         color: "#f4f1de",
-        padding: "120px 80px",
+        padding: "140px 80px",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "space-between",
-        fontFamily: "'Newsreader', Georgia, serif",
+        fontFamily: "'Archivo Black', 'Helvetica Neue', Arial, sans-serif",
         boxSizing: "border-box",
         overflow: "hidden",
       }}
     >
       <div style={{ textAlign: "center" }}>
-        <div style={{ fontFamily: "'DM Mono', monospace", color: "#ffc847", letterSpacing: "0.4em", fontSize: "30px", fontWeight: 500 }}>★ THE SNL ORACLE ★</div>
-        <div style={{ fontFamily: "'Limelight', Georgia, serif", marginTop: "32px", fontSize: "64px", color: "#f4f1de", lineHeight: 1.1 }}>
-          My peak SNL season is
+        <div style={{ fontFamily: "'Archivo Black', 'Helvetica Neue', sans-serif", color: "#c9b8a0", letterSpacing: "0.5em", fontSize: "32px", textTransform: "uppercase" }}>
+          A Digital Short
         </div>
       </div>
 
       <div style={{ textAlign: "center" }}>
-        <div style={{ fontFamily: "'Anton', Impact, sans-serif", fontSize: "520px", color: "#e63946", textShadow: "0 0 50px rgba(230,57,70,0.5), 14px 14px 0 #ffc847", lineHeight: 1, letterSpacing: "-0.02em" }}>
+        <div style={{ fontFamily: "'Archivo Black', 'Helvetica Neue', sans-serif", fontSize: "560px", color: "#f4f1de", lineHeight: 0.95, letterSpacing: "-0.03em" }}>
           S{winner.season}
         </div>
-        <div style={{ fontFamily: "'Limelight', Georgia, serif", fontSize: "66px", marginTop: "24px", color: "#f4f1de" }}>
+        <div style={{ fontFamily: "'Archivo Black', 'Helvetica Neue', sans-serif", textTransform: "uppercase", fontSize: "80px", marginTop: "28px", color: "#c9b8a0", letterSpacing: "0.08em" }}>
           {meta.year}–{String(meta.end).slice(2)}
         </div>
       </div>
 
       {hotTake && (
-        <div style={{ fontStyle: "italic", textAlign: "center", fontSize: "38px", lineHeight: 1.45, color: "#c9b8a0", padding: "0 30px" }}>
+        <div style={{ fontFamily: "'Newsreader', Georgia, serif", fontStyle: "italic", textAlign: "center", fontSize: "40px", lineHeight: 1.4, color: "#c9b8a0", padding: "0 40px" }}>
           "{hotTake}"
         </div>
       )}
 
-      <div style={{ textAlign: "center", padding: "44px 60px", border: "4px solid #ffc847", background: "rgba(255,200,71,0.08)", width: "100%", boxSizing: "border-box" }}>
-        <div style={{ fontFamily: "'DM Mono', monospace", color: "#ffc847", letterSpacing: "0.3em", fontSize: "22px", marginBottom: "14px" }}>I AM</div>
-        <div style={{ fontFamily: "'Anton', Impact, sans-serif", textTransform: "uppercase", fontSize: "62px", color: "#f4f1de", lineHeight: 1.1 }}>
+      <div style={{ textAlign: "center", paddingTop: "40px", borderTop: "2px solid #2a2030", width: "100%", boxSizing: "border-box" }}>
+        <div style={{ fontFamily: "'DM Mono', monospace", color: "#6a5a4a", letterSpacing: "0.4em", fontSize: "22px", marginBottom: "16px", textTransform: "uppercase" }}>You Are</div>
+        <div style={{ fontFamily: "'Archivo Black', 'Helvetica Neue', sans-serif", textTransform: "uppercase", fontSize: "60px", color: "#f4f1de", lineHeight: 1.1, letterSpacing: "0.04em" }}>
           {archetype.name}
         </div>
       </div>
 
       <div style={{ textAlign: "center" }}>
-        <div style={{ fontFamily: "'DM Mono', monospace", color: "#8a7a6a", letterSpacing: "0.3em", fontSize: "22px" }}>FIND YOURS</div>
-        <div style={{ fontFamily: "'DM Mono', monospace", color: "#ffc847", letterSpacing: "0.2em", fontSize: "30px", marginTop: "10px" }}>{host || "the snl oracle"}</div>
+        <div style={{ fontFamily: "'DM Mono', monospace", color: "#6a5a4a", letterSpacing: "0.4em", fontSize: "22px", textTransform: "uppercase" }}>Find Yours</div>
+        <div style={{ fontFamily: "'Archivo Black', 'Helvetica Neue', sans-serif", color: "#ffc847", letterSpacing: "0.18em", fontSize: "30px", marginTop: "12px", textTransform: "lowercase" }}>{host || "the snl oracle"}</div>
       </div>
     </div>
   );
@@ -1986,29 +1989,37 @@ function FriendResult({ result, onStart }) {
   const meta = SEASONS[result.season];
   const archetype = result.archetypeId ? ARCHETYPES[result.archetypeId] : null;
   return (
-    <div className="rise text-center">
-      <div className="font-mono mb-4" style={{ color: "#ffc847", fontSize: "11px", letterSpacing: "0.4em" }}>★ A FRIEND'S RESULT ★</div>
-      <div className="font-body italic mb-3" style={{ color: "#c9b8a0", fontSize: "1.05rem" }}>Their ultimate SNL season is</div>
-      <div className="font-display" style={{ fontSize: "clamp(6rem, 18vw, 11rem)", color: "#e63946", textShadow: "0 0 30px rgba(230, 57, 70, 0.5), 0 0 60px rgba(230, 57, 70, 0.25), 4px 4px 0 #ffc847", letterSpacing: "-0.02em", lineHeight: 1 }}>
-        S{result.season}
-      </div>
-      <div className="font-marquee mt-3 mb-2" style={{ color: "#f4f1de", fontSize: "clamp(1.2rem, 4vw, 1.8rem)" }}>
-        {meta.year}–{String(meta.end).slice(2)}
+    <div className="rise">
+      <div className="font-mono mb-4 text-center" style={{ color: "#ffc847", fontSize: "11px", letterSpacing: "0.4em" }}>★ A FRIEND'S RESULT ★</div>
+      <div className="mb-8 text-center" style={{ background: "#000", padding: "64px 24px", border: "1px solid #1a1424" }}>
+        <div className="font-digital uppercase mb-10" style={{ color: "#c9b8a0", fontSize: "13px", letterSpacing: "0.5em" }}>
+          A DIGITAL SHORT
+        </div>
+        <div className="font-digital" style={{ fontSize: "clamp(5.5rem, 18vw, 10rem)", color: "#f4f1de", letterSpacing: "-0.02em", lineHeight: 0.95 }}>
+          S{result.season}
+        </div>
+        <div className="font-digital uppercase mt-4" style={{ color: "#c9b8a0", fontSize: "clamp(1.1rem, 4vw, 1.6rem)", letterSpacing: "0.08em" }}>
+          {meta.year}–{String(meta.end).slice(2)}
+        </div>
+        {archetype && (
+          <div className="mt-10 pt-6" style={{ borderTop: "1px solid #2a2030" }}>
+            <div className="font-mono uppercase mb-2" style={{ color: "#6a5a4a", fontSize: "10px", letterSpacing: "0.4em" }}>THEY ARE</div>
+            <div className="font-digital uppercase" style={{ color: "#f4f1de", fontSize: "clamp(1.1rem, 4vw, 1.4rem)", letterSpacing: "0.05em" }}>
+              {archetype.name}
+            </div>
+          </div>
+        )}
       </div>
       {HOT_TAKES[result.season] && (
-        <p className="font-body italic mx-auto mt-4 mb-6" style={{ color: "#c9b8a0", fontSize: "1rem", maxWidth: "500px", lineHeight: 1.5 }}>
+        <p className="font-body italic mx-auto mb-8 text-center" style={{ color: "#c9b8a0", fontSize: "1rem", maxWidth: "500px", lineHeight: 1.5 }}>
           "{HOT_TAKES[result.season]}"
         </p>
       )}
-      {archetype && (
-        <div className="mb-8 mx-auto p-5 border" style={{ borderColor: "#ffc847", background: "rgba(255, 200, 71, 0.05)", maxWidth: "440px" }}>
-          <div className="font-mono mb-2" style={{ color: "#ffc847", fontSize: "10px", letterSpacing: "0.3em" }}>THEIR ARCHETYPE</div>
-          <div className="font-display uppercase" style={{ color: "#f4f1de", fontSize: "1.3rem", lineHeight: 1.1 }}>{archetype.name}</div>
-        </div>
-      )}
-      <button onClick={onStart} className="font-display uppercase px-8 py-4 border transition" style={{ borderColor: "#ffc847", color: "#ffc847", fontSize: "13px", letterSpacing: "0.3em", background: "transparent", cursor: "pointer" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#ffc847"; e.currentTarget.style.color = "#0a0710"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#ffc847"; }}>
-        ★ Take the quiz to find yours ★
-      </button>
+      <div className="text-center">
+        <button onClick={onStart} className="font-digital uppercase px-8 py-4 border transition" style={{ borderColor: "#ffc847", color: "#ffc847", fontSize: "13px", letterSpacing: "0.3em", background: "transparent", cursor: "pointer" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#ffc847"; e.currentTarget.style.color = "#0a0710"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#ffc847"; }}>
+          Take the quiz to find yours →
+        </button>
+      </div>
     </div>
   );
 }
@@ -2207,8 +2218,9 @@ function Footer() {
 function Style() {
   return (
     <style>{`
-      @import url('https://fonts.googleapis.com/css2?family=Anton&family=Limelight&family=DM+Mono:wght@300;400;500&family=Newsreader:ital,wght@0,400;0,600;1,400&display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=Limelight&family=DM+Mono:wght@300;400;500&family=Newsreader:ital,wght@0,400;0,600;1,400&display=swap');
       .font-display { font-family: 'Anton', 'Impact', sans-serif; letter-spacing: 0.02em; }
+      .font-digital { font-family: 'Archivo Black', 'Helvetica Neue', Arial, sans-serif; letter-spacing: 0.01em; }
       .font-marquee { font-family: 'Limelight', 'Georgia', serif; }
       .font-mono { font-family: 'DM Mono', 'Courier New', monospace; }
       .font-body { font-family: 'Newsreader', 'Georgia', serif; }
