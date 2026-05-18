@@ -821,7 +821,13 @@ function pickSketches(season, picks) {
 }
 
 function sketchYouTubeUrl(sketch) {
-  return `https://www.youtube.com/results?search_query=${encodeURIComponent(`SNL ${sketch.title} season ${sketch.season}`)}`;
+  // Quoted phrase + year forces YouTube to surface specific sketches rather than
+  // random uploads. "Saturday Night Live" reads more reliably in the YouTube
+  // index than "SNL," especially for older content.
+  const meta = SEASONS[sketch.season];
+  const year = meta ? meta.year : "";
+  const q = `Saturday Night Live "${sketch.title}" ${year}`.trim();
+  return `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`;
 }
 
 function pickCrossSeasonSketches(winningSeason, picks, n = 4) {
@@ -857,16 +863,10 @@ function pickCrossSeasonSketches(winningSeason, picks, n = 4) {
 /* ============================================================
    QUOTES
    ============================================================ */
-const QUOTES = [
-  {
-    text: "Generally when people talk about the best cast I think, 'Well, that's when they were in high school.' Because in high school you have the least amount of power you're ever gonna have. Staying up with friends later on a Saturday is great, and people attach to a cast.",
-    attrib: "Lorne Michaels, on why everyone insists their cast was the best.",
-  },
-  {
-    text: "People always give me a hard time about, 'Oh, the original show was so great and it's lousy now.' And I say, 'No, it's not.' The show that's on now, they do stuff that's just as good as anybody ever did, all the time.",
-    attrib: "Bill Murray, defending the current cast on the New Heights podcast (2024).",
-  },
-];
+const LORNE_QUOTE = {
+  text: "Generally when people talk about the best cast I think, 'Well, that's when they were in high school.' Because in high school you have the least amount of power you're ever gonna have. Staying up with friends later on a Saturday is great, and people attach to a cast.",
+  attrib: "Lorne Michaels, on why everyone insists their cast was the best.",
+};
 
 /* ============================================================
    ARCHETYPES
@@ -956,7 +956,12 @@ function predictAge(season) {
   return { ageMin: Math.min(low, high), ageMax: Math.max(low, high) };
 }
 
-const youtubeLink = (s) => `https://www.youtube.com/results?search_query=SNL+season+${s}+best+sketches`;
+const youtubeLink = (s) => {
+  const meta = SEASONS[s];
+  const yearStr = meta ? `${meta.year}-${meta.end}` : `season ${s}`;
+  const q = `Saturday Night Live ${yearStr} best sketches`;
+  return `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`;
+};
 const peacockLink = (s) => `https://www.peacocktv.com/watch-online/tv/saturday-night-live/8885992813767211112/seasons/${s}`;
 
 /* ============================================================
@@ -1750,18 +1755,9 @@ function Results({ picks, onReset }) {
         </div>
       )}
 
-      <p className="font-body mx-auto mb-3 text-center" style={{ color: "#c9b8a0", fontSize: "1.05rem", maxWidth: "560px", lineHeight: 1.5 }}>
+      <p className="font-body mx-auto mb-10 text-center" style={{ color: "#c9b8a0", fontSize: "1.05rem", maxWidth: "560px", lineHeight: 1.55 }}>
         {winnerMeta.tag}
       </p>
-
-      {HOT_TAKES[winner.season] && (
-        <div className="mx-auto mb-8 text-center" style={{ maxWidth: "560px" }}>
-          <div className="font-mono mb-1" style={{ color: "#e63946", fontSize: "10px", letterSpacing: "0.3em" }}>HOT TAKE</div>
-          <p className="font-body italic" style={{ color: "#f4f1de", fontSize: "1.05rem", lineHeight: 1.5 }}>
-            {HOT_TAKES[winner.season]}
-          </p>
-        </div>
-      )}
 
       <WhyThisSeason winner={winner} picks={picks} />
 
@@ -1824,11 +1820,14 @@ function Results({ picks, onReset }) {
               {age.ageMin}–{age.ageMax}
             </span>
           </div>
-          <p className="font-body italic text-center mx-auto" style={{ color: "#c9b8a0", fontSize: "0.95rem", maxWidth: "500px", lineHeight: 1.55 }}>
-            Lorne Michaels' theory: people insist their cast is the best because that's when they were in high school. If S{winner.season} is your peak, you were in high school during {winnerMeta.year}–{winnerMeta.end}.
+          <p className="font-body italic mx-auto" style={{ color: "#c9b8a0", fontSize: "0.95rem", maxWidth: "560px", lineHeight: 1.65 }}>
+            "{LORNE_QUOTE.text}"
           </p>
-          <p className="font-body italic text-center mx-auto mt-3" style={{ color: "#8a7a6a", fontSize: "0.9rem", maxWidth: "500px", lineHeight: 1.5 }}>
-            Or, per Bill Murray: you just like good comedy.
+          <div className="font-mono mt-3" style={{ color: "#8a7a6a", fontSize: "10px", letterSpacing: "0.2em" }}>
+            — {LORNE_QUOTE.attrib}
+          </div>
+          <p className="font-body text-center mt-6 mx-auto" style={{ color: "#c9b8a0", fontSize: "0.95rem", maxWidth: "560px", lineHeight: 1.55 }}>
+            If S{winner.season} is your peak, you were in high school during {winnerMeta.year}–{winnerMeta.end}. That's the math.
           </p>
         </div>
       )}
@@ -1891,13 +1890,20 @@ function Results({ picks, onReset }) {
 
       <StoryCard winner={winner} archetype={archetype} forwardRef={storyCardRef} />
 
-      <div className="text-center my-10">
-        <p className="font-body italic" style={{ color: "#8a7a6a", fontSize: "0.95rem" }}>
+      <div className="my-10">
+        <p className="font-body italic text-center mb-4" style={{ color: "#8a7a6a", fontSize: "0.95rem" }}>
           "Ladies and gentlemen, the tip jar."
         </p>
-        <a href={KOFI_URL} target="_blank" rel="noreferrer" className="inline-block mt-2 font-mono uppercase transition" style={{ color: "#ffc847", letterSpacing: "0.25em", fontSize: "11px", textDecoration: "none", borderBottom: "1px solid #ffc847", paddingBottom: "2px" }} onMouseEnter={(e) => { e.currentTarget.style.color = "#f4f1de"; e.currentTarget.style.borderColor = "#f4f1de"; }} onMouseLeave={(e) => { e.currentTarget.style.color = "#ffc847"; e.currentTarget.style.borderColor = "#ffc847"; }}>
-          Tip on Ko-fi →
-        </a>
+        <div style={{ maxWidth: "560px", margin: "0 auto" }}>
+          <iframe
+            id="kofiframe"
+            src="https://ko-fi.com/snloracle/?hidefeed=true&widget=true&embed=true&preview=true"
+            style={{ border: "none", width: "100%", padding: "4px", background: "#f9f9f9", borderRadius: "4px", display: "block" }}
+            height="540"
+            title="Tip the SNL Oracle on Ko-fi"
+            loading="lazy"
+          />
+        </div>
       </div>
 
       <div className="flex justify-center mb-6">
@@ -2013,11 +2019,9 @@ function FriendResult({ result, onStart }) {
           </div>
         )}
       </div>
-      {HOT_TAKES[result.season] && (
-        <p className="font-body italic mx-auto mb-8 text-center" style={{ color: "#c9b8a0", fontSize: "1rem", maxWidth: "500px", lineHeight: 1.5 }}>
-          "{HOT_TAKES[result.season]}"
-        </p>
-      )}
+      <p className="font-body mx-auto mb-8 text-center" style={{ color: "#c9b8a0", fontSize: "1rem", maxWidth: "520px", lineHeight: 1.55 }}>
+        {meta.tag}
+      </p>
       <div className="text-center">
         <button onClick={onStart} className="font-digital uppercase px-8 py-4 border transition" style={{ borderColor: "#ffc847", color: "#ffc847", fontSize: "13px", letterSpacing: "0.3em", background: "transparent", cursor: "pointer" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#ffc847"; e.currentTarget.style.color = "#0a0710"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#ffc847"; }}>
           Take the quiz to find yours →
