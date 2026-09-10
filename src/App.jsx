@@ -861,9 +861,9 @@ function Results({ picks, onReset }) {
       {seasonPhoto.url ? (
         <div className="mb-8 rise" style={{ animationDelay: "0.5s" }}>
           <div className="relative" style={{ border: "2px solid #3a2f44", background: "#0a0710" }}>
-            <img src={seasonPhoto.url} alt={`Season ${winner.season} cast`} style={{ width: "100%", height: "auto", display: "block", filter: "contrast(1.05) saturate(0.95)" }} />
+            <img src={seasonPhoto.url} alt={`Season ${winner.season}`} style={{ width: "100%", height: "auto", display: "block", filter: "contrast(1.05) saturate(0.95)" }} />
             <div className="font-mono uppercase" style={{ position: "absolute", bottom: "8px", left: "8px", background: "#0a0710", padding: "4px 8px", color: "#ffc847", fontSize: "11px", letterSpacing: "0.2em" }}>
-              CAST / S{winner.season}
+              S{winner.season}
             </div>
           </div>
         </div>

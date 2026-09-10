@@ -706,7 +706,6 @@ export const ADAPTIVE_POOL = [
     negate: true,
     title: "THE SKIP",
     prompt: "Now pick the one you'd rather skip.",
-    sub: "Which of these would you not miss?",
     options: MOMENT_OPTIONS,
   },
   {
@@ -982,9 +981,19 @@ export function sketchYouTubeUrl(sketch) {
   // Quoted phrase + year forces YouTube to surface specific sketches rather than
   // random uploads. "Saturday Night Live" reads more reliably in the YouTube
   // index than "SNL," especially for older content.
+  //
+  // But an exact-phrase search only pays off when the title is likely to appear
+  // verbatim in an upload's title. Anything carrying a colon or a parenthetical
+  // is our own shorthand, not the sketch's name, so those search unquoted. A
+  // sketch can also carry an explicit `query` to override both.
   const meta = SEASONS[sketch.season];
   const year = meta ? meta.year : "";
-  const q = `Saturday Night Live "${sketch.title}" ${year}`.trim();
+  const raw = sketch.query || sketch.title;
+  const isShorthand = /[:()]/.test(raw);
+  const term = isShorthand
+    ? raw.replace(/[():]/g, " ").replace(/\s+/g, " ").trim()
+    : `"${raw}"`;
+  const q = `Saturday Night Live ${term} ${year}`.trim();
   return `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`;
 }
 
@@ -1318,11 +1327,16 @@ function trimOptionsToCandidates(options, candidateSeasons, keep = 10, wildcards
   return [...relevant, ...extras].sort((a, b) => a.index - b.index).map((x) => x.option);
 }
 
-function withTrimmedOptions(question, scores) {
+function withTrimmedOptions(question, scores, picks = []) {
   if (!question || !MOMENT_QUESTION_IDS.includes(question.id) || !scores) return question;
   const candidates = topSeasons(scores, 8).filter((t) => t.score > 0).map((t) => t.season);
   if (candidates.length === 0) return question;
-  return { ...question, options: trimOptionsToCandidates(question.options, candidates) };
+  // Never offer back the moment they just told us lives in their head.
+  const alreadyPicked = new Set(
+    picks.filter((p) => MOMENT_QUESTION_IDS.includes(p.adaptiveId)).map((p) => p.value?.label)
+  );
+  const available = question.options.filter((o) => !alreadyPicked.has(o.label));
+  return { ...question, options: trimOptionsToCandidates(available, candidates) };
 }
 
 // How much would answering this question pull the current candidates apart?
@@ -1380,7 +1394,7 @@ export function pickNextAdaptive(picks, usedIds) {
   if (pool.length === 0) return null;
   if (top.length === 0) {
     // No information yet, so nothing to discriminate between.
-    return withTrimmedOptions(pool[0], null);
+    return withTrimmedOptions(pool[0], null, picks);
   }
 
   // The Skip is a negative signal, and it only earns a round when the top two
@@ -1400,7 +1414,7 @@ export function pickNextAdaptive(picks, usedIds) {
   const ranked = eligible.map((question) => ({
     question,
     // Score the trimmed version, since that is what the user will answer.
-    score: discriminationScore(withTrimmedOptions(question, scores), top),
+    score: discriminationScore(withTrimmedOptions(question, scores, picks), top),
   }));
 
   // On pure information The Moment wins almost every round, because its
@@ -1414,7 +1428,7 @@ export function pickNextAdaptive(picks, usedIds) {
     .sort((a, b) => b.score - a.score)
     .slice(0, ROTATION_WIDTH);
   const chosen = contenders[picksFingerprint(picks) % contenders.length];
-  return withTrimmedOptions(chosen.question, scores);
+  return withTrimmedOptions(chosen.question, scores, picks);
 }
 
 export const ASPECT_ROUND_INDEX = 0;
