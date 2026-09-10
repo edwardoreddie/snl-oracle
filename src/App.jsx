@@ -1166,7 +1166,7 @@ function generateStoryImage(winner, archetype) {
   // Archetype lead-in
   ctx.fillStyle = "#c9b8a0";
   ctx.font = 'italic 30px Georgia, "Times New Roman", serif';
-  ctx.fillText("My archetype is", STORY_WIDTH / 2, 1520);
+  ctx.fillText("I'm", STORY_WIDTH / 2, 1520);
 
   // Archetype name
   ctx.fillStyle = "#f4f1de";
@@ -1204,7 +1204,7 @@ function FriendResult({ result, onStart }) {
         </div>
         {archetype && (
           <div className="mt-10 pt-6" style={{ borderTop: "1px solid #2a2030" }}>
-            <div className="font-mono uppercase mb-2" style={{ color: "#6a5a4a", fontSize: "10px", letterSpacing: "0.4em" }}>THEY ARE</div>
+            <div className="font-mono uppercase mb-2" style={{ color: "#6a5a4a", fontSize: "11px", letterSpacing: "0.2em" }}>Their type</div>
             <div className="font-digital uppercase" style={{ color: "#f4f1de", fontSize: "clamp(1.1rem, 4vw, 1.4rem)", letterSpacing: "0.05em" }}>
               {archetype.name}
             </div>

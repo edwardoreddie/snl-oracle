@@ -1037,15 +1037,15 @@ export const LORNE_QUOTE = {
    ARCHETYPES
    ============================================================ */
 export const ARCHETYPES = {
-  "cold-open": { name: "The C-Span Diehard", line: "You're here for the cold open. The show is at its best when it's making sense of the week." },
+  "cold-open": { name: "The Cold Open Lifer", line: "You're here for the cold open. The show is at its best when it's making sense of the week." },
   "update": { name: "The Update Loyalist", line: "The desk is the heart of the show. Everything else is appetizer." },
   "recurring": { name: "The Catchphrase Connoisseur", line: "You quote sketches verbatim. The recurring bit is the religion." },
-  "host": { name: "The Host Watcher", line: "A great host episode is event TV for you. The right guest unlocks something nothing else can." },
-  "pretape": { name: "The Sunday-Morning Clip-Watcher", line: "You want it polished, viral, and rewatchable. The pre-tape is the future." },
+  "host": { name: "The Host Whisperer", line: "A great host episode is event TV for you. The right guest unlocks something nothing else can." },
+  "pretape": { name: "The Sunday Morning Rewatcher", line: "You want it polished, viral, and rewatchable. The pre-tape is the future." },
   "music": { name: "The Saturday Night DJ", line: "The musical guest is half the reason you're up. The band matters as much as the cast." },
-  "ten-to-one": { name: "The 12:55 AM Citizen", line: "You're up for the weird stuff. The 10-to-1 is where the show takes its real risks." },
+  "ten-to-one": { name: "The 12:55 Citizen", line: "You're up for the weird stuff. The 10-to-1 is where the show takes its real risks." },
   "impressions": { name: "The Impression Scholar", line: "You can rank every Trebek, every Sinatra, and every Bieber in order." },
-  "topical": { name: "The Newsroom Loyalist", line: "You watch SNL like the news. The political moment is the show's reason to exist." },
+  "topical": { name: "The Newsroom Regular", line: "You watch SNL like the news. The political moment is the show's reason to exist." },
   "loose": { name: "The Live-Wire Patron", line: "You're here for the danger. The unrehearsed glance, the breaking laugh, the sketch that almost fell apart." },
   "commercial": { name: "The Fake Ad Collector", line: "The best joke of the night is often the one pretending to sell you something." },
 };
