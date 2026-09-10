@@ -315,7 +315,7 @@ function Header({ compact }) {
       <h1 className="font-marquee mb-2" style={{ color: "#f4f1de", fontSize: "clamp(2.5rem, 8vw, 4.5rem)", textShadow: "0 0 20px rgba(255, 200, 71, 0.4), 0 0 40px rgba(230, 57, 70, 0.2)", lineHeight: 1 }}>
         The SNL Oracle
       </h1>
-      <div className="font-body italic mx-auto" style={{ color: "#c9b8a0", fontSize: "0.95rem", maxWidth: "460px", lineHeight: 1.45 }}>
+      <div className="font-body italic mx-auto" style={{ color: "#c9b8a0", fontSize: "1rem", maxWidth: "460px", lineHeight: 1.55 }}>
         Tell the Oracle what you love. It names your peak season, runs Lorne's math on your age, and hands you a rewatch list.
       </div>
     </div>
@@ -370,7 +370,7 @@ function AspectsRound({ q, onAnswer, index, total }) {
         <span style={{ color: ready ? "#ffc847" : "#e63946" }}>
           {ready ? `LOCKED IN 3 / 3` : `PICK ${remaining} MORE`}
         </span>
-        <button onClick={submit} disabled={!ready} className="font-mono px-5 py-2 border transition" style={{ borderColor: ready ? "#ffc847" : "#3a2f44", color: ready ? "#0a0710" : "#5a4a3a", background: ready ? "#ffc847" : "transparent", fontSize: "11px", letterSpacing: "0.25em", cursor: ready ? "pointer" : "not-allowed" }}>
+        <button onClick={submit} disabled={!ready} className="font-mono px-5 py-2 border transition" style={{ borderColor: ready ? "#ffc847" : "#3a2f44", color: ready ? "#0a0710" : "#5a4a3a", background: ready ? "#ffc847" : "transparent", fontSize: "11px", letterSpacing: "0.2em", cursor: ready ? "pointer" : "not-allowed" }}>
           ★ Next ★
         </button>
       </div>
@@ -413,7 +413,7 @@ function AspectsRound({ q, onAnswer, index, total }) {
       </div>
 
       <div className="flex justify-center mt-6">
-        <button onClick={submit} disabled={!ready} className="font-mono px-8 py-3 border transition" style={{ borderColor: ready ? "#ffc847" : "#3a2f44", color: ready ? "#0a0710" : "#5a4a3a", background: ready ? "#ffc847" : "transparent", fontSize: "11px", letterSpacing: "0.25em", cursor: ready ? "pointer" : "not-allowed" }}>
+        <button onClick={submit} disabled={!ready} className="font-mono px-8 py-3 border transition" style={{ borderColor: ready ? "#ffc847" : "#3a2f44", color: ready ? "#0a0710" : "#5a4a3a", background: ready ? "#ffc847" : "transparent", fontSize: "11px", letterSpacing: "0.2em", cursor: ready ? "pointer" : "not-allowed" }}>
           ★ Next ★
         </button>
       </div>
@@ -513,7 +513,7 @@ function MultiCastRound({ q, onAnswer, index, total, photos, photosStatus }) {
           <span style={{ color: empty ? "#e63946" : "#ffc847" }}>
             {empty ? "TAP A FACE BELOW ↓" : `SELECTED ${selected.length} / ${q.max}`}
           </span>
-          <button onClick={submit} disabled={empty} className="font-mono px-5 py-2 border transition" style={{ borderColor: empty ? "#3a2f44" : "#ffc847", color: empty ? "#5a4a3a" : "#0a0710", background: empty ? "transparent" : "#ffc847", fontSize: "11px", letterSpacing: "0.25em", cursor: empty ? "not-allowed" : "pointer" }}>
+          <button onClick={submit} disabled={empty} className="font-mono px-5 py-2 border transition" style={{ borderColor: empty ? "#3a2f44" : "#ffc847", color: empty ? "#5a4a3a" : "#0a0710", background: empty ? "transparent" : "#ffc847", fontSize: "11px", letterSpacing: "0.2em", cursor: empty ? "not-allowed" : "pointer" }}>
             ★ Lock In ★
           </button>
         </div>
@@ -539,12 +539,12 @@ function MultiCastRound({ q, onAnswer, index, total, photos, photosStatus }) {
 
       {/* Photo status hint */}
       {photosStatus === "loading" && (
-        <div className="font-mono mb-4 mt-3 text-center" style={{ color: "#8a7a6a", fontSize: "10px", letterSpacing: "0.2em" }}>
+        <div className="font-mono mb-4 mt-3 text-center" style={{ color: "#8a7a6a", fontSize: "11px", letterSpacing: "0.2em" }}>
           ◌ FETCHING PHOTOS FROM WIKIPEDIA…
         </div>
       )}
       {photosStatus === "failed" && !photosLoaded && (
-        <div className="font-mono mb-4 mt-3 text-center" style={{ color: "#8a7a6a", fontSize: "10px", letterSpacing: "0.2em" }}>
+        <div className="font-mono mb-4 mt-3 text-center" style={{ color: "#8a7a6a", fontSize: "11px", letterSpacing: "0.2em" }}>
           ✕ PHOTOS UNAVAILABLE · USING MONOGRAMS
         </div>
       )}
@@ -862,7 +862,7 @@ function Results({ picks, onReset }) {
         <div className="mb-8 rise" style={{ animationDelay: "0.5s" }}>
           <div className="relative" style={{ border: "2px solid #3a2f44", background: "#0a0710" }}>
             <img src={seasonPhoto.url} alt={`Season ${winner.season} cast`} style={{ width: "100%", height: "auto", display: "block", filter: "contrast(1.05) saturate(0.95)" }} />
-            <div className="font-mono uppercase" style={{ position: "absolute", bottom: "8px", left: "8px", background: "#0a0710", padding: "4px 8px", color: "#ffc847", fontSize: "9px", letterSpacing: "0.3em" }}>
+            <div className="font-mono uppercase" style={{ position: "absolute", bottom: "8px", left: "8px", background: "#0a0710", padding: "4px 8px", color: "#ffc847", fontSize: "11px", letterSpacing: "0.2em" }}>
               CAST / S{winner.season}
             </div>
           </div>
@@ -925,8 +925,8 @@ function Results({ picks, onReset }) {
                   </div>
                   {i > 0 && (
                     <div className="flex gap-4 mt-3">
-                      <a href={peacockLink(t.season)} target="_blank" rel="noreferrer" className="font-mono" style={{ color: "#00a4a6", fontSize: "10px", letterSpacing: "0.18em", textDecoration: "underline" }}>Peacock →</a>
-                      <a href={youtubeLink(t.season)} target="_blank" rel="noreferrer" className="font-mono" style={{ color: "#e63946", fontSize: "10px", letterSpacing: "0.18em", textDecoration: "underline" }}>YouTube →</a>
+                      <a href={peacockLink(t.season)} target="_blank" rel="noreferrer" className="font-mono" style={{ color: "#00a4a6", fontSize: "11px", letterSpacing: "0.18em", textDecoration: "underline" }}>Peacock →</a>
+                      <a href={youtubeLink(t.season)} target="_blank" rel="noreferrer" className="font-mono" style={{ color: "#e63946", fontSize: "11px", letterSpacing: "0.18em", textDecoration: "underline" }}>YouTube →</a>
                     </div>
                   )}
                 </div>
@@ -994,7 +994,7 @@ function Results({ picks, onReset }) {
 
             return (
               <div key={i} className="flex items-baseline gap-3 font-body" style={{ color: "#c9b8a0", fontSize: "0.92rem" }}>
-                <span className="font-mono" style={{ color: "#ffc847", fontSize: "10px" }}>0{i + 1}</span>
+                <span className="font-mono" style={{ color: "#ffc847", fontSize: "11px" }}>0{i + 1}</span>
                 <span style={{ color: "#8a7a6a" }} className="italic">{prompt}</span>
                 <span style={{ color: "#f4f1de", fontSize: "0.92rem", marginLeft: "auto", textAlign: "right", fontWeight: 500 }}>
                   {displayValue}
@@ -1038,19 +1038,19 @@ function Results({ picks, onReset }) {
           })}
         </div>
         {saveError && (
-          <div className="font-mono mt-3" style={{ color: "#e63946", fontSize: "10px", letterSpacing: "0.2em" }}>
+          <div className="font-mono mt-3" style={{ color: "#e63946", fontSize: "11px", letterSpacing: "0.2em" }}>
             ✕ {saveError}
           </div>
         )}
         {igToast && (
-          <div className="font-mono mt-3" style={{ color: "#ffc847", fontSize: "10px", letterSpacing: "0.2em" }}>
+          <div className="font-mono mt-3" style={{ color: "#ffc847", fontSize: "11px", letterSpacing: "0.2em" }}>
             ✓ {igToast}
           </div>
         )}
       </div>
 
       <div className="flex justify-center mb-6">
-        <button onClick={onReset} className="font-mono px-8 py-3 border transition" style={{ borderColor: "#ffc847", color: "#ffc847", fontSize: "11px", letterSpacing: "0.3em", background: "transparent", cursor: "pointer" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#ffc847"; e.currentTarget.style.color = "#0a0710"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#ffc847"; }}>
+        <button onClick={onReset} className="font-mono px-8 py-3 border transition" style={{ borderColor: "#ffc847", color: "#ffc847", fontSize: "11px", letterSpacing: "0.2em", background: "transparent", cursor: "pointer" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#ffc847"; e.currentTarget.style.color = "#0a0710"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#ffc847"; }}>
           ★ Run It Back ★
         </button>
       </div>
@@ -1229,9 +1229,9 @@ function FriendResult({ result, onStart }) {
   const archetype = result.archetypeId ? ARCHETYPES[result.archetypeId] : null;
   return (
     <div className="rise">
-      <div className="font-mono mb-4 text-center" style={{ color: "#ffc847", fontSize: "11px", letterSpacing: "0.4em" }}>★ A FRIEND'S RESULT ★</div>
+      <div className="font-mono mb-4 text-center" style={{ color: "#ffc847", fontSize: "11px", letterSpacing: "0.2em" }}>★ A FRIEND'S RESULT ★</div>
       <div className="mb-8 text-center" style={{ background: "#000", padding: "64px 24px", border: "1px solid #1a1424" }}>
-        <div className="font-digital uppercase mb-10" style={{ color: "#c9b8a0", fontSize: "13px", letterSpacing: "0.5em" }}>
+        <div className="font-digital uppercase mb-10" style={{ color: "#c9b8a0", fontSize: "13px", letterSpacing: "0.2em" }}>
           A DIGITAL SHORT
         </div>
         <div className="font-digital" style={{ fontSize: "clamp(5.5rem, 18vw, 10rem)", color: "#f4f1de", letterSpacing: "-0.02em", lineHeight: 0.95 }}>
@@ -1253,7 +1253,7 @@ function FriendResult({ result, onStart }) {
         {meta.tag}
       </p>
       <div className="text-center">
-        <button onClick={onStart} className="font-digital uppercase px-8 py-4 border transition" style={{ borderColor: "#ffc847", color: "#ffc847", fontSize: "13px", letterSpacing: "0.3em", background: "transparent", cursor: "pointer" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#ffc847"; e.currentTarget.style.color = "#0a0710"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#ffc847"; }}>
+        <button onClick={onStart} className="font-digital uppercase px-8 py-4 border transition" style={{ borderColor: "#ffc847", color: "#ffc847", fontSize: "13px", letterSpacing: "0.2em", background: "transparent", cursor: "pointer" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#ffc847"; e.currentTarget.style.color = "#0a0710"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#ffc847"; }}>
           Take the quiz to find yours →
         </button>
       </div>
@@ -1449,7 +1449,7 @@ function MoreLikeYourTaste({ winner, picks, scores }) {
               <div className="font-body" style={{ color: "#f4f1de", fontSize: "1.1rem", lineHeight: 1.3, fontWeight: 600 }}>
                 {s.title} →
               </div>
-              <div className="font-mono" style={{ color: "#8a7a6a", fontSize: "10px", letterSpacing: "0.2em" }}>
+              <div className="font-mono" style={{ color: "#8a7a6a", fontSize: "11px", letterSpacing: "0.2em" }}>
                 S{s.season}
               </div>
             </div>
