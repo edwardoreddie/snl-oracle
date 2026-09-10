@@ -577,8 +577,8 @@ export const ASPECT_IDS = Object.keys(ASPECTS);
 export const ASPECT_ROUND = {
   type: "aspects",
   title: "ROUND 01 / WHAT YOU LIVE FOR",
-  prompt: "Pick the 3 aspects of SNL you live for.",
-  sub: "These shape the next three questions. Be honest — there's no wrong combination.",
+  prompt: "What do you watch SNL for? Pick three.",
+  sub: "Your first pick becomes your type. The next three questions come from these.",
   max: 3,
   min: 3,
 };

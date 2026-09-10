@@ -360,7 +360,10 @@ function AspectsRound({ q, onAnswer, index, total }) {
     <div className="rise" key={index}>
       <RoundHeader q={q} index={index} total={total} />
 
-      <div className="flex items-center justify-between mb-5 font-mono" style={{ color: "#a89684", fontSize: "11px", letterSpacing: "0.2em" }}>
+      <div
+        className="flex items-center justify-between mb-5 font-mono"
+        style={{ color: "#a89684", fontSize: "11px", letterSpacing: "0.2em", position: "sticky", top: 0, zIndex: 30, background: "#0a0710", paddingTop: "10px", paddingBottom: "10px" }}
+      >
         <span style={{ color: ready ? "#ffc847" : "#e63946" }}>
           {ready ? `LOCKED IN 3 / 3` : `PICK ${remaining} MORE`}
         </span>
@@ -404,6 +407,12 @@ function AspectsRound({ q, onAnswer, index, total }) {
             </button>
           );
         })}
+      </div>
+
+      <div className="flex justify-center mt-6">
+        <button onClick={submit} disabled={!ready} className="font-mono px-8 py-3 border transition" style={{ borderColor: ready ? "#ffc847" : "#3a2f44", color: ready ? "#0a0710" : "#5a4a3a", background: ready ? "#ffc847" : "transparent", fontSize: "11px", letterSpacing: "0.25em", cursor: ready ? "pointer" : "not-allowed" }}>
+          ★ Next ★
+        </button>
       </div>
 
       <Progress index={index} total={total} />
