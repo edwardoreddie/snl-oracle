@@ -702,7 +702,7 @@ function Results({ picks, onReset }) {
     setSavingStory(true);
     setSaveError(null);
     try {
-      const dataUrl = renderStoryDataUrl();
+      const dataUrl = await renderStoryDataUrl();
       if (!dataUrl) throw new Error("Couldn't render image");
       downloadDataUrl(dataUrl, storyFilename);
     } catch (e) {
@@ -718,7 +718,7 @@ function Results({ picks, onReset }) {
     setSaveError(null);
     setIgToast(null);
     try {
-      const dataUrl = renderStoryDataUrl();
+      const dataUrl = await renderStoryDataUrl();
       if (!dataUrl) throw new Error("Couldn't render image");
       // Mobile path: invoke native share sheet with image + caption text.
       // Instagram appears as an option; caption auto-fills.
@@ -1105,83 +1105,121 @@ function wrapTextCanvas(ctx, text, maxWidth) {
   return lines;
 }
 
-function generateStoryImage(winner, archetype) {
+// The one asset that leaves the site, so it has to look like the site: the plum
+// black gradient, Limelight for the title, a bulb strip and a gold hairline.
+const STORY_DOMAIN = "studio8h.fan";
+
+async function generateStoryImage(winner, archetype) {
   const meta = SEASONS[winner.season];
   if (!meta) return null;
   const hotTake = HOT_TAKES[winner.season];
-  const host = typeof window !== "undefined" ? window.location.host : "the snl oracle";
+
+  // The page has already requested these, but canvas needs them resolved before
+  // it draws or it silently falls back to a system face.
+  if (typeof document !== "undefined" && document.fonts) {
+    try {
+      await Promise.all([
+        document.fonts.load('72px Limelight'),
+        document.fonts.load('900 520px "Archivo Black"'),
+        document.fonts.load('italic 38px Newsreader'),
+        document.fonts.load('500 22px "DM Mono"'),
+      ]);
+    } catch (e) { /* draw with fallbacks */ }
+  }
 
   const canvas = document.createElement("canvas");
   canvas.width = STORY_WIDTH;
   canvas.height = STORY_HEIGHT;
   const ctx = canvas.getContext("2d");
 
-  ctx.fillStyle = "#000000";
+  // Plum-black gradient, matching the site's radial background.
+  const bg = ctx.createLinearGradient(0, 0, 0, STORY_HEIGHT);
+  bg.addColorStop(0, "#1a1424");
+  bg.addColorStop(0.55, "#0a0710");
+  bg.addColorStop(1, "#050306");
+  ctx.fillStyle = bg;
   ctx.fillRect(0, 0, STORY_WIDTH, STORY_HEIGHT);
   ctx.textAlign = "center";
   ctx.textBaseline = "alphabetic";
 
-  // Brand title — what is this?
-  ctx.fillStyle = "#ffc847";
-  ctx.font = '900 56px "Arial Black", Impact, sans-serif';
-  ctx.fillText("THE SNL ORACLE", STORY_WIDTH / 2, 200);
+  const bulbStrip = (y) => {
+    const count = 15;
+    const gap = STORY_WIDTH / (count + 1);
+    for (let i = 1; i <= count; i++) {
+      ctx.beginPath();
+      ctx.arc(i * gap, y, 7, 0, Math.PI * 2);
+      ctx.fillStyle = "#ffc847";
+      ctx.shadowColor = "#ffc847";
+      ctx.shadowBlur = 18;
+      ctx.fill();
+    }
+    ctx.shadowBlur = 0;
+  };
+  const hairline = (y) => {
+    ctx.fillStyle = "#ffc847";
+    ctx.globalAlpha = 0.5;
+    ctx.fillRect(110, y, STORY_WIDTH - 220, 2);
+    ctx.globalAlpha = 1;
+  };
 
-  // Brand subtitle — what does it do?
-  ctx.fillStyle = "#8a7a6a";
-  ctx.font = '600 22px "Courier New", monospace';
-  ctx.fillText("F I N D   Y O U R   P E A K   S N L   S E A S O N", STORY_WIDTH / 2, 250);
+  bulbStrip(70);
+  hairline(120);
 
-  // Lead-in
-  ctx.fillStyle = "#c9b8a0";
-  ctx.font = 'italic 34px Georgia, "Times New Roman", serif';
-  ctx.fillText("My peak season is", STORY_WIDTH / 2, 410);
-
-  // Giant S##
   ctx.fillStyle = "#f4f1de";
-  ctx.font = '900 520px "Arial Black", Impact, sans-serif';
-  ctx.fillText(`S${winner.season}`, STORY_WIDTH / 2, 880);
+  ctx.font = '72px Limelight, Georgia, serif';
+  ctx.shadowColor = "rgba(255, 200, 71, 0.45)";
+  ctx.shadowBlur = 26;
+  ctx.fillText("The SNL Oracle", STORY_WIDTH / 2, 250);
+  ctx.shadowBlur = 0;
 
-  // Year range
+  ctx.fillStyle = "#8a7a6a";
+  ctx.font = '500 22px "DM Mono", "Courier New", monospace';
+  ctx.fillText("F I N D   Y O U R   P E A K   S N L   S E A S O N", STORY_WIDTH / 2, 310);
+
   ctx.fillStyle = "#c9b8a0";
-  ctx.font = '700 64px "Arial Black", Impact, sans-serif';
-  ctx.fillText(`${meta.year}–${String(meta.end).slice(2)}`, STORY_WIDTH / 2, 970);
+  ctx.font = 'italic 34px Newsreader, Georgia, serif';
+  ctx.fillText("My peak season is", STORY_WIDTH / 2, 450);
 
-  // Hot take (italic serif, wrapped)
+  ctx.fillStyle = "#f4f1de";
+  ctx.font = '900 520px "Archivo Black", "Arial Black", sans-serif';
+  ctx.fillText(`S${winner.season}`, STORY_WIDTH / 2, 900);
+
+  ctx.fillStyle = "#c9b8a0";
+  ctx.font = '700 64px "Archivo Black", "Arial Black", sans-serif';
+  ctx.fillText(`${meta.year}\u2013${String(meta.end).slice(2)}`, STORY_WIDTH / 2, 985);
+
+  let y = 1120;
   if (hotTake) {
     ctx.fillStyle = "#c9b8a0";
-    ctx.font = 'italic 38px Georgia, "Times New Roman", serif';
-    const lines = wrapTextCanvas(ctx, `“${hotTake}”`, STORY_WIDTH - 240);
-    const lineHeight = 54;
-    const blockHeight = lines.length * lineHeight;
-    const startY = 1170 - blockHeight / 2;
-    lines.forEach((line, i) => {
-      ctx.fillText(line, STORY_WIDTH / 2, startY + i * lineHeight);
-    });
+    ctx.font = 'italic 38px Newsreader, Georgia, serif';
+    const lines = wrapTextCanvas(ctx, `\u201C${hotTake}\u201D`, STORY_WIDTH - 240);
+    lines.forEach((line, i) => ctx.fillText(line, STORY_WIDTH / 2, y + i * 54));
+    y += lines.length * 54;
   }
 
-  // Hairline divider
-  ctx.fillStyle = "#2a2030";
-  ctx.fillRect(120, 1430, STORY_WIDTH - 240, 2);
+  y += 70;
+  hairline(y);
 
-  // Archetype lead-in
+  y += 78;
   ctx.fillStyle = "#c9b8a0";
-  ctx.font = 'italic 30px Georgia, "Times New Roman", serif';
-  ctx.fillText("I'm", STORY_WIDTH / 2, 1520);
+  ctx.font = 'italic 30px Newsreader, Georgia, serif';
+  ctx.fillText("I'm", STORY_WIDTH / 2, y);
 
-  // Archetype name
+  y += 74;
   ctx.fillStyle = "#f4f1de";
-  ctx.font = '900 56px "Arial Black", Impact, sans-serif';
-  ctx.fillText(archetype.name, STORY_WIDTH / 2, 1600);
+  ctx.font = '900 56px "Archivo Black", "Arial Black", sans-serif';
+  ctx.fillText(archetype.name, STORY_WIDTH / 2, y);
 
-  // CTA lead-in
   ctx.fillStyle = "#8a7a6a";
-  ctx.font = '600 24px "Courier New", monospace';
-  ctx.fillText("F I N D   Y O U R S   A T", STORY_WIDTH / 2, 1770);
+  ctx.font = '500 24px "DM Mono", "Courier New", monospace';
+  ctx.fillText("F I N D   Y O U R S   A T", STORY_WIDTH / 2, 1720);
 
-  // host URL in gold
   ctx.fillStyle = "#ffc847";
-  ctx.font = '900 36px "Arial Black", Impact, sans-serif';
-  ctx.fillText(host, STORY_WIDTH / 2, 1830);
+  ctx.font = '40px Limelight, Georgia, serif';
+  ctx.fillText(STORY_DOMAIN, STORY_WIDTH / 2, 1785);
+
+  hairline(1840);
+  bulbStrip(1880);
 
   return canvas.toDataURL("image/png");
 }
