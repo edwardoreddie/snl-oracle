@@ -583,6 +583,23 @@ export const ASPECT_ROUND = {
   min: 3,
 };
 
+// Era filter chips for the cast round. Hardcore fans think in decades, and
+// scrolling 174 faces three to a row is 58 rows on a phone.
+export const CAST_ERAS = [
+  { id: "70s", label: "70s", first: 1, last: 5 },
+  { id: "80s", label: "80s", first: 6, last: 15 },
+  { id: "90s", label: "90s", first: 16, last: 25 },
+  { id: "00s", label: "00s", first: 26, last: 35 },
+  { id: "10s", label: "10s", first: 36, last: 45 },
+  { id: "20s", label: "20s", first: 46, last: 51 },
+];
+
+export function castInEra(name, eraId) {
+  const era = CAST_ERAS.find((e) => e.id === eraId);
+  if (!era) return true;
+  return seasonsFor(name).some((s) => s >= era.first && s <= era.last);
+}
+
 export const CAST_ROUND = {
   type: "multi-cast",
   title: "ROUND 05 / NON-NEGOTIABLES",

@@ -5,6 +5,8 @@ import {
   STORY_HEIGHT,
   CAST_TENURE,
   ALL_CAST,
+  CAST_ERAS,
+  castInEra,
   seasonsFor,
   SEASONS,
   HOT_TAKES,
@@ -484,6 +486,7 @@ function SingleRound({ q, onAnswer, index, total }) {
 function MultiCastRound({ q, onAnswer, index, total, photos, photosStatus }) {
   const [selected, setSelected] = useState([]);
   const [query, setQuery] = useState("");
+  const [era, setEra] = useState(null);
   const photoCount = Object.keys(photos).length;
   const photosLoaded = photoCount > 30;
 
@@ -495,9 +498,9 @@ function MultiCastRound({ q, onAnswer, index, total, photos, photosStatus }) {
 
   const empty = selected.length === 0;
   const trimmed = query.trim().toLowerCase();
-  const filtered = trimmed
-    ? ALL_CAST.filter((name) => name.toLowerCase().includes(trimmed))
-    : ALL_CAST;
+  const filtered = ALL_CAST
+    .filter((name) => (trimmed ? name.toLowerCase().includes(trimmed) : true))
+    .filter((name) => (era ? castInEra(name, era) : true));
 
   return (
     <div className="rise" key={index}>
@@ -545,7 +548,31 @@ function MultiCastRound({ q, onAnswer, index, total, photos, photosStatus }) {
         </div>
       )}
 
-      <div className="font-mono mt-4 mb-3" style={{ color: "#8a7a6a", fontSize: "10px", letterSpacing: "0.2em" }}>
+      <div className="flex flex-wrap gap-2 mt-4">
+        {[{ id: null, label: "All" }, ...CAST_ERAS].map((chip) => {
+          const active = era === chip.id;
+          return (
+            <button
+              key={chip.id || "all"}
+              onClick={() => setEra(chip.id)}
+              className="font-mono border transition"
+              style={{
+                borderColor: active ? "#ffc847" : "#3a2f44",
+                color: active ? "#0a0710" : "#c9b8a0",
+                background: active ? "#ffc847" : "rgba(255,255,255,0.02)",
+                padding: "7px 14px",
+                fontSize: "11px",
+                letterSpacing: "0.2em",
+                cursor: "pointer",
+              }}
+            >
+              {chip.label}
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="font-mono mt-4 mb-3" style={{ color: "#8a7a6a", fontSize: "11px", letterSpacing: "0.2em" }}>
         SHOWING {filtered.length} OF {ALL_CAST.length} CAST MEMBERS
       </div>
 
