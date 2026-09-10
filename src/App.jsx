@@ -634,9 +634,11 @@ function Results({ picks, onReset }) {
   const winner = top[0];
   const winnerMeta = SEASONS[winner.season];
   const age = predictAge(winner.season);
-  const totalScore = top.reduce((acc, t) => acc + t.score, 0) || 1;
-  const winnerPct = Math.round((winner.score / totalScore) * 100);
-  const archetype = archetypeFromPicks(picks);
+  // Clamp at zero before summing: after the negative-signal questions a
+  // runner-up can be negative, which made the percentage nonsense.
+  const totalScore = top.reduce((acc, t) => acc + Math.max(0, t.score), 0) || 1;
+  const winnerPct = Math.round((Math.max(0, winner.score) / totalScore) * 100);
+  const archetype = archetypeFromPicks(picks, winner.season);
   const seasonPhoto = useSeasonPhoto(winner.season);
   const [savingStory, setSavingStory] = useState(false);
   const [saveError, setSaveError] = useState(null);

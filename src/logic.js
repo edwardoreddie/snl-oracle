@@ -722,38 +722,17 @@ export const ADAPTIVE_POOL = [
     id: "host-era",
     title: "THE HOST",
     prompt: "Which kind of host episode do you live for?",
-    options: [
-      { label: "One of the early-years regulars", sub: "Steve Martin. Buck Henry. Paul Simon.", weight: { 1: 3, 2: 3, 3: 3, 4: 3, 5: 3, 6: 1 } },
-      { label: "A musician who could actually host", sub: "Ray Charles. Stevie Wonder.", weight: { 7: 2, 8: 3, 9: 2, 10: 2 } },
-      { label: "An 80s or 90s repeat offender", sub: "Hanks. Goodman. Baldwin.", weight: { 11: 2, 12: 2, 13: 2, 14: 2, 15: 3, 16: 3, 17: 3, 18: 3, 19: 3, 20: 2, 21: 2 } },
-      { label: "An old-school dramatic actor having fun", sub: "Walken. Hanks. Hopkins. Goodman.", weight: { 22: 2, 23: 2, 24: 2, 25: 2, 26: 1, 31: 1, 32: 2, 41: 1, 42: 2 } },
-      { label: "A ringer holding up a thin year", sub: "Jon Hamm. Betty White. Walken again.", weight: { 27: 2, 28: 2, 29: 2, 30: 2, 34: 2, 35: 3, 36: 2, 38: 2, 48: 2 } },
-      { label: "A host with no real audience", sub: "SNL at Home. The distanced 2021 shows.", weight: { 45: 4, 46: 3 } },
-      { label: "A comedian in their prime", sub: "Mulaney. Carrey. Sandler. Galifianakis.", weight: { 24: 1, 25: 1, 41: 1, 42: 1, 43: 2, 44: 3, 47: 1 } },
-      { label: "A pop star doing double duty", sub: "Bieber. Timberlake. Carpenter. Bad Bunny.", weight: { 32: 2, 33: 2, 37: 2, 49: 1, 50: 1, 51: 2 } },
-      { label: "A returning legend", sub: "Five-Timers. Hosts who used to be cast.", weight: { 25: 2, 31: 1, 37: 2, 40: 2, 50: 3, 51: 2 } },
-    ],
+    // One options array, not a hand-copied near-duplicate of the host
+    // sub-question. coveredByAspects already skips this round for anyone who
+    // picked the host lane, so the two are never both asked.
+    options: ASPECTS.host.subQuestion.options,
   },
   {
     id: "impression",
     title: "THE IMPRESSION",
-    prompt: "Pick an impression you'd watch on loop.",
-    options: [
-      { label: "Chase's Ford and Aykroyd's Carter", weight: { 1: 3, 2: 3, 3: 3, 4: 3, 5: 2 } },
-      { label: "Piscopo's Reagan", weight: { 6: 2, 7: 3, 8: 3, 9: 3, 10: 2 } },
-      { label: "Hartman's Reagan", weight: { 12: 3, 13: 3, 14: 2 } },
-      { label: "Carvey's Bush 41", weight: { 14: 2, 15: 3, 16: 2 } },
-      { label: "Hartman's Clinton", weight: { 18: 3, 19: 3, 20: 3, 21: 2 } },
-      { label: "Armisen's Obama", weight: { 33: 2, 34: 3, 35: 3, 36: 3, 37: 3 } },
-      { label: "Ferrell's Bush 43", weight: { 26: 3, 27: 3 } },
-      { label: "Hammond's Clinton & Trump", weight: { 22: 1, 23: 1, 24: 2, 25: 2, 26: 2 } },
-      { label: "Tina Fey's Sarah Palin", weight: { 34: 4 } },
-      { label: "Pharoah's Obama", weight: { 38: 2, 39: 2, 40: 2, 41: 1 } },
-      { label: "McKinnon's Hillary", weight: { 40: 2, 41: 3, 42: 3 } },
-      { label: "Baldwin's Trump", weight: { 42: 3, 43: 2, 44: 2, 45: 1, 46: 2 } },
-      { label: "Maya's Kamala", weight: { 46: 3, 50: 3 } },
-      { label: "JAJ's Trump (current)", weight: { 47: 2, 48: 2, 49: 3, 50: 2, 51: 2 } },
-    ],
+    prompt: "Pick a political impression you'd watch on loop.",
+    // Shares the politics sub-question's options for the same reason.
+    options: ASPECTS.topical.subQuestion.options,
   },
   {
     id: "ten-to-one",
@@ -1015,13 +994,46 @@ export const ARCHETYPES = {
   "commercial": { name: "The Fake Ad Collector", line: "The best joke of the night is often the one pretending to sell you something." },
 };
 
-export function archetypeFromPicks(picks) {
+// Which of the user's three lanes did the most to win this season? Nothing on
+// screen ever told anyone their first tap decided their type, so derive it from
+// the result instead: the lane that contributed the most points to the winner.
+export function primaryAspectFor(picks, winningSeason) {
   const aspectsPick = picks[ASPECT_ROUND_INDEX];
-  if (!aspectsPick || !aspectsPick.value || aspectsPick.value.length === 0) {
+  const chosen = aspectsPick?.value || [];
+  if (chosen.length === 0) return null;
+  if (!winningSeason) return chosen[0];
+
+  const contribution = {};
+  chosen.forEach((id) => { contribution[id] = 0; });
+
+  // The aspect's own baseline weight for the winning season.
+  chosen.forEach((id) => {
+    const aspect = ASPECTS[id];
+    if (!aspect) return;
+    contribution[id] += (aspect.weight?.[winningSeason] || 0) * ASPECT_MULTIPLIER;
+  });
+
+  // Plus whatever its sub-question answer gave that season. Sub-questions are
+  // asked in the order the lanes were picked, in rounds 1 to 3.
+  chosen.forEach((id, i) => {
+    const pick = picks[SUB_QUESTION_START + i];
+    if (!pick || pick.type !== "single") return;
+    contribution[id] += (pick.value?.weight?.[winningSeason] || 0) * OPTION_MULTIPLIER;
+  });
+
+  // Ties fall back to the order the user picked, which is the old behavior.
+  let best = chosen[0];
+  chosen.forEach((id) => {
+    if (contribution[id] > contribution[best]) best = id;
+  });
+  return best;
+}
+
+export function archetypeFromPicks(picks, winningSeason = null) {
+  const primaryAspect = primaryAspectFor(picks, winningSeason);
+  if (!primaryAspect) {
     return { name: "The Devotee", line: "You love what you love. SNL is in your bones." };
   }
-  // Use the first aspect they picked — their top priority
-  const primaryAspect = aspectsPick.value[0];
   return ARCHETYPES[primaryAspect] || ARCHETYPES["recurring"];
 }
 
@@ -1182,8 +1194,11 @@ export function tradeOffsFor(season, picks) {
 export function predictAge(season) {
   const meta = SEASONS[season];
   if (!meta) return null;
-  const low = 2026 - (meta.end - 18);
-  const high = 2026 - (meta.year - 14);
+  // Read the year at call time. Hardcoding it made the Lorne age a year
+  // stale every January.
+  const thisYear = new Date().getFullYear();
+  const low = thisYear - (meta.end - 18);
+  const high = thisYear - (meta.year - 14);
   return { ageMin: Math.min(low, high), ageMax: Math.max(low, high) };
 }
 
@@ -1243,8 +1258,11 @@ function withTrimmedOptions(question, scores) {
 // For each option, the spread of its weights across the candidates; summed
 // across options. A question every candidate scores identically on tells us
 // nothing, however many points it hands out.
-// How close to the best a question has to score to enter the rotation.
-const NEAR_BEST = 0.2;
+// How many of the best-scoring questions enter the rotation. A ratio threshold
+// was tried first and plateaued: when the skip map rules several questions out,
+// the contender set collapses to two or three and The Moment takes most of them
+// however low the ratio goes. A fixed count guarantees a wide enough field.
+const ROTATION_WIDTH = 7;
 
 // Stable, order-sensitive hash of everything the user has answered so far.
 function picksFingerprint(picks) {
@@ -1313,7 +1331,6 @@ export function pickNextAdaptive(picks, usedIds) {
     // Score the trimmed version, since that is what the user will answer.
     score: discriminationScore(withTrimmedOptions(question, scores), top),
   }));
-  const bestScore = Math.max(...ranked.map((r) => r.score));
 
   // On pure information The Moment wins almost every round, because its
   // options are one-season spikes and nothing else separates candidates as
@@ -1321,7 +1338,10 @@ export function pickNextAdaptive(picks, usedIds) {
   // list again, so instead: take every question within reach of the best one
   // and rotate between them on a hash of the answers so far. Same answers
   // always produce the same question; different fans get different rounds.
-  const contenders = ranked.filter((r) => r.score >= bestScore * NEAR_BEST);
+  const contenders = ranked
+    .slice()
+    .sort((a, b) => b.score - a.score)
+    .slice(0, ROTATION_WIDTH);
   const chosen = contenders[picksFingerprint(picks) % contenders.length];
   return withTrimmedOptions(chosen.question, scores);
 }
@@ -1344,8 +1364,13 @@ export function coveredByAspects(aspectIds) {
   return (aspectIds || []).flatMap((id) => {
     if (id === "update") return ["update"];
     if (id === "host") return ["host-era"];
-    if (id === "topical") return ["impression"];
     if (id === "ten-to-one") return ["ten-to-one"];
+    // Anyone who answered a political sub-question, from either the politics
+    // lane or cold opens, has already told us about political impressions.
+    if (id === "topical" || id === "cold-open") return ["impression"];
+    // Recurring characters and pre-tapes are both what the sketch-type
+    // adaptive question asks about.
+    if (id === "recurring" || id === "pretape") return ["sketch-type"];
     return [];
   });
 }
