@@ -279,7 +279,7 @@ export default function App() {
         <BulbStrip top />
         <BulbStrip />
         <div className="relative max-w-3xl mx-auto px-5 sm:px-6 pt-14 pb-20" style={{ zIndex: 20 }}>
-          <Header />
+          <Header compact={round > 0 || isDone} />
           {friendResult && picks.length === 0 ? (
             <FriendResult result={friendResult} onStart={startFromFriend} />
           ) : !isDone && currentQ ? (
@@ -294,15 +294,26 @@ export default function App() {
   );
 }
 
-function Header() {
+function Header({ compact }) {
+  // After round 1 the full header is just pushing the question down a third of
+  // a phone screen, so it collapses to the title at about half size.
+  if (compact) {
+    return (
+      <div className="text-center mb-6">
+        <h1 className="font-marquee" style={{ color: "#f4f1de", fontSize: "clamp(1.5rem, 4vw, 2.2rem)", textShadow: "0 0 14px rgba(255, 200, 71, 0.3)", lineHeight: 1 }}>
+          The SNL Oracle
+        </h1>
+      </div>
+    );
+  }
   return (
     <div className="text-center mb-10 rise">
-      <div className="font-mono mb-3 flicker" style={{ color: "#ffc847", fontSize: "11px", letterSpacing: "0.4em" }}>★ LIVE FROM NEW YORK ★</div>
+      <div className="font-mono mb-3 flicker" style={{ color: "#ffc847", fontSize: "11px", letterSpacing: "0.2em" }}>★ LIVE FROM NEW YORK ★</div>
       <h1 className="font-marquee mb-2" style={{ color: "#f4f1de", fontSize: "clamp(2.5rem, 8vw, 4.5rem)", textShadow: "0 0 20px rgba(255, 200, 71, 0.4), 0 0 40px rgba(230, 57, 70, 0.2)", lineHeight: 1 }}>
         The SNL Oracle
       </h1>
-      <div className="font-body italic mx-auto" style={{ color: "#c9b8a0", fontSize: "0.95rem", maxWidth: "440px", lineHeight: 1.45 }}>
-        A fan-built rewatch guide. Tell us what you love about SNL and we'll point you at the seasons and sketches you've been missing.
+      <div className="font-body italic mx-auto" style={{ color: "#c9b8a0", fontSize: "0.95rem", maxWidth: "460px", lineHeight: 1.45 }}>
+        Tell the Oracle what you love. It names your peak season, runs Lorne's math on your age, and hands you a rewatch list.
       </div>
     </div>
   );
@@ -320,10 +331,7 @@ function Round({ q, onAnswer, index, total, photos, photosStatus }) {
 function RoundHeader({ q, index, total }) {
   return (
     <>
-      <div className="font-mono text-center mb-2" style={{ color: "#6a5a4a", fontSize: "10px", letterSpacing: "0.4em" }}>
-        A Digital Short
-      </div>
-      <div className="flex items-center justify-between mb-6 font-mono" style={{ color: "#a89684", fontSize: "10px", letterSpacing: "0.3em" }}>
+      <div className="flex items-center justify-between mb-6 font-mono" style={{ color: "#a89684", fontSize: "11px", letterSpacing: "0.2em" }}>
         <span>{q.title}</span>
         <span>{String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}</span>
       </div>
@@ -786,8 +794,8 @@ function Results({ picks, onReset }) {
   return (
     <div>
       <div className="mb-10 text-center" style={{ background: "#000", padding: "80px 24px 60px", border: "1px solid #1a1424" }}>
-        <div className="font-mono mb-12" style={{ color: "#8a7a6a", fontSize: "11px", letterSpacing: "0.45em" }}>
-          A Digital Short
+        <div className="font-mono mb-12" style={{ color: "#ffc847", fontSize: "11px", letterSpacing: "0.2em" }}>
+          YOUR PEAK SEASON
         </div>
         <div className="font-digital reveal" style={{ fontSize: "clamp(6.5rem, 22vw, 13rem)", color: "#f4f1de", letterSpacing: "-0.02em", lineHeight: 0.95 }}>
           S{winner.season}
@@ -1341,7 +1349,8 @@ function MoreLikeYourTaste({ winner, picks, scores }) {
 
 function Footer() {
   return (
-    <div className="mt-14 pt-6 border-t text-center font-mono" style={{ borderColor: "#3a2f44", color: "#6a5a4a", fontSize: "10px", letterSpacing: "0.15em", lineHeight: 1.6 }}>
+    <div className="mt-14 pt-6 border-t text-center font-mono" style={{ borderColor: "#3a2f44", color: "#6a5a4a", fontSize: "11px", letterSpacing: "0.15em", lineHeight: 1.6 }}>
+      <div style={{ color: "#8a7a6a", marginBottom: "10px" }}>studio8h.fan</div>
       An unaffiliated fan project. Not associated with, endorsed by, or sponsored by
       <br />
       NBC, Broadway Video, or Saturday Night Live. SNL and all sketch / character
