@@ -1021,7 +1021,28 @@ export function archetypeFromPicks(picks) {
 /* ============================================================
    SCORING
    ============================================================ */
+/* ------------------------------------------------------------
+   CAST BOOST
+
+   A flat 40 points split evenly across a performer's tenure was upside
+   down at both ends: Kenan's 23 seasons gave 1.7 points each, which is
+   noise, while a one-season featured player dropped the whole 40 on a
+   single season, equal to two of the strongest possible answers.
+
+   24 / sqrt(tenure), capped at 15, keeps every pick inside a range where
+   it means something without letting it decide the quiz on its own. A
+   performer's first season counts half, since featured-player rookie
+   years rarely define anyone's peak, but only when they have more than
+   one season to give.
+   ------------------------------------------------------------ */
 export const CAST_BOOST = 40;
+const CAST_PER_SEASON_CAP = 15;
+const CAST_PER_SEASON_SCALE = 24;
+
+export function castPerSeason(tenureLength) {
+  if (tenureLength <= 0) return 0;
+  return Math.min(CAST_PER_SEASON_CAP, CAST_PER_SEASON_SCALE / Math.sqrt(tenureLength));
+}
 
 /* ------------------------------------------------------------
    SEASON GRAVITY
@@ -1104,9 +1125,12 @@ export function scoreFromPicks(picks) {
       p.value.forEach((name) => {
         const ss = seasonsFor(name);
         if (ss.length === 0) return;
-        const per = CAST_BOOST / ss.length;
-        // Not divided: a cast pick means what it means.
-        ss.forEach((s) => { scores[s] += per; });
+        const per = castPerSeason(ss.length);
+        // Not divided by the gravity divisor: a cast pick means what it means.
+        ss.forEach((s, i) => {
+          const rookieYear = i === 0 && ss.length > 1;
+          scores[s] += rookieYear ? per / 2 : per;
+        });
       });
     } else if (p.type === "aspects") {
       // p.value is array of aspect IDs
