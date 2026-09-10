@@ -928,6 +928,79 @@ export function archetypeFromPicks(picks) {
    ============================================================ */
 export const CAST_BOOST = 40;
 
+/* ------------------------------------------------------------
+   SEASON GRAVITY
+
+   The weight tables were written by hand over months, and famous
+   seasons picked up far more mentions than obscure ones: S42 can
+   collect roughly twelve times what S6 can. Left alone, that means a
+   user with taste spread across eras drifts to S42 no matter what
+   they actually like, because S42 is in everything.
+
+   So: add up every positive point each season could collect if the
+   user picked every answer on the quiz, compare each season to the
+   median, and divide that season's question points by the square
+   root of the ratio. A point aimed at a heavy season is worth less;
+   a point aimed at a starved season is worth more; seasons near the
+   median are untouched.
+
+   The square root is deliberate. A season with a deep catalog of
+   famous moments should still win a little more often than a season
+   nobody remembers, so this corrects the head start rather than
+   erasing it. Raise GRAVITY_EXPONENT toward 1 to flatten harder,
+   lower it toward 0 to turn this off.
+
+   Cast picks are excluded. Picking Farley should mean the same thing
+   regardless of how well-documented his seasons happen to be
+   elsewhere in the quiz.
+   ------------------------------------------------------------ */
+const GRAVITY_EXPONENT = 0.6;
+const ASPECT_MULTIPLIER = 4;
+const OPTION_MULTIPLIER = 5;
+
+// Total positive weight each season can collect across the whole quiz.
+function totalAvailableWeight() {
+  const total = {};
+  for (let s = 1; s <= 51; s++) total[s] = 0;
+  const add = (weights, multiplier) => {
+    Object.entries(weights || {}).forEach(([s, v]) => {
+      if (total[s] !== undefined) total[s] += v * multiplier;
+    });
+  };
+  ASPECT_IDS.forEach((id) => {
+    const a = ASPECTS[id];
+    add(a.weight, ASPECT_MULTIPLIER);
+    a.subQuestion.options.forEach((o) => add(o.weight, OPTION_MULTIPLIER));
+  });
+  ADAPTIVE_POOL.filter((q) => !q.negate).forEach((q) => {
+    q.options.forEach((o) => add(o.weight, OPTION_MULTIPLIER));
+  });
+  return total;
+}
+
+// Per-season divisor, computed once at module load.
+export const GRAVITY_DIVISOR = (() => {
+  const total = totalAvailableWeight();
+  const values = Object.values(total).filter((v) => v > 0).sort((a, b) => a - b);
+  const median = values.length
+    ? values.length % 2
+      ? values[(values.length - 1) / 2]
+      : (values[values.length / 2 - 1] + values[values.length / 2]) / 2
+    : 1;
+  const divisor = {};
+  for (let s = 1; s <= 51; s++) {
+    // A season no answer points to gets a divisor of 1 rather than 0.
+    // Step 3 of the audit gives those seasons real options to collect.
+    const raw = total[s] > 0 ? Math.pow(total[s] / median, GRAVITY_EXPONENT) : 1;
+    // Clamped at 1: heavy seasons shrink, light seasons are left alone rather
+    // than amplified. Prevents the correction from overshooting into seasons
+    // that are thinly covered because little happened, not because of an
+    // oversight in the tables.
+    divisor[s] = Math.max(1, raw);
+  }
+  return divisor;
+})();
+
 export function scoreFromPicks(picks) {
   const scores = {};
   for (let s = 1; s <= 51; s++) scores[s] = 0;
@@ -937,6 +1010,7 @@ export function scoreFromPicks(picks) {
         const ss = seasonsFor(name);
         if (ss.length === 0) return;
         const per = CAST_BOOST / ss.length;
+        // Not divided: a cast pick means what it means.
         ss.forEach((s) => { scores[s] += per; });
       });
     } else if (p.type === "aspects") {
@@ -945,7 +1019,7 @@ export function scoreFromPicks(picks) {
         const a = ASPECTS[aspectId];
         if (!a) return;
         Object.entries(a.weight || {}).forEach(([s, v]) => {
-          scores[parseInt(s)] += v * 4; // aspect baseline weight
+          scores[parseInt(s)] += (v * ASPECT_MULTIPLIER) / GRAVITY_DIVISOR[s];
         });
       });
     } else {
@@ -954,7 +1028,9 @@ export function scoreFromPicks(picks) {
       const adaptiveQ = p.adaptiveId ? ADAPTIVE_POOL.find((q) => q.id === p.adaptiveId) : null;
       const sign = adaptiveQ?.negate ? -1 : 1;
       const w = p.value.weight || {};
-      Object.entries(w).forEach(([s, v]) => { scores[parseInt(s)] += v * 5 * sign; });
+      Object.entries(w).forEach(([s, v]) => {
+        scores[parseInt(s)] += (v * OPTION_MULTIPLIER * sign) / GRAVITY_DIVISOR[s];
+      });
     }
   });
   return scores;

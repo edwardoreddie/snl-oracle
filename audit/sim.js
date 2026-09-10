@@ -110,10 +110,17 @@ const tot = {}; for (let s = 1; s <= LAST_SEASON; s++) tot[s] = 0;
 const add = (w, m) => Object.entries(w || {}).forEach(([s, v]) => { tot[s] += v * m; });
 L.ASPECT_IDS.forEach((id) => { const a = L.ASPECTS[id]; add(a.weight, 4); a.subQuestion.options.forEach((o) => add(o.weight, 5)); });
 L.ADAPTIVE_POOL.filter((q) => !q.negate).forEach((q) => q.options.forEach((o) => add(o.weight, 5)));
+// Gravity is measured AFTER the scoring-time divisor, because that is what a
+// user actually experiences. The raw table totals are printed underneath for
+// reference; Step 2 deliberately leaves those alone.
+const div = L.GRAVITY_DIVISOR || {};
+const eff = Object.entries(tot).map(([s, v]) => [+s, v / (div[s] || 1)]).sort((a, b) => b[1] - a[1]);
 const g = Object.entries(tot).map(([s, v]) => [+s, v]).sort((a, b) => b[1] - a[1]);
-console.log("\n=== 4. GRAVITY: total points a season can collect across every positive answer ===");
-console.log("Heaviest: " + g.slice(0, 5).map(([s, v]) => `S${s} ${v}`).join("  ") + "   Lightest: " + g.slice(-5).map(([s, v]) => `S${s} ${v}`).join("  "));
-console.log("Heaviest to lightest ratio: " + (g[0][1] / Math.max(1, g[g.length - 1][1])).toFixed(1) + "x   TARGET: under 4x");
+const fmt = (rows) => rows.map(([s, v]) => `S${s} ${v.toFixed(0)}`).join("  ");
+console.log("\n=== 4. GRAVITY: points a season can collect across every positive answer, after the divisor ===");
+console.log("Heaviest: " + fmt(eff.slice(0, 5)) + "   Lightest: " + fmt(eff.slice(-5)));
+console.log("Heaviest to lightest ratio: " + (eff[0][1] / Math.max(1, eff[eff.length - 1][1])).toFixed(1) + "x   TARGET: under 4x");
+console.log("  (raw tables, before the divisor: " + fmt(g.slice(0, 3)) + " ... " + fmt(g.slice(-3)) + "   ratio " + (g[0][1] / Math.max(1, g[g.length - 1][1])).toFixed(1) + "x)");
 
 // ---------- 5. Named profiles: do coherent tastes land where they should? ----------
 console.log("\n=== 5. NAMED PROFILES (top 3 should sit inside the expected band) ===");
