@@ -344,7 +344,7 @@ export const HOT_TAKES = {
 export const ASPECTS = {
   "cold-open": {
     label: "Cold opens",
-    sub: "Politics, impressions, Live From New York",
+    sub: "The first sketch of the night, and the line at the end of it.",
     weight: { 14: 1, 15: 2, 21: 1, 22: 1, 24: 1, 25: 1, 26: 2, 27: 3, 34: 4, 41: 2, 42: 4, 43: 3, 44: 2, 45: 2, 46: 3, 47: 2, 48: 2, 49: 2, 50: 2, 51: 1 },
     subQuestion: {
       id: "cold-open-style",
@@ -390,7 +390,7 @@ export const ASPECTS = {
       prompt: "Which recurring type owns you?",
       options: [
         { label: "The originals", sub: "Coneheads. Killer Bees. Roseanne Roseannadanna.", weight: { 1: 3, 2: 3, 3: 3, 4: 3, 5: 3, 6: 2 } },
-        { label: "Big personalities with catchphrases", sub: "Mr. Robinson. Church Lady. Mary Katherine Gallagher. Stefon.", weight: { 7: 3, 8: 3, 9: 2, 10: 2, 11: 2, 12: 3, 13: 3, 14: 2, 17: 1, 22: 3, 23: 3, 24: 3, 25: 2, 36: 2, 37: 3 } },
+        { label: "Big personalities with catchphrases", sub: "Mr. Robinson. Church Lady. Mary Katherine Gallagher. Stefon.", weight: { 7: 3, 8: 3, 9: 3, 10: 2, 11: 2, 12: 3, 13: 3, 14: 2, 17: 1, 22: 3, 23: 3, 24: 3, 25: 2, 36: 2, 37: 3 } },
         { label: "Loser archetypes", sub: "Matt Foley. Hans & Franz. Roxbury Guys. Drunk Uncle.", weight: { 14: 2, 15: 2, 17: 3, 18: 4, 19: 3, 20: 2, 22: 3, 23: 3, 38: 2, 39: 2 } },
         { label: "Mid-2000s regulars", sub: "Debbie Downer. Bronx Beat. Two A-Holes.", weight: { 26: 2, 27: 2, 28: 2, 29: 3, 30: 3, 31: 3, 32: 3, 33: 3, 34: 3 } },
         { label: "Wiig-era weirdos", sub: "Target Lady. Gilly. Penelope. Sue.", weight: { 31: 2, 32: 2, 33: 2, 34: 2, 35: 3, 36: 3, 37: 3 } },
@@ -410,7 +410,7 @@ export const ASPECTS = {
       prompt: "Which host episode would you queue first?",
       options: [
         { label: "Steve Martin owning the building", sub: "The wild and crazy years. Buck Henry every December.", weight: { 1: 2, 2: 3, 3: 3, 4: 3, 5: 3 } },
-        { label: "Musician hosts of the early years", sub: "Paul Simon. Ray Charles. Stevie Wonder.", weight: { 1: 2, 2: 2, 3: 3, 6: 2, 7: 2, 8: 3, 9: 2, 10: 2 } },
+        { label: "Musician hosts of the early years", sub: "Paul Simon. Ray Charles. Stevie Wonder.", weight: { 1: 2, 2: 2, 3: 3, 6: 2, 7: 2, 8: 3, 9: 3, 10: 2 } },
         { label: "An 80s or 90s repeat offender", sub: "Tom Hanks. John Goodman. Alec Baldwin.", weight: { 11: 2, 12: 2, 13: 2, 14: 2, 15: 3, 16: 3, 17: 3, 18: 3, 19: 3, 20: 2, 21: 2 } },
         { label: "Dramatic actor cutting loose", sub: "Walken. Hopkins. De Niro. Goodman.", weight: { 22: 2, 23: 2, 24: 2, 25: 3, 26: 2, 27: 2, 31: 2, 32: 2, 41: 2, 42: 2 } },
         { label: "The ringer holding up a thin year", sub: "Walken again. Jon Hamm. Betty White.", weight: { 28: 2, 29: 2, 30: 2, 34: 2, 35: 3, 36: 2, 39: 2 } },
@@ -452,7 +452,7 @@ export const ASPECTS = {
       prompt: "When was SNL's music booking at its best?",
       options: [
         { label: "Original punk, new wave, disco", sub: "Talking Heads. Devo. Patti Smith. Costello stopping the show.", weight: { 1: 3, 2: 3, 3: 3, 4: 3, 5: 2 } },
-        { label: "80s pop and R&B bookings", sub: "Prince's first time. Stevie Wonder. Queen.", weight: { 6: 2, 7: 2, 8: 3, 9: 2, 10: 2, 11: 2, 12: 2, 13: 2, 14: 2, 15: 2, 16: 2 } },
+        { label: "80s pop and R&B bookings", sub: "Prince's first time. Stevie Wonder. Queen.", weight: { 6: 2, 7: 2, 8: 3, 9: 3, 10: 2, 11: 2, 12: 2, 13: 2, 14: 2, 15: 2, 16: 2 } },
         { label: "Nirvana, Pearl Jam, alt-rock 90s", sub: "Grunge debuting. Smashing Pumpkins. Beastie Boys.", weight: { 17: 2, 18: 3, 19: 3, 20: 3, 21: 2, 22: 2 } },
         { label: "Late-90s and early-2000s crossover", sub: "Fiona Apple. Beck. The White Stripes.", weight: { 23: 2, 24: 2, 25: 2, 28: 3, 29: 2, 30: 2 } },
         { label: "The streaming-era bookings", sub: "Chance the Rapper. Cardi B. Post Malone.", weight: { 42: 2, 43: 2, 44: 3 } },
@@ -485,42 +485,50 @@ export const ASPECTS = {
       ],
     },
   },
+  // NOTE: the id stays "impressions" so old share links (?a=impressions)
+  // still resolve. The lane now means celebrity impressions; political
+  // impressions moved into the merged "topical" politics lane below.
   "impressions": {
-    label: "Political impressions",
-    sub: "Bush. Clinton. Palin. Trump. The defining ones.",
-    weight: { 12: 2, 13: 2, 14: 2, 15: 3, 18: 3, 19: 3, 22: 2, 23: 2, 24: 2, 25: 2, 26: 3, 27: 3, 34: 4, 40: 2, 41: 3, 42: 4, 43: 3, 44: 2, 45: 1, 46: 2, 47: 2, 48: 2, 49: 2, 50: 2 },
+    label: "Celebrity impressions",
+    sub: "Trebek, Connery, Martha Stewart, and everyone Fineman does.",
+    weight: { 1: 2, 2: 2, 3: 2, 4: 2, 5: 2, 6: 2, 7: 3, 8: 3, 9: 3, 10: 3, 11: 2, 12: 3, 13: 3, 14: 3, 15: 3, 16: 3, 17: 3, 18: 3, 19: 3, 20: 2, 21: 3, 22: 3, 23: 3, 24: 3, 25: 3, 26: 3, 27: 3, 28: 2, 29: 2, 30: 2, 31: 3, 32: 3, 33: 3, 34: 3, 35: 3, 36: 3, 37: 3, 38: 3, 39: 2, 40: 3, 41: 3, 42: 3, 43: 3, 44: 3, 45: 3, 46: 3, 47: 3, 48: 3, 49: 3, 50: 3, 51: 3 },
     subQuestion: {
-      id: "impression-era",
-      title: "IMPRESSION ERA",
-      prompt: "Which impression era defines your SNL?",
+      id: "celebrity-era",
+      title: "CELEBRITY IMPRESSIONS",
+      prompt: "Whose impression of someone famous do you rewatch?",
+      options: [
+        { label: "The 70s and 80s bench", sub: "Belushi's Joe Cocker. Murphy's Stevie Wonder. Piscopo's Sinatra.", weight: { 1: 2, 2: 3, 3: 3, 4: 3, 5: 2, 6: 2, 7: 3, 8: 3, 9: 3, 10: 3, 11: 2 } },
+        { label: "Hartman, Carvey, and Lovitz doing everybody", sub: "Hartman's Sinatra. Carvey's Casey Kasem. Lovitz's Harvey Fierstein.", weight: { 12: 3, 13: 3, 14: 3, 15: 3, 16: 3, 17: 3, 18: 3, 19: 3, 20: 2 } },
+        { label: "Ferrell's Trebek and the Jeopardy bench", sub: "Trebek. Hammond's Connery. Gasteyer's Martha Stewart.", weight: { 21: 3, 22: 3, 23: 3, 24: 3, 25: 3, 26: 3, 27: 3, 28: 2 } },
+        { label: "Wiig, Armisen, and Hader on anyone", sub: "Wiig's Kathie Lee. Armisen's Prince. Hader's Clint Eastwood.", weight: { 29: 2, 30: 2, 31: 3, 32: 3, 33: 3, 34: 3, 35: 3, 36: 3, 37: 3, 38: 3 } },
+        { label: "McKinnon and Fineman doing everyone", sub: "McKinnon's Bieber and Ellen. Fineman's entire rolodex.", weight: { 39: 2, 40: 3, 41: 3, 42: 3, 43: 3, 44: 3, 45: 3, 46: 3, 47: 3, 48: 3, 49: 3, 50: 3, 51: 3 } },
+      ],
+    },
+  },
+  // The merged politics lane. Keeps the id "topical" so old share links
+  // (?a=topical) still resolve, and absorbs what used to be the separate
+  // "Political impressions" lane.
+  "topical": {
+    label: "Politics",
+    sub: "Elections, presidents, and the week's news performed back at you.",
+    weight: { 1: 2, 2: 2, 3: 2, 4: 2, 5: 2, 6: 1, 7: 2, 8: 2, 9: 2, 10: 2, 11: 2, 12: 2, 13: 2, 14: 2, 15: 3, 16: 2, 17: 2, 18: 3, 19: 3, 20: 2, 21: 2, 22: 2, 23: 2, 24: 2, 25: 2, 26: 3, 27: 4, 28: 2, 29: 2, 30: 2, 31: 2, 32: 2, 33: 2, 34: 4, 35: 2, 36: 2, 37: 2, 38: 2, 39: 2, 40: 3, 41: 3, 42: 4, 43: 3, 44: 2, 45: 2, 46: 3, 47: 2, 48: 2, 49: 3, 50: 3, 51: 2 },
+    subQuestion: {
+      id: "topical-style",
+      title: "POLITICS",
+      prompt: "Which political SNL is your SNL?",
       options: [
         { label: "The 70s political bench", sub: "Chase's Ford falling down. Aykroyd's Nixon and Carter.", weight: { 1: 3, 2: 3, 3: 3, 4: 3, 5: 2 } },
         { label: "Piscopo's Reagan, Murphy's everyone", sub: "The years the impressions carried the show.", weight: { 6: 2, 7: 3, 8: 3, 9: 3, 10: 2 } },
         { label: "Hartman doing all of them", sub: "Reagan. Sinatra. The chameleon years.", weight: { 11: 2, 12: 3, 13: 3, 17: 3 } },
         { label: "Carvey's Bush 41", sub: "'Nah gonna do it.' 'Wouldn't be prudent.'", weight: { 14: 2, 15: 3, 16: 2 } },
         { label: "Hartman & Hammond doing Clinton", sub: "The 90s political ringers.", weight: { 18: 3, 19: 3, 20: 2, 21: 2, 22: 2, 23: 2, 24: 3, 25: 3, 26: 2 } },
-        { label: "The Obama years", sub: "Armisen's Obama. Poehler's Hillary. Then Pharoah takes it over.", weight: { 28: 2, 29: 2, 30: 2, 31: 2, 32: 3, 33: 3, 35: 3, 36: 3, 37: 3, 38: 3, 39: 3 } },
         { label: "Ferrell's Bush 43", sub: "'Strategery.' The dumbest stares ever broadcast.", weight: { 26: 3, 27: 3 } },
+        { label: "Day-after-the-news cold opens", sub: "Giuliani after 9/11. Hallelujah after 2016. Real-time response.", weight: { 27: 4, 28: 2, 42: 3, 46: 3, 49: 1, 50: 1 } },
+        { label: "The Obama years", sub: "Armisen's Obama. Poehler's Hillary. Then Pharoah takes it over.", weight: { 28: 2, 29: 2, 30: 2, 31: 2, 32: 3, 33: 3, 35: 3, 36: 3, 37: 3, 38: 3, 39: 3 } },
         { label: "Tina Fey's Sarah Palin", sub: "'I can see Russia from my house.' The 2008 moment.", weight: { 34: 4 } },
-        { label: "McKinnon's Hillary + Baldwin's Trump", sub: "The 2016 election framework.", weight: { 40: 2, 41: 3, 42: 4, 43: 3, 44: 2, 45: 1, 46: 2 } },
+        { label: "Election-season chaos", sub: "Conventions to results night. The years it never stopped.", weight: { 14: 1, 18: 1, 22: 1, 26: 2, 30: 2, 34: 4, 38: 1, 40: 3, 42: 4, 46: 3, 50: 2 } },
+        { label: "McKinnon's Hillary + Baldwin's Trump", sub: "The 2016 election framework.", weight: { 40: 3, 41: 3, 42: 4, 43: 3, 44: 2, 45: 1, 46: 2 } },
         { label: "JAJ's Trump (the current run)", sub: "James Austin Johnson somehow nailing the impossible.", weight: { 47: 3, 48: 3, 49: 4, 50: 3, 51: 3 } },
-      ],
-    },
-  },
-  "topical": {
-    label: "Politics of the week",
-    sub: "Election years. Cold-open responses. Comedy as commentary.",
-    weight: { 12: 2, 13: 2, 14: 2, 15: 3, 18: 3, 19: 3, 22: 2, 23: 2, 24: 2, 25: 1, 26: 3, 27: 4, 30: 2, 34: 4, 40: 2, 41: 3, 42: 4, 43: 3, 44: 2, 45: 2, 46: 3, 49: 3, 50: 3 },
-    subQuestion: {
-      id: "topical-style",
-      title: "POLITICAL FLAVOR",
-      prompt: "What kind of political comedy fires you up?",
-      options: [
-        { label: "Impressions of sitting presidents", sub: "The week's biggest character — POTUS — performed back at us.", weight: { 14: 2, 15: 3, 18: 2, 19: 3, 22: 1, 23: 1, 24: 1, 25: 1, 26: 3, 27: 3, 34: 2, 41: 2, 42: 3, 43: 2, 44: 1, 45: 1, 46: 2, 49: 3, 50: 2 } },
-        { label: "Election-season chaos", sub: "Palin sketches. Trump-tower entry. Conventions to results night.", weight: { 14: 1, 18: 1, 22: 1, 26: 2, 30: 2, 34: 4, 38: 1, 42: 4, 46: 3, 50: 2 } },
-        { label: "Day-after-the-news cold opens", sub: "Mayor Giuliani after 9/11. Hallelujah after 2016. Real-time response.", weight: { 27: 4, 28: 1, 42: 3, 46: 3, 49: 1, 50: 1 } },
-        { label: "Cabinet & Congress — not just the president", sub: "McKinnon's Sessions. Matt Damon's Kavanaugh. The supporting cast.", weight: { 22: 1, 26: 1, 41: 1, 42: 2, 43: 3, 44: 3, 45: 2, 46: 2 } },
-        { label: "Pure satire, no impression required", sub: "Absurd-political takedowns where the joke isn't the lookalike.", weight: { 34: 3, 41: 2, 42: 3, 43: 2, 44: 2, 49: 1, 50: 1 } },
       ],
     },
   },
@@ -541,6 +549,22 @@ export const ASPECTS = {
         { label: "Sketches dying on air", sub: "Bombs and recoveries. The risk you only get live.", weight: { 5: 1, 6: 2, 11: 2, 20: 3, 38: 1, 48: 1 } },
         { label: "A brand-new cast finding its feet", sub: "Reset years. The chaos before things click.", weight: { 6: 3, 11: 3, 20: 2, 21: 1, 28: 2, 38: 3, 40: 1, 48: 3 } },
         { label: "Long-running bits getting weirder each appearance", sub: "Stefon's evolution. Domingo every other week.", weight: { 12: 2, 13: 2, 14: 2, 22: 2, 23: 2, 35: 2, 36: 3, 37: 3, 47: 2, 48: 2 } },
+      ],
+    },
+  },
+  "commercial": {
+    label: "Commercial parodies",
+    sub: "The fake ad that lands harder than the sketch around it.",
+    weight: { 1: 3, 2: 3, 3: 3, 4: 3, 5: 2, 6: 2, 7: 2, 8: 2, 9: 2, 10: 2, 11: 2, 12: 2, 13: 2, 14: 3, 15: 3, 16: 3, 17: 3, 18: 3, 19: 2, 20: 2, 21: 2, 22: 2, 23: 2, 24: 2, 25: 2, 26: 2, 27: 2, 28: 3, 29: 2, 30: 2, 31: 3, 32: 2, 33: 2, 34: 2, 35: 2, 36: 2, 37: 2, 38: 2, 39: 2, 40: 2, 41: 2, 42: 2, 43: 2, 44: 2, 45: 2, 46: 2, 47: 3, 48: 2, 49: 2, 50: 2, 51: 2 },
+    subQuestion: {
+      id: "commercial-era",
+      title: "COMMERCIALS",
+      prompt: "Which fake ad do you still quote?",
+      options: [
+        { label: "The 70s hard sell", sub: "Bass-O-Matic. Shimmer. Little Chocolate Donuts.", weight: { 1: 3, 2: 3, 3: 3, 4: 3, 5: 3, 6: 2, 7: 2, 8: 2, 9: 2, 10: 2, 11: 2 } },
+        { label: "80s and 90s product parody", sub: "Colon Blow. Happy Fun Ball. Schmitt's Gay.", weight: { 12: 2, 13: 2, 14: 3, 15: 3, 16: 3, 17: 3, 18: 3, 19: 2, 20: 2, 21: 2, 22: 2, 23: 2, 24: 2, 25: 2, 26: 2, 27: 2 } },
+        { label: "2000s lifestyle parody", sub: "Mom Jeans. Taco Town. Swiftamine.", weight: { 28: 3, 29: 2, 30: 2, 31: 3, 32: 2, 33: 2, 34: 2, 35: 2, 36: 2, 37: 2, 38: 2, 39: 2, 40: 2, 41: 2 } },
+        { label: "Modern pharma and app ads", sub: "The parodies that run 90 seconds longer than a real ad.", weight: { 42: 2, 43: 2, 44: 2, 45: 2, 46: 2, 47: 3, 48: 2, 49: 2, 50: 2, 51: 2 } },
       ],
     },
   },
@@ -578,6 +602,7 @@ export const MOMENT_OPTIONS = [
   { label: "Land Shark", weight: { 1: 3, 2: 3 } },
   { label: "Two Wild and Crazy Guys", weight: { 3: 3, 4: 3 } },
   { label: "The Nerds", weight: { 4: 4 } },
+  { label: "The Blues Brothers' first performance", weight: { 4: 4 } },
   { label: "Mr. Robinson's Neighborhood", weight: { 7: 3, 8: 3, 9: 2 } },
   { label: "Buckwheat", weight: { 7: 3, 8: 2, 9: 2 } },
   { label: "Nick the Lounge Singer", weight: { 4: 1, 5: 3 } },
@@ -614,6 +639,7 @@ export const MOMENT_OPTIONS = [
   { label: "Stefon at the desk", weight: { 35: 2, 36: 3, 37: 4 } },
   { label: "The Californians", weight: { 37: 3, 38: 2 } },
   { label: "Drunk Uncle", weight: { 37: 2, 38: 3, 39: 3 } },
+  { label: "The 40th Anniversary special", weight: { 40: 4 } },
   { label: "McKinnon's Hillary cold opens", weight: { 40: 2, 41: 3, 42: 3 } },
   { label: "Black Jeopardy with Tom Hanks", weight: { 42: 4 } },
   { label: "Hallelujah cold open", weight: { 42: 4 } },
@@ -798,7 +824,7 @@ export const SKETCHES = [
   { season: 14, title: "Hans and Franz", tier: "iconic", aspects: ["recurring"] },
   { season: 14, title: "Toonces the Driving Cat", tier: "deep_cut", aspects: ["recurring"] },
   { season: 15, title: "Wayne's World — Garth's Wedding", tier: "iconic", aspects: ["recurring"] },
-  { season: 15, title: "Carvey's Bush 41", tier: "iconic", aspects: ["impressions", "topical"] },
+  { season: 15, title: "Carvey's Bush 41", tier: "iconic", aspects: ["topical"] },
   // S16-20 — Sandler/Farley
   { season: 16, title: "Wayne's World", tier: "iconic", aspects: ["recurring"] },
   { season: 16, title: "Stuart Smalley debut", tier: "iconic", aspects: ["recurring"] },
@@ -827,7 +853,7 @@ export const SKETCHES = [
   { season: 26, title: "Janet Reno's Dance Party finale", tier: "deep_cut", aspects: ["recurring", "topical"] },
   // S26-30
   { season: 26, title: "Tina Fey & Jimmy Fallon Update", tier: "iconic", aspects: ["update"] },
-  { season: 26, title: "Ferrell's Bush 43", tier: "iconic", aspects: ["impressions", "topical"] },
+  { season: 26, title: "Ferrell's Bush 43", tier: "iconic", aspects: ["topical"] },
   { season: 27, title: "Mayor Giuliani opens the show", tier: "iconic", aspects: ["cold-open", "topical"] },
   { season: 27, title: "Ferrell's farewell", tier: "iconic", aspects: ["host"] },
   { season: 29, title: "Debbie Downer", tier: "iconic", aspects: ["recurring", "loose"] },
@@ -842,7 +868,7 @@ export const SKETCHES = [
   { season: 32, title: "Bronx Beat", tier: "deep_cut", aspects: ["recurring"] },
   { season: 33, title: "Iran So Far", tier: "iconic", aspects: ["pretape", "topical"] },
   { season: 34, title: "Jizz In My Pants", tier: "iconic", aspects: ["pretape", "music"] },
-  { season: 34, title: "Sarah Palin opens the show", tier: "iconic", aspects: ["cold-open", "impressions", "topical"] },
+  { season: 34, title: "Sarah Palin opens the show", tier: "iconic", aspects: ["cold-open", "topical"] },
   { season: 34, title: "I'm On a Boat", tier: "iconic", aspects: ["pretape", "music"] },
   { season: 34, title: "Motherlover", tier: "deep_cut", aspects: ["pretape", "music"] },
   { season: 35, title: "Stefon debut", tier: "iconic", aspects: ["update", "recurring"] },
@@ -858,9 +884,9 @@ export const SKETCHES = [
   { season: 37, title: "Drunk Uncle debut", tier: "iconic", aspects: ["update", "recurring"] },
   { season: 38, title: "Stefon farewell at the desk", tier: "iconic", aspects: ["update", "recurring", "loose"] },
   { season: 39, title: "Drunk Uncle at the desk", tier: "iconic", aspects: ["update", "recurring"] },
-  { season: 39, title: "Pharoah's Obama", tier: "iconic", aspects: ["impressions", "topical"] },
+  { season: 39, title: "Pharoah's Obama", tier: "iconic", aspects: ["topical"] },
   { season: 39, title: "Mooney's Inside SoCal", tier: "deep_cut", aspects: ["pretape", "ten-to-one"] },
-  { season: 40, title: "McKinnon's Hillary debut", tier: "iconic", aspects: ["impressions", "topical"] },
+  { season: 40, title: "McKinnon's Hillary debut", tier: "iconic", aspects: ["topical"] },
   { season: 40, title: "Jost & Che take Update", tier: "iconic", aspects: ["update"] },
   // S41-46 — Trump I era
   { season: 41, title: "Trump hosts", tier: "iconic", aspects: ["host", "topical"] },
@@ -869,7 +895,7 @@ export const SKETCHES = [
   { season: 42, title: "David S. Pumpkins", tier: "iconic", aspects: ["recurring", "ten-to-one", "host"] },
   { season: 42, title: "Black Jeopardy with Tom Hanks", tier: "iconic", aspects: ["recurring", "host", "topical"] },
   { season: 42, title: "Hallelujah cold open", tier: "iconic", aspects: ["cold-open", "topical"] },
-  { season: 42, title: "Baldwin's Trump", tier: "deep_cut", aspects: ["cold-open", "impressions", "topical"] },
+  { season: 42, title: "Baldwin's Trump", tier: "deep_cut", aspects: ["cold-open", "topical"] },
   { season: 43, title: "Diner Lobster with Mulaney", tier: "iconic", aspects: ["host", "pretape"] },
   { season: 43, title: "Welcome to Hell", tier: "iconic", aspects: ["pretape", "music"] },
   { season: 42, title: "Wells for Boys (Emma Stone)", tier: "iconic", aspects: ["pretape", "ten-to-one"] },
@@ -877,7 +903,7 @@ export const SKETCHES = [
   { season: 45, title: "Sara Lee Instagram", tier: "iconic", aspects: ["pretape"] },
   { season: 45, title: "COVID remote monologues", tier: "deep_cut", aspects: ["loose", "topical"] },
   { season: 46, title: "Bowen Yang as the Iceberg", tier: "iconic", aspects: ["update", "recurring"] },
-  { season: 46, title: "Maya as Kamala", tier: "iconic", aspects: ["impressions", "topical"] },
+  { season: 46, title: "Maya as Kamala", tier: "iconic", aspects: ["topical"] },
   // S47-51
   { season: 47, title: "Please Don't Destroy: Hard Seltzer", tier: "iconic", aspects: ["pretape"] },
   { season: 47, title: "Sarah Sherman pieces", tier: "iconic", aspects: ["ten-to-one", "loose"] },
@@ -886,10 +912,10 @@ export const SKETCHES = [
   { season: 48, title: "Strong's farewell", tier: "iconic", aspects: ["recurring", "loose"] },
   { season: 48, title: "Lisa from Temecula", tier: "deep_cut", aspects: ["recurring"] },
   { season: 50, title: "Domingo (Beyond Bachelorette)", tier: "iconic", aspects: ["recurring"] },
-  { season: 49, title: "JAJ's Trump cemented", tier: "iconic", aspects: ["impressions", "cold-open", "topical"] },
+  { season: 49, title: "JAJ's Trump cemented", tier: "iconic", aspects: ["cold-open", "topical"] },
   { season: 49, title: "Sarah Sherman cooks", tier: "deep_cut", aspects: ["ten-to-one", "loose"] },
   { season: 50, title: "SNL50 anniversary specials", tier: "iconic", aspects: ["host"] },
-  { season: 50, title: "Maya returns as Kamala", tier: "iconic", aspects: ["impressions", "topical"] },
+  { season: 50, title: "Maya returns as Kamala", tier: "iconic", aspects: ["topical"] },
   { season: 51, title: "1000th episode", tier: "iconic", aspects: ["host"] },
   { season: 51, title: "Bad Bunny parent-teacher conference", tier: "iconic", aspects: ["host", "topical"] },
   { season: 51, title: "Bowen's farewell", tier: "deep_cut", aspects: ["host", "loose"] },
@@ -975,9 +1001,10 @@ export const ARCHETYPES = {
   "pretape": { name: "The Sunday-Morning Clip-Watcher", line: "You want it polished, viral, and rewatchable. The pre-tape is the future." },
   "music": { name: "The Saturday Night DJ", line: "The musical guest is half the reason you're up. The band matters as much as the cast." },
   "ten-to-one": { name: "The 12:55 AM Citizen", line: "You're up for the weird stuff. The 10-to-1 is where the show takes its real risks." },
-  "impressions": { name: "The Impression Scholar", line: "Decades of presidents and pop stars. You can rank every Trump and Clinton in order." },
+  "impressions": { name: "The Impression Scholar", line: "You can rank every Trebek, every Sinatra, and every Bieber in order." },
   "topical": { name: "The Newsroom Loyalist", line: "You watch SNL like the news. The political moment is the show's reason to exist." },
   "loose": { name: "The Live-Wire Patron", line: "You're here for the danger. The unrehearsed glance, the breaking laugh, the sketch that almost fell apart." },
+  "commercial": { name: "The Fake Ad Collector", line: "The best joke of the night is often the one pretending to sell you something." },
 };
 
 export function archetypeFromPicks(picks) {
@@ -1203,7 +1230,7 @@ export function coveredByAspects(aspectIds) {
   return (aspectIds || []).flatMap((id) => {
     if (id === "update") return ["update"];
     if (id === "host") return ["host-era"];
-    if (id === "impressions") return ["impression"];
+    if (id === "topical") return ["impression"];
     if (id === "ten-to-one") return ["ten-to-one"];
     return [];
   });
