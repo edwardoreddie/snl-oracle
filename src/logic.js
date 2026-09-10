@@ -1170,47 +1170,129 @@ export const peacockLink = (s) => `https://www.peacocktv.com/watch-online/tv/sat
    the user's current top season candidates. Higher
    "preferred-option diversity" = more discriminating.
    ============================================================ */
+// The two questions that share the big MOMENT_OPTIONS list. Both get trimmed
+// down to options the user's current candidates actually care about.
+const MOMENT_QUESTION_IDS = ["moment", "moment-skip"];
+
+// Cut a long option list down to the ones that carry weight for the current
+// candidate seasons, plus a couple of wildcards so the screen isn't a mirror
+// of what the user already said. Wildcards are picked at fixed intervals so
+// the same state always produces the same screen.
+function trimOptionsToCandidates(options, candidateSeasons, keep = 10, wildcards = 2) {
+  const candidates = new Set(candidateSeasons);
+  const scored = options.map((option, index) => {
+    const weight = option.weight || {};
+    let best = 0;
+    Object.entries(weight).forEach(([season, value]) => {
+      if (candidates.has(parseInt(season))) best = Math.max(best, value);
+    });
+    return { option, index, best };
+  });
+  const relevant = scored
+    .filter((x) => x.best > 0)
+    .sort((a, b) => b.best - a.best || a.index - b.index)
+    .slice(0, keep);
+  if (relevant.length === 0) return options;
+  const taken = new Set(relevant.map((x) => x.index));
+  const rest = scored.filter((x) => !taken.has(x.index));
+  const extras = [];
+  const step = Math.max(1, Math.floor(rest.length / (wildcards + 1)));
+  for (let i = 1; i <= wildcards && i * step < rest.length; i++) extras.push(rest[i * step]);
+  return [...relevant, ...extras].sort((a, b) => a.index - b.index).map((x) => x.option);
+}
+
+function withTrimmedOptions(question, scores) {
+  if (!question || !MOMENT_QUESTION_IDS.includes(question.id) || !scores) return question;
+  const candidates = topSeasons(scores, 8).filter((t) => t.score > 0).map((t) => t.season);
+  if (candidates.length === 0) return question;
+  return { ...question, options: trimOptionsToCandidates(question.options, candidates) };
+}
+
+// How much would answering this question pull the current candidates apart?
+// For each option, the spread of its weights across the candidates; summed
+// across options. A question every candidate scores identically on tells us
+// nothing, however many points it hands out.
+// How close to the best a question has to score to enter the rotation.
+const NEAR_BEST = 0.2;
+
+// Stable, order-sensitive hash of everything the user has answered so far.
+function picksFingerprint(picks) {
+  const key = picks
+    .map((p) => {
+      if (p.type === "multi-cast") return p.value.join("|");
+      if (p.type === "aspects") return p.value.join("|");
+      return p.value?.label || "";
+    })
+    .join(">");
+  let h = 0;
+  for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) | 0;
+  return Math.abs(h);
+}
+
+function discriminationScore(question, top) {
+  const seasons = top.map((t) => t.season);
+  const columns = question.options.map((option) => {
+    const weight = option.weight || {};
+    return seasons.map((season) => weight[season] || 0);
+  });
+  // Candidates this question has nothing to say about at all.
+  const blind = seasons.filter((_, i) => columns.every((values) => values[i] === 0));
+  const usable = seasons.map((_, i) => i).filter((i) => !blind.includes(seasons[i]));
+  if (usable.length < 2) return -1;
+  let total = 0;
+  columns.forEach((values) => {
+    const use = usable.map((i) => values[i]);
+    total += Math.max(...use) - Math.min(...use);
+  });
+  // Mean, not sum. Summing is what made the old picker always choose the
+  // longest list: a 50-option question wins on length alone even when each
+  // individual option separates the candidates no better than a 5-option one.
+  let score = total / columns.length;
+  // A question that can't help two or more of the top five is a poor use of a round.
+  if (blind.length >= 2) score *= 0.4;
+  return score;
+}
+
 export function pickNextAdaptive(picks, usedIds) {
   const scores = scoreFromPicks(picks);
   const top = topSeasons(scores, 5).filter((t) => t.score > 0);
-  if (top.length === 0) {
-    // No info yet — fall back to first unused question
-    return ADAPTIVE_POOL.find((q) => !usedIds.includes(q.id));
-  }
-
   const pool = ADAPTIVE_POOL.filter((q) => !usedIds.includes(q.id));
   if (pool.length === 0) return null;
-
-  let best = null;
-  let bestDiscrim = -1;
-  let bestSpread = -1;
-  for (const q of pool) {
-    // For each top candidate, find which option boosts it most
-    const preferred = top.map((t) => {
-      let bestIdx = -1;
-      let bestVal = -1;
-      q.options.forEach((opt, idx) => {
-        const v = (opt.weight || {})[t.season] || 0;
-        if (v > bestVal) {
-          bestVal = v;
-          bestIdx = idx;
-        }
-      });
-      return bestIdx;
-    });
-    const distinct = new Set(preferred).size;
-    // Tiebreak: spread = total option-weight variance across top seasons
-    const spread = q.options.reduce((acc, opt) => {
-      const total = top.reduce((s, t) => s + ((opt.weight || {})[t.season] || 0), 0);
-      return acc + total;
-    }, 0);
-    if (distinct > bestDiscrim || (distinct === bestDiscrim && spread > bestSpread)) {
-      bestDiscrim = distinct;
-      bestSpread = spread;
-      best = q;
-    }
+  if (top.length === 0) {
+    // No information yet, so nothing to discriminate between.
+    return withTrimmedOptions(pool[0], null);
   }
-  return best || pool[0];
+
+  // The Skip is a negative signal, and it only earns a round when the top two
+  // candidates are genuinely close. It also never follows The Moment directly,
+  // which is the same 50-option list twice in a row.
+  const lastAdaptiveId = [...picks].reverse().find((p) => p.adaptiveId)?.adaptiveId;
+  const leaderGap = top.length >= 2 && top[0].score > 0
+    ? (top[0].score - top[1].score) / top[0].score
+    : 1;
+  let eligible = pool.filter((q) => {
+    if (q.id !== "moment-skip") return true;
+    return lastAdaptiveId !== "moment" && leaderGap <= 0.15;
+  });
+  if (eligible.length === 0) eligible = pool.filter((q) => q.id !== "moment-skip");
+  if (eligible.length === 0) return null;
+
+  const ranked = eligible.map((question) => ({
+    question,
+    // Score the trimmed version, since that is what the user will answer.
+    score: discriminationScore(withTrimmedOptions(question, scores), top),
+  }));
+  const bestScore = Math.max(...ranked.map((r) => r.score));
+
+  // On pure information The Moment wins almost every round, because its
+  // options are one-season spikes and nothing else separates candidates as
+  // sharply. Asking it to everybody makes the four adaptive rounds a fixed
+  // list again, so instead: take every question within reach of the best one
+  // and rotate between them on a hash of the answers so far. Same answers
+  // always produce the same question; different fans get different rounds.
+  const contenders = ranked.filter((r) => r.score >= bestScore * NEAR_BEST);
+  const chosen = contenders[picksFingerprint(picks) % contenders.length];
+  return withTrimmedOptions(chosen.question, scores);
 }
 
 export const ASPECT_ROUND_INDEX = 0;
