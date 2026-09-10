@@ -953,19 +953,26 @@ export function sketchYouTubeUrl(sketch) {
   return `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`;
 }
 
-export function pickCrossSeasonSketches(winningSeason, picks, n = 4) {
+export function pickCrossSeasonSketches(winningSeason, picks, n = 4, scores = null) {
   const aspectsPick = picks[ASPECT_ROUND_INDEX];
   const userAspects = aspectsPick?.value || [];
   if (userAspects.length === 0) return [];
+
+  // Rank by the user's own score for the sketch's season, so the list reads as
+  // their runners-up rather than as whatever is oldest. Sorting on aspect
+  // overlap alone is what sent a modern fan who won S49 to Opera Man first.
+  const table = scores || scoreFromPicks(picks);
 
   const scored = SKETCHES
     .filter((s) => s.season !== winningSeason)
     .map((s) => ({
       ...s,
       overlap: s.aspects.filter((a) => userAspects.includes(a)).length,
+      seasonScore: table[s.season] || 0,
     }))
     .filter((s) => s.overlap > 0)
     .sort((a, b) => {
+      if (b.seasonScore !== a.seasonScore) return b.seasonScore - a.seasonScore;
       if (b.overlap !== a.overlap) return b.overlap - a.overlap;
       if (a.tier !== b.tier) return a.tier === "iconic" ? -1 : 1;
       return a.season - b.season;

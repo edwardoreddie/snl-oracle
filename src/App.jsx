@@ -840,7 +840,7 @@ function Results({ picks, onReset }) {
 
       <WatchNext season={winner.season} picks={picks} />
 
-      <MoreLikeYourTaste winner={winner} picks={picks} />
+      <MoreLikeYourTaste winner={winner} picks={picks} scores={scores} />
 
       <CastSweetSpot picks={picks} winnerSeason={winner.season} />
 
@@ -1299,8 +1299,8 @@ function CastSweetSpot({ picks, winnerSeason }) {
   );
 }
 
-function MoreLikeYourTaste({ winner, picks }) {
-  const sketches = pickCrossSeasonSketches(winner.season, picks);
+function MoreLikeYourTaste({ winner, picks, scores }) {
+  const sketches = pickCrossSeasonSketches(winner.season, picks, 4, scores);
   if (sketches.length === 0) return null;
   return (
     <div className="mb-12">
