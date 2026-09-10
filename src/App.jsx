@@ -370,9 +370,7 @@ function AspectsRound({ q, onAnswer, index, total }) {
         <span style={{ color: ready ? "#ffc847" : "#e63946" }}>
           {ready ? `LOCKED IN 3 / 3` : `PICK ${remaining} MORE`}
         </span>
-        <button onClick={submit} disabled={!ready} className="font-mono px-5 py-2 border transition" style={{ borderColor: ready ? "#ffc847" : "#3a2f44", color: ready ? "#0a0710" : "#5a4a3a", background: ready ? "#ffc847" : "transparent", fontSize: "11px", letterSpacing: "0.2em", cursor: ready ? "pointer" : "not-allowed" }}>
-          ★ Next ★
-        </button>
+        <span style={{ color: "#6a5a4a" }}>{String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}</span>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -680,6 +678,13 @@ function Results({ picks, onReset }) {
   const winnerMeta = SEASONS[winner.season];
   const age = predictAge(winner.season);
   const archetype = archetypeFromPicks(picks, winner.season);
+  // One pass for every runner-up sentence on the page. The `used` set carries
+  // the winner's own answers in, so nothing is claimed twice anywhere.
+  const runnerUpLines = useMemo(() => {
+    const used = new Set(topContributingAnswers(picks, winner.season, 2));
+    return top.slice(1).map((t) => describeRunnerUp(picks, winner, t, used));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [picks]);
   const seasonPhoto = useSeasonPhoto(winner.season);
   const [showPicks, setShowPicks] = useState(false);
   const [savingStory, setSavingStory] = useState(false);
@@ -886,7 +891,7 @@ function Results({ picks, onReset }) {
         {winnerMeta.tag}
       </p>
 
-      <WhyThisSeason winner={winner} picks={picks} runnerUp={runnerUp} />
+      <WhyThisSeason winner={winner} picks={picks} runnerUp={runnerUp} runnerUpLine={runnerUpLines[0]} />
 
       <WatchNext season={winner.season} picks={picks} />
 
@@ -906,7 +911,7 @@ function Results({ picks, onReset }) {
             const i = idx + 1;
             const m = SEASONS[t.season];
             const tradeoffs = tradeOffsFor(t.season, picks);
-            const theirBest = topContributingAnswers(picks, t.season, 1)[0];
+            const line = runnerUpLines[idx];
             return (
               <div key={t.season} className="flex items-start gap-4 pb-4 border-b" style={{ borderColor: "#3a2f44" }}>
                 <div className="font-digital" style={{ color: i === 0 ? "#e63946" : "#ffc847", fontSize: "2rem", lineHeight: 1, minWidth: "36px" }}>{i + 1}</div>
@@ -917,11 +922,7 @@ function Results({ picks, onReset }) {
                   </div>
                   <p className="font-body mt-1" style={{ color: "#c9b8a0", fontSize: "0.95rem", lineHeight: 1.5 }}>{m.tag}</p>
                   <div className="mt-2 font-body italic" style={{ color: tradeoffs.length > 0 ? "#e63946" : "#8a7a6a", fontSize: "0.92rem" }}>
-                    {tradeoffs.length > 0
-                      ? `You'd give up ${tradeoffs.join(", ")}.`
-                      : theirBest
-                        ? `Same cast for you. You'd still get ${theirBest}.`
-                        : "Close on everything you picked."}
+                    {line}
                   </div>
                   {i > 0 && (
                     <div className="flex gap-4 mt-3">
@@ -1261,39 +1262,73 @@ function FriendResult({ result, onStart }) {
   );
 }
 
-function WhyThisSeason({ winner, picks, runnerUp }) {
+// Option labels are written as headings ("A friend group throwing parties"), so
+// dropping one mid-sentence reads as a typo. Quoting them keeps their own
+// capitalization and makes clear they are something the user picked.
+function quoteLabel(label) {
+  return `\u201C${label}\u201D`;
+}
+
+function firstSentence(text) {
+  if (!text) return "";
+  const cut = text.indexOf(". ");
+  return cut === -1 ? text.replace(/\.$/, "") : text.slice(0, cut);
+}
+
+// One line explaining a runner-up. `used` collects every option label already
+// spent elsewhere in the paragraph, so no label is ever printed twice and the
+// two runners-up never print the same sentence.
+function describeRunnerUp(picks, winner, other, used) {
+  const missing = tradeOffsFor(other.season, picks);
+  if (missing.length > 0) {
+    const verb = missing.length === 1 ? "wasn't" : "weren't";
+    return `S${other.season} came second, but ${joinWithAnd(missing)} ${verb} there.`;
+  }
+
+  const gap = (winner.score - other.score) / Math.max(winner.score, 1);
+  if (gap < 0.02) {
+    return `S${other.season} is a coin flip with this one.`;
+  }
+
+  // Something this season earned that hasn't been claimed by the winner yet.
+  const own = topContributingAnswers(picks, other.season, 4).find((label) => !used.has(label));
+  if (own) {
+    used.add(own);
+    return `S${other.season} came close on ${quoteLabel(own)}.`;
+  }
+
+  // Same cast, same answers. The seasons themselves are the only difference,
+  // so let their own tags do the separating.
+  const mine = firstSentence(SEASONS[winner.season]?.tag);
+  const theirs = firstSentence(SEASONS[other.season]?.tag);
+  if (theirs && theirs !== mine) {
+    return `S${other.season} scored almost the same. The difference is the year itself: ${theirs}.`;
+  }
+  return `S${other.season} is a coin flip with this one.`;
+}
+
+function WhyThisSeason({ winner, picks, runnerUp, runnerUpLine }) {
   const castPick = picks.find((p) => p.type === "multi-cast");
   const castNames = castPick?.value || [];
   const castOnSeason = castNames.filter((name) => seasonsFor(name).includes(winner.season));
-  const answers = topContributingAnswers(picks, winner.season, 2);
+  const answers = [...new Set(topContributingAnswers(picks, winner.season, 2))];
 
-  // The lead sentence: who you picked, sharing a cast with what you answered.
   let lead;
   if (castOnSeason.length > 0 && answers.length > 0) {
     const verb = castOnSeason.length === 1 ? "shares" : "share";
-    lead = `S${winner.season} is where ${joinWithAnd(castOnSeason)} ${verb} a cast with ${joinWithAnd(answers)}.`;
+    const noun = answers.length === 1 ? "your answer" : "your answers";
+    lead = `S${winner.season} is where ${joinWithAnd(castOnSeason)} ${verb} a cast with ${noun}: ${joinWithAnd(answers.map(quoteLabel))}.`;
   } else if (answers.length > 0) {
-    lead = `S${winner.season} is the season that best matches ${joinWithAnd(answers)}.`;
+    const noun = answers.length === 1 ? "your answer" : "your answers";
+    lead = `S${winner.season} is the season that best matches ${noun}: ${joinWithAnd(answers.map(quoteLabel))}.`;
   } else if (castOnSeason.length > 0) {
-    lead = `S${winner.season} is the season ${joinWithAnd(castOnSeason)} shared.`;
+    const verb = castOnSeason.length === 1 ? "was" : "were";
+    lead = `S${winner.season} is the season ${joinWithAnd(castOnSeason)} ${verb} on.`;
   } else {
     lead = `S${winner.season} is the closest fit for what you picked.`;
   }
 
-  // The runner-up line: what the second place season would cost you.
-  let second = null;
-  if (runnerUp) {
-    const missing = tradeOffsFor(runnerUp.season, picks);
-    const theirBest = topContributingAnswers(picks, runnerUp.season, 1)[0];
-    if (missing.length > 0) {
-      const verb = missing.length === 1 ? "wasn't" : "weren't";
-      second = `S${runnerUp.season} came second, but ${joinWithAnd(missing)} ${verb} there.`;
-    } else if (theirBest) {
-      second = `S${runnerUp.season} came second, and it's a fair fight: same cast, and you'd still get ${theirBest}.`;
-    } else {
-      second = `S${runnerUp.season} came second.`;
-    }
-  }
+  const second = runnerUp ? runnerUpLine : null;
 
   return (
     <div className="mb-12">
