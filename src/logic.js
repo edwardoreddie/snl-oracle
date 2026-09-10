@@ -367,7 +367,10 @@ export const ASPECTS = {
       title: "UPDATE STYLE",
       prompt: "What's your Update vibe?",
       options: [
+        { label: "The original desk", sub: "Chevy's \"and you're not.\" Curtin and Aykroyd on Point/Counterpoint.", weight: { 1: 3, 2: 3, 3: 3, 4: 3, 5: 2 } },
+        { label: "When it wasn't called Update", sub: "Charles Rocket. SNL NewsBreak. Saturday Night News.", weight: { 6: 3, 7: 3, 8: 3, 9: 3, 10: 3 } },
         { label: "Sharp commentary with attitude", sub: "Miller smug. A. Whitney Brown editorials.", weight: { 11: 2, 12: 2, 13: 2, 14: 2, 15: 2, 16: 1 } },
+        { label: "Anchor as straight man", sub: "Nealon playing it dead straight. Quinn taking the desk.", weight: { 17: 3, 18: 3, 19: 2, 23: 2, 24: 3, 25: 3 } },
         { label: "Deadpan one-liners", sub: "Norm. Note to self. Headlines as standup.", weight: { 19: 2, 20: 2, 21: 3, 22: 3, 23: 3 } },
         { label: "Warm comedic chemistry", sub: "Tina & Jimmy. Tina & Amy. The grinning best-friend energy.", weight: { 26: 3, 27: 3, 28: 3, 29: 3, 30: 3, 31: 3 } },
         { label: "Cool detached observer", sub: "Seth solo. Jost & Che bantering through the apocalypse.", weight: { 32: 2, 33: 2, 34: 3, 35: 3, 36: 3, 37: 3, 38: 2, 39: 2, 40: 2, 41: 2, 42: 2, 43: 2, 44: 2, 45: 2, 46: 2, 47: 2, 48: 2, 49: 2, 50: 2, 51: 2 } },
@@ -589,7 +592,10 @@ export const ADAPTIVE_POOL = [
     prompt: "Best Update desk.",
     options: [
       { label: "Chevy Chase", weight: { 1: 3, 2: 1 } },
+      { label: "Jane Curtin & Dan Aykroyd", weight: { 3: 3, 4: 3, 5: 2 } },
+      { label: "The Ebersol-era news desks", weight: { 6: 3, 7: 3, 8: 3, 9: 3, 10: 3 } },
       { label: "Dennis Miller", weight: { 11: 2, 12: 2, 13: 2, 14: 2, 15: 2, 16: 1 } },
+      { label: "Kevin Nealon", weight: { 17: 3, 18: 3, 19: 2 } },
       { label: "Norm Macdonald", weight: { 20: 2, 21: 3, 22: 3, 23: 3 } },
       { label: "Colin Quinn", weight: { 23: 2, 24: 3, 25: 3 } },
       { label: "Tina Fey & Jimmy Fallon", weight: { 26: 3, 27: 3, 28: 3, 29: 3 } },
