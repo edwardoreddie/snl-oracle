@@ -348,7 +348,7 @@ export const ASPECTS = {
     weight: { 14: 1, 15: 2, 21: 1, 22: 1, 24: 1, 25: 1, 26: 2, 27: 3, 34: 4, 41: 2, 42: 4, 43: 3, 44: 2, 45: 2, 46: 3, 47: 2, 48: 2, 49: 2, 50: 2, 51: 1 },
     subQuestion: {
       id: "cold-open-style",
-      title: "COLD OPEN ENERGY",
+      title: "COLD OPENS",
       prompt: "What lights you up about a cold open?",
       options: [
         { label: "Live from New York, and nothing more", sub: "Before the cold open meant politics. A sketch that ends in the line.", weight: { 1: 3, 2: 3, 3: 3, 4: 3, 5: 3, 6: 2, 7: 2, 8: 2, 9: 2, 10: 2, 11: 2 } },
@@ -366,8 +366,8 @@ export const ASPECTS = {
     weight: { 1: 3, 2: 2, 3: 1, 4: 1, 5: 2, 11: 2, 12: 2, 13: 2, 14: 2, 15: 2, 20: 1, 21: 3, 22: 3, 23: 3, 24: 2, 25: 2, 26: 3, 27: 3, 28: 2, 29: 3, 30: 3, 31: 3, 32: 4, 33: 4, 34: 2, 35: 2, 36: 2, 37: 3, 38: 1, 39: 2, 40: 1, 41: 1, 42: 1, 43: 1, 44: 1, 45: 1, 46: 2, 47: 1, 48: 1, 49: 1, 50: 1, 51: 1 },
     subQuestion: {
       id: "update-style",
-      title: "UPDATE STYLE",
-      prompt: "What's your Update vibe?",
+      title: "UPDATE",
+      prompt: "What do you want from the desk?",
       options: [
         { label: "The original desk", sub: "Chevy's \"and you're not.\" Curtin and Aykroyd on Point/Counterpoint.", weight: { 1: 3, 2: 3, 3: 3, 4: 3, 5: 2 } },
         { label: "When it wasn't called Update", sub: "Charles Rocket. SNL NewsBreak. Saturday Night News.", weight: { 6: 3, 7: 3, 8: 3, 9: 3, 10: 3 } },
@@ -386,7 +386,7 @@ export const ASPECTS = {
     weight: { 5: 1, 6: 1, 7: 3, 8: 3, 9: 2, 10: 3, 12: 3, 13: 3, 14: 3, 15: 2, 17: 2, 18: 3, 22: 3, 23: 3, 24: 3, 25: 2, 29: 2, 32: 2, 36: 2, 37: 3, 38: 2, 39: 2, 42: 2, 43: 2, 47: 1 },
     subQuestion: {
       id: "recurring-type",
-      title: "RECURRING TYPE",
+      title: "RECURRING",
       prompt: "Which recurring type owns you?",
       options: [
         { label: "The originals", sub: "Coneheads. Killer Bees. Roseanne Roseannadanna.", weight: { 1: 3, 2: 3, 3: 3, 4: 3, 5: 3, 6: 2 } },
@@ -406,7 +406,7 @@ export const ASPECTS = {
     weight: { 10: 3, 22: 2, 23: 2, 24: 2, 25: 3, 26: 2, 27: 2, 31: 2, 32: 3, 37: 2, 38: 1, 41: 2, 42: 3, 43: 3, 44: 3, 50: 2, 51: 2 },
     subQuestion: {
       id: "host-type",
-      title: "HOST ENERGY",
+      title: "HOSTS",
       prompt: "Which host episode would you queue first?",
       options: [
         { label: "Steve Martin owning the building", sub: "The wild and crazy years. Buck Henry closing every season.", weight: { 1: 2, 2: 3, 3: 3, 4: 3, 5: 3 } },
@@ -428,7 +428,7 @@ export const ASPECTS = {
     weight: { 2: 1, 3: 1, 9: 1, 10: 2, 22: 2, 23: 3, 24: 3, 25: 3, 26: 2, 27: 2, 28: 2, 29: 2, 30: 2, 31: 4, 32: 4, 33: 3, 34: 3, 35: 3, 36: 2, 37: 2, 38: 1, 39: 2, 40: 2, 42: 2, 43: 3, 44: 2, 45: 2, 46: 3, 47: 4, 48: 2, 49: 3, 50: 2, 51: 2 },
     subQuestion: {
       id: "pretape-type",
-      title: "PRE-TAPE TYPE",
+      title: "PRE-TAPES",
       prompt: "What pre-tape would you rewatch most?",
       options: [
         { label: "The original film shorts", sub: "Mr. Bill. Albert Brooks films. Gary Weis shorts.", weight: { 1: 3, 2: 3, 3: 3, 4: 3, 5: 3, 6: 2, 7: 2, 8: 2, 9: 2, 10: 2 } },
@@ -448,7 +448,7 @@ export const ASPECTS = {
     weight: { 1: 2, 2: 2, 3: 2, 4: 2, 5: 1, 11: 1, 18: 2, 19: 2, 20: 2, 25: 2, 29: 2, 32: 2, 33: 2, 34: 2, 37: 2, 41: 2, 45: 1, 49: 2, 50: 2, 51: 2 },
     subQuestion: {
       id: "music-era",
-      title: "MUSIC ERA",
+      title: "MUSIC",
       prompt: "When was SNL's music booking at its best?",
       options: [
         { label: "Original punk, new wave, disco", sub: "Talking Heads. Devo. Patti Smith. Costello stopping the show.", weight: { 1: 3, 2: 3, 3: 3, 4: 3, 5: 2 } },
@@ -458,7 +458,7 @@ export const ASPECTS = {
         { label: "The streaming-era bookings", sub: "Chance the Rapper. Cardi B. Post Malone.", weight: { 42: 2, 43: 2, 44: 3 } },
         { label: "Pop power 2000s", sub: "Beyoncé. Timberlake. Adele. Gaga.", weight: { 26: 2, 27: 2, 32: 3, 33: 3, 34: 3, 35: 2, 36: 2, 37: 2 } },
         { label: "Hip-hop crossover", sub: "Kanye. Drake. Kendrick. Frank Ocean. Megan Thee Stallion.", weight: { 31: 2, 35: 2, 38: 3, 39: 2, 40: 2, 41: 2, 45: 2, 46: 2 } },
-        { label: "Now — K-pop, Bad Bunny, Carpenter", sub: "BTS. Bad Bunny in his bag. Sabrina. Olivia.", weight: { 47: 2, 48: 2, 49: 3, 50: 3, 51: 3 } },
+        { label: "Now: K-pop, Bad Bunny, Carpenter", sub: "BTS. Bad Bunny in his bag. Sabrina. Olivia.", weight: { 47: 2, 48: 2, 49: 3, 50: 3, 51: 3 } },
       ],
     },
   },
@@ -468,7 +468,7 @@ export const ASPECTS = {
     weight: { 28: 2, 29: 2, 30: 2, 31: 1, 32: 1, 33: 2, 34: 1, 35: 3, 38: 2, 39: 3, 40: 2, 41: 2, 42: 1, 43: 1, 44: 2, 47: 4, 48: 3, 49: 3, 50: 2, 51: 2 },
     subQuestion: {
       id: "ten-to-one-flavor",
-      title: "WEIRD FLAVOR",
+      title: "10-TO-1",
       prompt: "What kind of weird ends your perfect SNL?",
       options: [
         { label: "Aykroyd and Belushi getting strange", sub: "The last sketch, back when nobody was watching the clock.", weight: { 1: 3, 2: 3, 3: 3, 4: 3, 5: 2 } },
@@ -494,7 +494,7 @@ export const ASPECTS = {
     weight: { 1: 2, 2: 2, 3: 2, 4: 2, 5: 2, 6: 2, 7: 3, 8: 3, 9: 3, 10: 3, 11: 2, 12: 3, 13: 3, 14: 3, 15: 3, 16: 3, 17: 3, 18: 3, 19: 3, 20: 2, 21: 3, 22: 3, 23: 3, 24: 3, 25: 3, 26: 3, 27: 3, 28: 2, 29: 2, 30: 2, 31: 3, 32: 3, 33: 3, 34: 3, 35: 3, 36: 3, 37: 3, 38: 3, 39: 2, 40: 3, 41: 3, 42: 3, 43: 3, 44: 3, 45: 3, 46: 3, 47: 3, 48: 3, 49: 3, 50: 3, 51: 3 },
     subQuestion: {
       id: "celebrity-era",
-      title: "CELEBRITY IMPRESSIONS",
+      title: "IMPRESSIONS",
       prompt: "Whose impression of someone famous do you rewatch?",
       options: [
         { label: "The 70s and 80s bench", sub: "Belushi's Joe Cocker. Murphy's Stevie Wonder. Piscopo's Sinatra.", weight: { 1: 2, 2: 3, 3: 3, 4: 3, 5: 2, 6: 2, 7: 3, 8: 3, 9: 3, 10: 3, 11: 2 } },
@@ -540,7 +540,7 @@ export const ASPECTS = {
     weight: { 1: 4, 2: 4, 3: 3, 4: 3, 5: 3, 6: 3, 11: 2, 20: 2, 28: 2, 38: 2, 39: 1, 47: 2, 48: 3 },
     subQuestion: {
       id: "loose-flavor",
-      title: "LOOSE FLAVOR",
+      title: "THE LOOSE STUFF",
       prompt: "What kind of looseness do you crave?",
       options: [
         { label: "One person visibly carrying it", sub: "The Murphy years, when the show was basically his.", weight: { 7: 3, 8: 3, 9: 3, 10: 2 } },
@@ -709,7 +709,7 @@ export const ADAPTIVE_POOL = [
   {
     id: "feel",
     title: "THE FEEL",
-    prompt: "When SNL is at its best for you, it feels like…",
+    prompt: "When SNL is at its best, what does it feel like?",
     options: [
       { label: "A New York theater company taking risks", sub: "Loose, raw, you can feel the audience", weight: { 1: 2, 2: 2, 3: 2, 4: 2, 5: 1, 11: 1, 20: 1, 38: 1, 39: 1, 47: 1, 48: 1 } },
       { label: "A perfectly oiled comedy machine", sub: "Every sketch lands, no fat", weight: { 14: 2, 15: 2, 22: 2, 23: 2, 24: 2, 25: 2, 32: 3, 33: 3, 34: 2, 42: 2 } },
@@ -783,7 +783,7 @@ export const SKETCHES = [
   { season: 3, title: "Mr. Mike's Least-Loved Bedtime Stories", tier: "deep_cut", aspects: ["pretape", "loose"] },
   { season: 2, title: "The Coneheads", tier: "iconic", aspects: ["recurring", "loose"] },
   { season: 1, title: "Bass-O-Matic '76", tier: "deep_cut", aspects: ["pretape", "recurring"] },
-  { season: 3, title: "Olympia Cafe — Cheeseburger Cheeseburger", tier: "iconic", aspects: ["recurring", "host"] },
+  { season: 3, title: "Olympia Cafe: Cheeseburger Cheeseburger", tier: "iconic", aspects: ["recurring", "host"] },
   { season: 3, title: "Mr. Bill", tier: "iconic", aspects: ["pretape", "loose"] },
   { season: 4, title: "Two Wild and Crazy Guys", tier: "iconic", aspects: ["recurring", "host"] },
   { season: 5, title: "Nick the Lounge Singer", tier: "iconic", aspects: ["recurring", "host"] },
@@ -804,7 +804,7 @@ export const SKETCHES = [
   { season: 14, title: "Wayne's World", tier: "iconic", aspects: ["recurring", "host"] },
   { season: 14, title: "Hans and Franz", tier: "iconic", aspects: ["recurring"] },
   { season: 14, title: "Toonces the Driving Cat", tier: "deep_cut", aspects: ["recurring"] },
-  { season: 15, title: "Wayne's World — Garth's Wedding", tier: "iconic", aspects: ["recurring"] },
+  { season: 15, title: "Wayne's World: Garth's Wedding", tier: "iconic", aspects: ["recurring"] },
   { season: 15, title: "Carvey's Bush 41", tier: "iconic", aspects: ["topical"] },
   // S16-20 — Sandler/Farley
   { season: 16, title: "Wayne's World", tier: "iconic", aspects: ["recurring"] },
@@ -812,7 +812,7 @@ export const SKETCHES = [
   { season: 16, title: "Pat debut", tier: "deep_cut", aspects: ["recurring"] },
   { season: 17, title: "Coffee Talk debut", tier: "iconic", aspects: ["recurring"] },
   { season: 17, title: "Hans and Franz pump up Schwarzenegger", tier: "iconic", aspects: ["recurring", "host"] },
-  { season: 18, title: "Matt Foley — van down by the river", tier: "iconic", aspects: ["recurring"] },
+  { season: 18, title: "Matt Foley: van down by the river", tier: "iconic", aspects: ["recurring"] },
   { season: 18, title: "Opera Man", tier: "iconic", aspects: ["update", "recurring"] },
   { season: 21, title: "Spartan Cheerleaders debut", tier: "iconic", aspects: ["recurring"] },
   { season: 19, title: "Hartman's farewell shows", tier: "deep_cut", aspects: ["host"] },

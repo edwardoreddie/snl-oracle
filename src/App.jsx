@@ -682,7 +682,7 @@ function Results({ picks, onReset }) {
       downloadDataUrl(dataUrl, storyFilename);
     } catch (e) {
       console.error(e);
-      setSaveError(e?.message || "Couldn't render image — try again.");
+      setSaveError(e?.message || "Couldn't render image. Try again.");
     }
     setSavingStory(false);
   };
@@ -722,7 +722,7 @@ function Results({ picks, onReset }) {
       setTimeout(() => setIgToast(null), 5000);
     } catch (e) {
       console.error(e);
-      setSaveError(e?.message || "Couldn't render image — try again.");
+      setSaveError(e?.message || "Couldn't render image. Try again.");
     }
     setSavingStory(false);
   };
@@ -916,7 +916,7 @@ function Results({ picks, onReset }) {
             "{LORNE_QUOTE.text}"
           </p>
           <div className="font-mono mt-3 text-center" style={{ color: "#6a5a4a", fontSize: "10px", letterSpacing: "0.2em" }}>
-            — {LORNE_QUOTE.attrib}
+            {LORNE_QUOTE.attrib}
           </div>
           <p className="font-body text-center mt-6 mx-auto" style={{ color: "#8a7a6a", fontSize: "0.9rem", maxWidth: "560px", lineHeight: 1.55 }}>
             If S{winner.season} is your peak, you were in high school during {winnerMeta.year}–{winnerMeta.end}. That's the math.
@@ -1284,7 +1284,7 @@ function CastSweetSpot({ picks, winnerSeason }) {
       <p className="font-body mb-4" style={{ color: "#c9b8a0", fontSize: "0.95rem", lineHeight: 1.5 }}>
         {isAllOverlap
           ? `All ${sweet.totalCast} of your cast picks share these seasons. Start here:`
-          : `Your ${sweet.totalCast} cast picks never share a season — the closest you can get is ${sweet.maxOverlap} of ${sweet.totalCast}. These seasons get you there:`}
+          : `Your ${sweet.totalCast} cast picks never share a season. The closest you can get is ${sweet.maxOverlap} of ${sweet.totalCast}, in these:`}
       </p>
       <div className="flex flex-wrap gap-2">
         {sweet.best.slice(0, 10).map((x) => {
