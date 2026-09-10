@@ -1030,7 +1030,7 @@ export function pickCrossSeasonSketches(winningSeason, picks, n = 4, scores = nu
    ============================================================ */
 export const LORNE_QUOTE = {
   text: "Generally when people talk about the best cast I think, 'Well, that's when they were in high school.' Because in high school you have the least amount of power you're ever gonna have. Staying up with friends later on a Saturday is great, and people attach to a cast.",
-  attrib: "Lorne Michaels, on why everyone insists their cast was the best.",
+  attrib: "Lorne Michaels, TODAY, February 2015.",
 };
 
 /* ============================================================
@@ -1235,6 +1235,21 @@ export function topSeasons(scores, n = 3) {
     .map(([s, v]) => ({ season: parseInt(s), score: v }))
     .sort((a, b) => b.score - a.score)
     .slice(0, n);
+}
+
+// Which of the user's answered options handed this season the most points?
+// Used to build a reason on the result page instead of a mail merge of inputs.
+// Negative questions are skipped: "the thing you'd skip" is not why you won.
+export function topContributingAnswers(picks, season, n = 2) {
+  const scored = [];
+  picks.forEach((p) => {
+    if (p.type === "multi-cast" || p.type === "aspects") return;
+    const question = p.adaptiveId ? ADAPTIVE_POOL.find((q) => q.id === p.adaptiveId) : null;
+    if (question?.negate) return;
+    const value = (p.value?.weight || {})[season] || 0;
+    if (value > 0) scored.push({ label: p.value.label, value });
+  });
+  return scored.sort((a, b) => b.value - a.value).slice(0, n).map((x) => x.label);
 }
 
 export function tradeOffsFor(season, picks) {

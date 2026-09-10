@@ -23,6 +23,7 @@ import {
   archetypeFromPicks,
   scoreFromPicks,
   topSeasons,
+  topContributingAnswers,
   tradeOffsFor,
   predictAge,
   youtubeLink,
@@ -441,7 +442,7 @@ function BinaryRound({ q, onAnswer, index, total }) {
             onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#ffc847"; e.currentTarget.style.background = "rgba(230, 57, 70, 0.08)"; }}
             onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#3a2f44"; e.currentTarget.style.background = "rgba(255,255,255,0.02)"; }}
           >
-            <div className="font-mono mb-1" style={{ color: "#ffc847", fontSize: "10px", letterSpacing: "0.3em" }}>
+            <div className="font-mono mb-1" style={{ color: "#ffc847", fontSize: "11px", letterSpacing: "0.2em" }}>
               {i === 0 ? "↞ THIS" : "THAT ↠"}
             </div>
             <div className="font-body" style={{ color: "#f4f1de", fontSize: "1.3rem", fontWeight: 600, lineHeight: 1.25 }}>{opt.label}</div>
@@ -678,12 +679,9 @@ function Results({ picks, onReset }) {
   const winner = top[0];
   const winnerMeta = SEASONS[winner.season];
   const age = predictAge(winner.season);
-  // Clamp at zero before summing: after the negative-signal questions a
-  // runner-up can be negative, which made the percentage nonsense.
-  const totalScore = top.reduce((acc, t) => acc + Math.max(0, t.score), 0) || 1;
-  const winnerPct = Math.round((Math.max(0, winner.score) / totalScore) * 100);
   const archetype = archetypeFromPicks(picks, winner.season);
   const seasonPhoto = useSeasonPhoto(winner.season);
+  const [showPicks, setShowPicks] = useState(false);
   const [savingStory, setSavingStory] = useState(false);
   const [saveError, setSaveError] = useState(null);
 
@@ -756,7 +754,14 @@ function Results({ picks, onReset }) {
 
   // Confidence: how clearly does the winner lead? Wide gap = strong match
   const gap = top[1] ? (winner.score - top[1].score) / Math.max(winner.score, 1) : 1;
-  const confidence = gap > 0.35 ? "STRONG MATCH" : gap > 0.15 ? "GOOD MATCH" : "TIGHT RACE";
+  const runnerUp = top[1] || null;
+  // A percentage here was always about a third, because it was the winner's
+  // share of the top three, and it read as the Oracle being one-third sure.
+  const confidence = gap > 0.35
+    ? "Not close. This is your season."
+    : gap > 0.15
+      ? `Clear winner. S${runnerUp ? runnerUp.season : winner.season} was in the running.`
+      : `Close call with S${runnerUp ? runnerUp.season : winner.season}. Both are yours.`;
   const confidenceColor = gap > 0.35 ? "#ffc847" : gap > 0.15 ? "#c9b8a0" : "#e63946";
 
   const siteUrl = typeof window !== "undefined" ? window.location.origin : "";
@@ -840,13 +845,16 @@ function Results({ picks, onReset }) {
           {winnerMeta.year}–{String(winnerMeta.end).slice(2)}
         </div>
         <div className="mt-12 pt-7" style={{ borderTop: "1px solid #2a2030" }}>
-          <div className="font-mono mb-3" style={{ color: "#6a5a4a", fontSize: "10px", letterSpacing: "0.4em" }}>You are</div>
+          <div className="font-mono mb-3" style={{ color: "#6a5a4a", fontSize: "11px", letterSpacing: "0.2em" }}>You are</div>
           <div className="font-body" style={{ color: "#f4f1de", fontSize: "clamp(1.4rem, 4.5vw, 1.9rem)", lineHeight: 1.2, fontWeight: 600 }}>
             {archetype.name}
           </div>
+          <p className="font-body italic mx-auto mt-3" style={{ color: "#c9b8a0", fontSize: "1rem", maxWidth: "460px", lineHeight: 1.5 }}>
+            {archetype.line}
+          </p>
         </div>
-        <div className="font-mono mt-8" style={{ color: confidenceColor, fontSize: "10px", letterSpacing: "0.35em" }}>
-          {winnerPct}% match · {confidence.toLowerCase()}
+        <div className="font-body mt-8" style={{ color: confidenceColor, fontSize: "0.95rem" }}>
+          {confidence}
         </div>
       </div>
 
@@ -861,7 +869,7 @@ function Results({ picks, onReset }) {
         </div>
       ) : (
         <div className="mb-10 rise" style={{ animationDelay: "0.5s", paddingTop: "20px", paddingBottom: "20px", borderTop: "1px solid #3a2f44", borderBottom: "1px solid #3a2f44" }}>
-          <div className="font-mono mb-5 text-center" style={{ color: "#ffc847", fontSize: "10px", letterSpacing: "0.3em" }}>
+          <div className="font-mono mb-5 text-center" style={{ color: "#ffc847", fontSize: "11px", letterSpacing: "0.2em" }}>
             The S{winner.season} cast
           </div>
           <div className="flex flex-wrap justify-center" style={{ gap: "6px 16px" }}>
@@ -878,11 +886,7 @@ function Results({ picks, onReset }) {
         {winnerMeta.tag}
       </p>
 
-      <WhyThisSeason winner={winner} picks={picks} />
-
-      <p className="font-body italic mx-auto mb-10 text-center" style={{ color: "#c9b8a0", fontSize: "1.02rem", maxWidth: "560px", lineHeight: 1.55 }}>
-        {archetype.line}
-      </p>
+      <WhyThisSeason winner={winner} picks={picks} runnerUp={runnerUp} />
 
       <WatchNext season={winner.season} picks={picks} />
 
@@ -896,12 +900,13 @@ function Results({ picks, onReset }) {
       </div>
 
       <div className="mb-12">
-        <div className="font-mono mb-4" style={{ color: "#ffc847", fontSize: "10px", letterSpacing: "0.3em" }}>The podium · what you'd trade away</div>
+        <div className="font-mono mb-4" style={{ color: "#ffc847", fontSize: "11px", letterSpacing: "0.2em" }}>Runners-up</div>
         <div className="space-y-5">
-          {top.map((t, i) => {
+          {top.slice(1).map((t, idx) => {
+            const i = idx + 1;
             const m = SEASONS[t.season];
-            const tradeoffs = i === 0 ? [] : tradeOffsFor(t.season, picks);
-            const pct = Math.round((t.score / totalScore) * 100);
+            const tradeoffs = tradeOffsFor(t.season, picks);
+            const theirBest = topContributingAnswers(picks, t.season, 1)[0];
             return (
               <div key={t.season} className="flex items-start gap-4 pb-4 border-b" style={{ borderColor: "#3a2f44" }}>
                 <div className="font-digital" style={{ color: i === 0 ? "#e63946" : "#ffc847", fontSize: "2rem", lineHeight: 1, minWidth: "36px" }}>{i + 1}</div>
@@ -909,10 +914,15 @@ function Results({ picks, onReset }) {
                   <div className="flex items-baseline gap-3 flex-wrap">
                     <div className="font-body" style={{ color: "#f4f1de", fontSize: "1.2rem", fontWeight: 600 }}>Season {t.season}</div>
                     <div className="font-mono" style={{ color: "#8a7a6a", fontSize: "11px" }}>{m.year}–{String(m.end).slice(2)}</div>
-                    <div className="font-mono" style={{ color: "#ffc847", fontSize: "11px", letterSpacing: "0.15em", marginLeft: "auto" }}>{pct}%</div>
                   </div>
                   <p className="font-body mt-1" style={{ color: "#c9b8a0", fontSize: "0.95rem", lineHeight: 1.5 }}>{m.tag}</p>
-                  {tradeoffs.length > 0 && <div className="mt-2 font-body italic" style={{ color: "#e63946", fontSize: "0.92rem" }}>Missing from this season: {tradeoffs.join(", ")}.</div>}
+                  <div className="mt-2 font-body italic" style={{ color: tradeoffs.length > 0 ? "#e63946" : "#8a7a6a", fontSize: "0.92rem" }}>
+                    {tradeoffs.length > 0
+                      ? `You'd give up ${tradeoffs.join(", ")}.`
+                      : theirBest
+                        ? `Same cast for you. You'd still get ${theirBest}.`
+                        : "Close on everything you picked."}
+                  </div>
                   {i > 0 && (
                     <div className="flex gap-4 mt-3">
                       <a href={peacockLink(t.season)} target="_blank" rel="noreferrer" className="font-mono" style={{ color: "#00a4a6", fontSize: "10px", letterSpacing: "0.18em", textDecoration: "underline" }}>Peacock →</a>
@@ -928,32 +938,38 @@ function Results({ picks, onReset }) {
 
       {age && (
         <div className="mb-12 py-10" style={{ borderTop: "1px solid #3a2f44", borderBottom: "1px solid #3a2f44" }}>
-          <div className="font-mono mb-5 text-center" style={{ color: "#ffc847", fontSize: "10px", letterSpacing: "0.35em" }}>
-            And one more thing
+          <div className="font-mono mb-5 text-center" style={{ color: "#ffc847", fontSize: "11px", letterSpacing: "0.2em" }}>
+            THE LORNE THEORY
           </div>
-          <p className="font-body text-center" style={{ color: "#8a7a6a", fontSize: "0.95rem", lineHeight: 1.5 }}>
-            The Oracle's guess at your age:
+          <p className="font-body italic mx-auto" style={{ color: "#c9b8a0", fontSize: "0.98rem", maxWidth: "560px", lineHeight: 1.65, textAlign: "center" }}>
+            "{LORNE_QUOTE.text}"
+          </p>
+          <div className="font-mono mt-3 text-center" style={{ color: "#6a5a4a", fontSize: "11px", letterSpacing: "0.15em" }}>
+            {LORNE_QUOTE.attrib}
+          </div>
+          <p className="font-body text-center mt-8 mx-auto" style={{ color: "#f4f1de", fontSize: "1rem", maxWidth: "560px", lineHeight: 1.55 }}>
+            By Lorne's math, S{winner.season} fans were in high school in {winnerMeta.year} and {winnerMeta.end}. That puts you around {age.ageMin} to {age.ageMax}.
           </p>
           <div className="text-center my-4">
             <span className="font-digital" style={{ color: "#f4f1de", fontSize: "clamp(3.5rem, 12vw, 5.5rem)", lineHeight: 1, letterSpacing: "-0.01em" }}>
               {age.ageMin}–{age.ageMax}
             </span>
           </div>
-          <p className="font-body italic mx-auto mt-6" style={{ color: "#c9b8a0", fontSize: "0.95rem", maxWidth: "560px", lineHeight: 1.65, textAlign: "center" }}>
-            "{LORNE_QUOTE.text}"
-          </p>
-          <div className="font-mono mt-3 text-center" style={{ color: "#6a5a4a", fontSize: "10px", letterSpacing: "0.2em" }}>
-            {LORNE_QUOTE.attrib}
-          </div>
-          <p className="font-body text-center mt-6 mx-auto" style={{ color: "#8a7a6a", fontSize: "0.9rem", maxWidth: "560px", lineHeight: 1.55 }}>
-            If S{winner.season} is your peak, you were in high school during {winnerMeta.year}–{winnerMeta.end}. That's the math.
+          <p className="font-body text-center mt-4 mx-auto" style={{ color: "#8a7a6a", fontSize: "0.92rem", maxWidth: "560px", lineHeight: 1.55 }}>
+            Off by a decade? Then you found your era on your own, which counts for more.
           </p>
         </div>
       )}
 
       <div className="mb-10">
-        <div className="font-mono mb-4" style={{ color: "#ffc847", fontSize: "10px", letterSpacing: "0.3em" }}>Your picks</div>
-        <div className="space-y-2">
+        <button
+          onClick={() => setShowPicks(!showPicks)}
+          className="font-mono mb-4"
+          style={{ color: "#ffc847", fontSize: "11px", letterSpacing: "0.2em", background: "none", border: "none", padding: 0, cursor: "pointer" }}
+        >
+          {showPicks ? "Hide your picks" : "Show your picks"}
+        </button>
+        <div className="space-y-2" hidden={!showPicks}>
           {picks.map((p, i) => {
             let prompt = "";
             let displayValue = "";
@@ -990,10 +1006,7 @@ function Results({ picks, onReset }) {
       </div>
 
       <div className="mb-10">
-        <div className="font-mono mb-1" style={{ color: "#ffc847", fontSize: "10px", letterSpacing: "0.3em" }}>Share your result</div>
-        <p className="font-body italic mb-4" style={{ color: "#8a7a6a", fontSize: "0.92rem" }}>
-          The story image is sized for IG / TikTok (1080×1920).
-        </p>
+        <div className="font-mono mb-4" style={{ color: "#ffc847", fontSize: "11px", letterSpacing: "0.2em" }}>Share it.</div>
         <div className="flex flex-wrap gap-2">
           {[
             { label: savingStory ? "Rendering…" : "Post to Instagram", action: handlePostToIG, disabled: savingStory, isButton: true },
@@ -1050,7 +1063,7 @@ function Results({ picks, onReset }) {
           className="font-body italic"
           style={{ color: "#8a7a6a", fontSize: "0.9rem", textDecoration: "underline", textDecorationColor: "#3a2f44", textUnderlineOffset: "3px" }}
         >
-          Found something off? Help us make it better →
+          Built by one fan. Found something off? Tell me →
         </a>
       </div>
     </div>
@@ -1210,29 +1223,45 @@ function FriendResult({ result, onStart }) {
   );
 }
 
-function WhyThisSeason({ winner, picks }) {
-  const aspectsPick = picks[ASPECT_ROUND_INDEX];
+function WhyThisSeason({ winner, picks, runnerUp }) {
   const castPick = picks.find((p) => p.type === "multi-cast");
-  const aspectLabels = (aspectsPick?.value || [])
-    .map((id) => ASPECTS[id]?.label?.toLowerCase())
-    .filter(Boolean);
-  const castNames = (castPick?.value || []);
+  const castNames = castPick?.value || [];
   const castOnSeason = castNames.filter((name) => seasonsFor(name).includes(winner.season));
+  const answers = topContributingAnswers(picks, winner.season, 2);
+
+  // The lead sentence: who you picked, sharing a cast with what you answered.
+  let lead;
+  if (castOnSeason.length > 0 && answers.length > 0) {
+    const verb = castOnSeason.length === 1 ? "shares" : "share";
+    lead = `S${winner.season} is where ${joinWithAnd(castOnSeason)} ${verb} a cast with ${joinWithAnd(answers)}.`;
+  } else if (answers.length > 0) {
+    lead = `S${winner.season} is the season that best matches ${joinWithAnd(answers)}.`;
+  } else if (castOnSeason.length > 0) {
+    lead = `S${winner.season} is the season ${joinWithAnd(castOnSeason)} shared.`;
+  } else {
+    lead = `S${winner.season} is the closest fit for what you picked.`;
+  }
+
+  // The runner-up line: what the second place season would cost you.
+  let second = null;
+  if (runnerUp) {
+    const missing = tradeOffsFor(runnerUp.season, picks);
+    const theirBest = topContributingAnswers(picks, runnerUp.season, 1)[0];
+    if (missing.length > 0) {
+      const verb = missing.length === 1 ? "wasn't" : "weren't";
+      second = `S${runnerUp.season} came second, but ${joinWithAnd(missing)} ${verb} there.`;
+    } else if (theirBest) {
+      second = `S${runnerUp.season} came second, and it's a fair fight: same cast, and you'd still get ${theirBest}.`;
+    } else {
+      second = `S${runnerUp.season} came second.`;
+    }
+  }
 
   return (
     <div className="mb-12">
-      <div className="font-mono mb-3" style={{ color: "#ffc847", fontSize: "10px", letterSpacing: "0.3em" }}>Why this season</div>
+      <div className="font-mono mb-3" style={{ color: "#ffc847", fontSize: "11px", letterSpacing: "0.2em" }}>Why this season</div>
       <p className="font-body" style={{ color: "#f4f1de", fontSize: "1.02rem", lineHeight: 1.55 }}>
-        You're drawn to {joinWithAnd(aspectLabels) || "the show"}
-        {castNames.length > 0 && (
-          <>, and you can't live without {joinWithAnd(castNames)}</>
-        )}
-        . S{winner.season} ({SEASONS[winner.season].year}–{String(SEASONS[winner.season].end).slice(2)}) is where that combination lives.
-        {castOnSeason.length > 0 && castNames.length > 0 && (
-          <> {castOnSeason.length === castNames.length
-            ? `All ${castOnSeason.length} of your picks were on the cast.`
-            : `${castOnSeason.length} of your ${castNames.length} cast picks (${castOnSeason.join(", ")}) were on this season.`}</>
-        )}
+        {lead}{second ? ` ${second}` : ""}
       </p>
     </div>
   );
@@ -1250,7 +1279,7 @@ function WatchNext({ season, picks }) {
   if (sketches.length === 0) return null;
   return (
     <div className="mb-12">
-      <div className="font-mono mb-1" style={{ color: "#ffc847", fontSize: "10px", letterSpacing: "0.3em" }}>
+      <div className="font-mono mb-1" style={{ color: "#ffc847", fontSize: "11px", letterSpacing: "0.2em" }}>
         Watch this next
       </div>
       <p className="font-body italic mb-4" style={{ color: "#8a7a6a", fontSize: "0.92rem" }}>
@@ -1299,19 +1328,29 @@ function castSweetSpots(picks) {
   };
 }
 
+// One pick, two picks and three picks each need their own sentence. The old
+// template produced "All 1 of your cast picks share these seasons."
+function overlapLine(sweet) {
+  const { totalCast, maxOverlap, names } = { ...sweet, names: sweet.best[0]?.names || [] };
+  if (maxOverlap === totalCast) {
+    if (totalCast === 1) return `${names[0]} was on all of these:`;
+    if (totalCast === 2) return "Both your picks share these seasons:";
+    return "All three share these seasons:";
+  }
+  if (totalCast === 2) return "Your two picks never share a season. These are the closest you get:";
+  return `Your three picks never share a season. The closest is two of them, in these:`;
+}
+
 function CastSweetSpot({ picks, winnerSeason }) {
   const sweet = castSweetSpots(picks);
   if (!sweet) return null;
-  const isAllOverlap = sweet.maxOverlap === sweet.totalCast;
   return (
     <div className="mb-12">
-      <div className="font-mono mb-3" style={{ color: "#ffc847", fontSize: "10px", letterSpacing: "0.3em" }}>
+      <div className="font-mono mb-3" style={{ color: "#ffc847", fontSize: "11px", letterSpacing: "0.2em" }}>
         Your cast overlap
       </div>
       <p className="font-body mb-4" style={{ color: "#c9b8a0", fontSize: "0.95rem", lineHeight: 1.5 }}>
-        {isAllOverlap
-          ? `All ${sweet.totalCast} of your cast picks share these seasons. Start here:`
-          : `Your ${sweet.totalCast} cast picks never share a season. The closest you can get is ${sweet.maxOverlap} of ${sweet.totalCast}, in these:`}
+        {overlapLine(sweet)}
       </p>
       <div className="flex flex-wrap gap-2">
         {sweet.best.slice(0, 10).map((x) => {
@@ -1350,11 +1389,11 @@ function MoreLikeYourTaste({ winner, picks, scores }) {
   if (sketches.length === 0) return null;
   return (
     <div className="mb-12">
-      <div className="font-mono mb-1" style={{ color: "#ffc847", fontSize: "10px", letterSpacing: "0.3em" }}>
+      <div className="font-mono mb-1" style={{ color: "#ffc847", fontSize: "11px", letterSpacing: "0.2em" }}>
         Also in your lane
       </div>
       <p className="font-body italic mb-4" style={{ color: "#8a7a6a", fontSize: "0.92rem" }}>
-        Sketches from other seasons that share your taste DNA.
+        Sketches from other seasons you'd probably rewatch.
       </p>
       <div style={{ borderTop: "1px solid #3a2f44" }}>
         {sketches.map((s) => (
