@@ -391,7 +391,7 @@ export const ASPECTS = {
       options: [
         { label: "The originals", sub: "Coneheads. Killer Bees. Roseanne Roseannadanna.", weight: { 1: 3, 2: 3, 3: 3, 4: 3, 5: 3, 6: 2 } },
         { label: "Big personalities with catchphrases", sub: "Mr. Robinson. Church Lady. Mary Katherine Gallagher. Stefon.", weight: { 7: 3, 8: 3, 9: 3, 10: 2, 11: 2, 12: 3, 13: 3, 14: 2, 17: 1, 22: 3, 23: 3, 24: 3, 25: 2, 36: 2, 37: 3 } },
-        { label: "Loser archetypes", sub: "Matt Foley. Hans & Franz. Roxbury Guys. Drunk Uncle.", weight: { 14: 2, 15: 2, 17: 3, 18: 4, 19: 3, 20: 2, 22: 3, 23: 3, 38: 2, 39: 2 } },
+        { label: "Lovable losers", sub: "Matt Foley. Hans & Franz. Roxbury Guys. Drunk Uncle.", weight: { 14: 2, 15: 2, 17: 3, 18: 4, 19: 3, 20: 2, 22: 3, 23: 3, 38: 2, 39: 2 } },
         { label: "Mid-2000s regulars", sub: "Debbie Downer. Bronx Beat. Two A-Holes.", weight: { 26: 2, 27: 2, 28: 2, 29: 3, 30: 3, 31: 3, 32: 3, 33: 3, 34: 3 } },
         { label: "Wiig-era weirdos", sub: "Target Lady. Gilly. Penelope. Sue.", weight: { 31: 2, 32: 2, 33: 2, 34: 2, 35: 3, 36: 3, 37: 3 } },
         { label: "Suburban absurdity", sub: "Wayne's World. Spartan Cheerleaders. The Californians.", weight: { 14: 3, 15: 3, 16: 3, 17: 3, 21: 2, 22: 3, 23: 2, 37: 3, 38: 2 } },
